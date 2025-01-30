@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+    <script src="{{ url_for('static', filename='javascript/demo.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascript/filter.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascript/pins.js') }}"></script>
+</head>
+<body>
+    <!-- Menu Section -->
+    <nav class="menu-left">
+        <button class="menu-button">Menu</button>
+        <ul class="menu-options">
+            <li><a href="/home">Back to Home</a></li>
+            <li><a href="/database">View Database</a></li>
+            <li><a href="/predictions">Predictions</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <nav class="menu-right">
+        <button class="menu-button">Navigation</button>
+        <ul class="menu-options">
+            <li><a href="#1">By Month&Product </a></li>
+            <li><a href="#2">By Week&Product </a></li>
+            <li><a href="#3">By Payment&Product</a></li>
+            <li><a href="#4">Filter/Self search</a></li>
+        </ul>
+    </nav>
+
+    <section id="percentage-calculator">
+        <h2> Percentage Calculator</h2>
+        <form id="percentage-form">
+            <label for="value">Value:</label>
+            <input type="number" id="value" placeholder="Enter value" step="any" required>
+            
+            <label for="total">Total:</label>
+            <input type="number" id="total" placeholder="Enter total" step="any" required>
+            
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="result-container">
+            <span id="result"></span>
+        </div>
+    </section>
+    
+
+    <script src="{{ url_for('static', filename='javascript/percentage.js') }}"></script>
+
+    <!-- Section 1: Filter by Month -->
+    <h1>Sales Analysis</h1>
+    <section id="1">
+        <!-- Sales Analysis Table -->
+        <h2>Filter by Month of the year</h2>
+    
+        {% if demo_mode %}
+            <!-- PIN input field, initially hidden if not verified -->
+            <div id="pin-container" class="pin-container" {% if not data_verified %}style="display:block;"{% else %}style="display:none;"{% endif %}>
+                <label for="pin">Enter PIN:</label>
+                <input type="password" id="pin" name="pin" />
+                <button class="submit-pin" onclick="verifyPin()">Submit</button>
+            </div>
+            
+            <div id="pin-message" style="display: none; padding: 10px; margin-top: 10px;">
+                <!-- Success or error messages will appear here -->
+            </div>
+
+            <div id="confidential-message" {% if not data_verified %}style="display:block;"{% else %}style="display:none;"{% endif %}>
+                <p>Data is confidential until the correct PIN is entered.</p>
+            </div>
+    
+            <!-- Content section, initially hidden if not verified -->
+            <div id="product-info" class="hidden-stat" {% if data_verified %}style="display:block;"{% else %}style="display:none;"{% endif %}>
+                <div class="table-container">
+                    {{ month | safe }}
+                </div>
+            </div>
+    
+            <!-- Hide button, initially hidden -->
+            <button id="hide-button" {% if data_verified %}style="display:block;"{% else %}style="display:none;"{% endif %} onclick="hideContent()">Hide</button>
+    
+        {% else %}
+            <div class="table-container">
+                <!-- Render the table without any PIN validation -->
+                {{ month | safe }}
+            </div>
+        {% endif %}
+    </section>
+    
+    
+    
+    
+
+    
+        
+    
+    <section id="2">
+        <!-- Sales Analysis Table -->
+        <h2>Filter By Day of the Week</h2>
+        {% if demo_mode %}
+            <button class="reveal-button" data-content="week">Reveal</button>
+            <section id="week-info" class="hidden-stat">
+                <div class="table-container">
+                    <!-- Render the table -->
+                    {{ week | safe }}
+                </div>  
+            </section>
+        {% else %}
+            <div class="table-container">
+                <!-- Render the table -->
+                {{ week | safe }}
+            </div>  
+        {% endif %}
+    </section>
+    
+    <section id="3">
+        <!-- Sales Analysis Table -->
+        <h2>Filter By Payment method</h2>
+        {% if demo_mode %}
+            <button class="reveal-button" data-content="payment">Reveal</button>
+            <section id="payment-info" class="hidden-stat">
+                <div class="table-container">
+                    <!-- Render the table -->
+                    {{ payment | safe }}
+                </div>  
+            </section>
+        {% else %}
+            <div class="table-container">
+                <!-- Render the table -->
+                {{ payment | safe }}
+            </div>  
+        {% endif %}
+    </section>
+
+    <section id="4">
+        <h2>Filter Sales Data</h2>
+        <form id="filter-form" action="/analysis" method="POST">
+            <div class="filter-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+            <div class="filter-group">
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+            <button type="submit" class="filter-button">Apply Filters</button>
+        </form>
+
+        {% if demo_mode %}
+            <button class="reveal-button" data-content="handmade">Reveal</button>
+            <section id="handmade-info" class="hidden-stat">
+                <div class="table-container">
+                    <h3>Handmade / Beaded Sales</h3>
+                    {{ handmade_table | safe }}
+                </div>
+            </section>
+        {% else %}
+            <div class="table-container">
+                <h3>Handmade / Beaded Sales</h3>
+                {{ handmade_table | safe }}
+            </div>
+        {% endif %}
+        <!-- Sterling Silver Sales -->
+        {% if demo_mode %}
+        <button class="reveal-button" data-content="sterling_silver">Reveal</button>
+        <section id="sterling_silver-info" class="hidden-stat">
+            <div class="table-container">
+                <h3>Sterling Silver Sales</h3>
+                {{ sterling_silver_table | safe }}
+            </div>
+        </section>
+        {% else %}
+        <div class="table-container">
+            <h3>Sterling Silver Sales</h3>
+            {{ sterling_silver_table | safe }}
+        </div>
+        {% endif %}
+
+        <!-- Gold Plated Sales -->
+        {% if demo_mode %}
+        <button class="reveal-button" data-content="gold_plated">Reveal</button>
+        <section id="gold_plated-info" class="hidden-stat">
+            <div class="table-container">
+                <h3>Gold Plated Sales</h3>
+                {{ gold_plated_table | safe }}
+            </div>
+        </section>
+        {% else %}
+        <div class="table-container">
+            <h3>Gold Plated Sales</h3>
+            {{ gold_plated_table | safe }}
+        </div>
+        {% endif %}
+
+        <!-- Full Database Sales -->
+        {% if demo_mode %}
+            <button class="reveal-button" data-content="full_database">Reveal</button>
+            <section id="full_database-info" class="hidden-stat">
+                <div class="table-container">
+                    <h3>Full Database Sales</h3>
+                    {{ full_database_table | safe }}
+                </div>
+            </section>
+        {% else %}
+            <div class="table-container">
+                <h3>Full Database Sales</h3>
+                {{ full_database_table | safe }}
+            </div>
+        {% endif %}
+    </section>
+
+    <section id="5">
+        <!-- Sales Analysis Table -->
+        <h2>Average </h2>
+        {% if demo_mode %}
+            <button class="reveal-button" data-content="average">Reveal</button>
+            <section id="average-info" class="hidden-stat">
+
+            </section>
+        {% else %}
+            <div class="table-container">
+
+            </div>  
+        {% endif %}
+    </section>
+
+    <footer>
+        &copy; 2024 Saras Beads & Jewellery
+    </footer>
+
+</body>
+</html>

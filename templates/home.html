@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
+    <title>Saras Beads Hub</title>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1>Sarasbeads & Jewellery Hub</h1>
+        <div class="demo-status">
+            <h2>Demo: {{ demo_mode }}</h2>
+        </div>
+        <div class="admin-status">
+            <h2>Admin: {{ admin_mode }}</h2>
+        </div>
+    </header>
+
+    <!-- About Saras Beads Section -->
+    <p>About the Business: </p>
+    <p>
+        My name is Sarah, founder of Saras Beads & Jewellery since 2019. In 2021, I turned my hobby and passion into a business :). As the business is evolving, Saras Beads & Jewellery is becoming part of a family business.
+        <br><br>
+        We are originally from Lebanon, and we are glad to offer you a unique range of modern and unusual jewellery that brings a smile to your faces and to your loved ones.
+    </p>
+    <p>Description of this Page: </p>
+    <p>
+        This project aims to enhance SarasBeads' business operations by providing a streamlined web application for data analysis and sales predictions. 
+        <br><br>
+        The platform allows users to analyze sales trends, predict future revenue, and manage the business database. 
+    </p>
+    
+    
+
+    <!-- Main Content Area -->
+    <main>
+        <section class="options">
+            <div class="option">
+                <h2>View Database</h2>
+                <p>Self Search : Explore and manage the complete sales data from your collections.</p>
+                <a href="/database" class="button">View Database</a>
+            </div>
+            <div class="option">
+                <h2>Analysis</h2>
+                <p>Analyze sales data to uncover trends and patterns in your business.</p>
+                <a href="/analysis" class="button">Go to Analysis</a>
+            </div>
+            <div class="option">
+                <h2>Predictions</h2>
+                <p>Forecast future sales and trends based on historical data.</p>
+                <a href="/predictions" class="button">View Predictions</a>
+            </div>
+            <br><br/>
+        </section>
+    </main>
+
+    <!-- Logout Button -->
+    <a href="/logout" class="logout">Logout</a>
+
+    <!-- Footer Section -->
+    <footer>
+        &copy; 2024 Saras Beads & Jewellery
+    </footer>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Ignore the secure.env file containing sensitive information
+.env
+
+# Ignore the uploads and data folders
+/uploads/
+data/
+
+# Ignore other potentially sensitive or unnecessary files/folders
+*.pyc
+__pycache__/
+instance/
+.vscode/
