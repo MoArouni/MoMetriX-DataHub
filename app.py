@@ -1,22 +1,66 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+#to pass on values to the html files
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, abort
+
+#importing the class from the analysis file
 from analysis.sales_trend import SalesAnalysis
+
+#some functions used in the application but don't have impact on the app itself
 from main import load_data, get_latest_date, get_amount_rows, percentage  # Import functions from main.py
+
+#pandas for analysis 
 import pandas as pd 
+
+#securing the filenames when uploading files
 from werkzeug.utils import secure_filename
+
+#passwords and confidential data
+from dotenv import load_dotenv
+
+# interacting with the operating system to do tasks like file management, environment variables, and system operations
 import os
+
+# functools: Provides higher-order functions like wraps, which is used to modify or enhance functions.
 from functools import wraps
+
+# jinja2: A templating engine for Python that allows you to generate HTML, XML, or other markup formats.
 from jinja2 import Environment
 
+# datetime: Supplies classes for manipulating dates and times.
+from datetime import timedelta
+
+
+#encrypts passwords 
+import bcrypt
+
+#secures the app 
+from flask_wtf.csrf import CSRFProtect
+
 app = Flask(__name__)
+
+# CSRFProtect is used to add Cross-Site Request Forgery (CSRF) protection to the application.
+# It ensures that any form submission or state-changing request includes a valid CSRF token,
+# preventing malicious websites from performing actions on behalf of the authenticated user without their consent.
+#csrf = CSRFProtect(app)
+
+# Set session to be permanent and set a timeout
+app.permanent_session_lifetime = timedelta(minutes=30)  # Session expires after 30 minutes
+app.config['SESSION_COOKIE_SECURE'] = True  # Ensures that the cookie is only sent over HTTPS
+
 # Add `sum` to the Jinja2 environment
 app.jinja_env.globals.update(sum=sum)
 
+# Load environment variables from secure.env
+load_dotenv('.env')
 
+# Read credentials from environment variables
+app.secret_key = os.getenv('SECRET_KEY')
+ADMIN_USER = os.getenv('ADMIN_USER')
+ADMIN_PASS = os.getenv('ADMIN_PASS')
+csv_file_path = os.getenv('CSV_FILE_PATH')
 
-app.secret_key = 'your_secret_key'  # Required for session management
-
-# Dummy credentials for testing
-users = {'demonstrator': 'demon', 'admin': 'kingM0_18', 'khalil': 'kingM0_18', 'sarah' : 'kingM0_18', 'yusuf' : 'kingM0_18'}
+users = {
+    ADMIN_USER: bcrypt.hashpw(ADMIN_PASS.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+}
 
 UPLOAD_FOLDER = 'uploads'  # Directory to save uploaded files
 ALLOWED_EXTENSIONS = {'csv'}  # Restrict file types to CSV
@@ -29,55 +73,28 @@ def reveal_section(section):
     revealed = request.json.get('revealed', False)
     session[f'{section}_revealed'] = revealed
     return jsonify(success=True)
-
-
-@app.route('/toggle_demo_mode')
-def toggle_demo_mode():
-    """Toggle the demo mode on or off based on the session state."""
-    if 'username' in session:
-        if session.get('demo_mode', False):
-            # If demo mode is currently on, turn it off and set admin mode on
-            session['demo_mode'] = False
-            session['admin_mode'] = True
-        else:
-            # If demo mode is currently off, turn it on and set admin mode off
-            session['demo_mode'] = True
-            session['admin_mode'] = False
-        return redirect(url_for('home'))  # Redirect to home page after toggle
-    return redirect(url_for('login'))
-
-
-
-@app.route('/toggle_admin_mode')
-def toggle_admin_mode():
-    """Ensure admin mode is opposite of demo mode."""
-    if 'username' in session:
-        # Set admin_mode based on the opposite of demo_mode
-        session['admin_mode'] = not session.get('demo_mode', False)
-        return redirect(url_for('home'))  # Redirect to home page
-    return redirect(url_for('login'))
-
-# Protect routes with login requirement
-def login_required(f):
-    def wrap(*args, **kwargs):
-        if 'logged_in' not in session:
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    wrap.__name__ = f.__name__
-    return wrap
-
-
-
+        
 # Ensure the upload folder exists
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 def allowed_file(filename):
-    """Check if the file has an allowed extension."""
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    """Check if the file has an allowed extension and isn't empty."""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS and filename != ""
+
+
+def admin_mode_required(f):
+    """Decorator to ensure the user is in admin mode."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_mode', False):
+            # Abort with a 403 Forbidden if the user is not in admin mode
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/upload_csv', methods=['POST'])
-@login_required
+@admin_mode_required
 def upload_csv():
     """Handle CSV file upload and process it."""
     if 'file' not in request.files:
@@ -108,90 +125,89 @@ def upload_csv():
         return "Invalid file type. Only CSV files are allowed.", 400
     
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    """Handle login to enable admin tools."""
     if request.method == 'POST':
-        username = request.form.get('username')  
-        password = request.form.get('password')
+        username = request.form.get('username')
+        password = request.form.get('password').encode('utf-8')  # Encode password to bytes for bcrypt
 
-        if username == 'demonstrator' and password == users.get(username):
-            # When demonstrator logs in, set demo mode in session
-            session['demo_mode'] = True
-            session['admin_mode'] = False
-            session['username'] = username
-            session['logged_in'] = True  # Mark as logged in
-            return redirect(url_for('home'))  # Redirect to home after login as demonstrator
-        elif username in users and password == users.get(username):
-            # Handle regular user login
-            session['logged_in'] = True
-            session['username'] = username
-            session['demo_mode'] = False  # Ensure demo mode is off for regular users
-            session['admin_mode'] = True
-            return redirect(url_for('home'))  # Redirect to home page for regular user
+        # Check if the username is 'admin' and proceed with validation
+        if username == 'admin':
+            # Compare the entered password with the stored hashed password
+            if bcrypt.checkpw(password, users.get(username).encode('utf-8')):
+                # Grant admin mode access upon successful login
+                session['admin_mode'] = True
+                session['username'] = username
+                session['logged_in'] = True  # Mark as logged in
+                return redirect(url_for('home'))  # Redirect to the home page
+            else:
+                flash("Invalid username or password", "error")
+                return redirect(url_for('admin'))  # Redirect back to login page
         else:
-            flash("Invalid username or password", "error")
-            return redirect(url_for('login'))  # Redirect back to login page with error
+            flash("Only the 'admin' user can access the admin tools", "error")
+            return redirect(url_for('admin'))  # Redirect back to login page
 
-    return render_template('login.html')
+    return render_template('admin.html')
 
-
-@app.route('/logout')
-def logout():
+@app.route('/access_admin')
+def access_admin():
     session.clear()  # Clear session or authentication
-    return redirect(url_for('login'))  # Redirect to login page
+    session['admin_mode'] = True  # Enable admin mode
+    session['uploaded_file'] = "data/sales.csv"
+    flash("You are now in Admin Mode.", "success")
+    return redirect(url_for('home'))  # Redirect to home
 
-
-
-
-
+@app.route('/exit_admin')
+def exit_admin():
+    session.pop('admin_mode', None)  # Completely remove admin mode from session
+    session.modified = True  # Ensure session updates
+    flash("Admin mode disabled.", "info")
+    return redirect(request.referrer or url_for('home'))  # Reload previous page or home
 
 
 @app.route('/database')
-@login_required
 def database():
     """Render the database page with the uploaded or default CSV file."""
-    # Use uploaded file if available
-    filepath = session.get('uploaded_file', "data/sales.csv")
+    
+    # Check if user is an admin (session variable `admin_mode` should be set to True)
+    if session.get('admin_mode', False):
+        filepath = "data/sales.csv"  # Real data file
+    else:
+        filepath = "data/dummy_sales.csv"  # Dummy data file for non-admin users
+    
+    # Check if the file exists
     if not os.path.exists(filepath):
-        flash("Default data file not found.", "error")
+        flash("Data file not found.", "error")
         return redirect(url_for('home'))
-
     
     # Get the latest date of sale
     latest_date = get_latest_date(filepath)
     rows = get_amount_rows(filepath)
+    
     # Load data
     try:
         data = pd.read_csv(filepath)
         data = data.drop(columns=["Timestamp"])
         data_html = data.to_html(classes='data', index=False)
-        return render_template('database.html', latest_date=latest_date, rows = rows, data_table=data_html)
+        return render_template('database.html', latest_date=latest_date, rows=rows, data_table=data_html)
     except Exception as e:
         return f"Error loading data: {e}", 500
 
+
 @app.route('/home')
-@login_required
 def home():
-    # Redirect based on whether demo_mode is set
-    if 'demo_mode' in session and session['demo_mode']:
-        demo_mode = "ON"
-        admin_mode = "OFF"
-    else:
-        demo_mode = "OFF"
-        admin_mode = "ON"
-    
-    return render_template('home.html', demo_mode=demo_mode, admin_mode=admin_mode)
+    admin_mode = session.get('admin_mode', False)  # Check if admin mode is enabled
+    return render_template('home.html', admin_mode = admin_mode)  # Pass admin state to template
 
 @app.route('/')
 def index():
-    if 'logged_in' not in session:
-        return redirect(url_for('login'))
-    return redirect(url_for('home'))
+    """Render the HUB page as the default landing page."""
+    return render_template('hub.html')
 
 
 # Analysis page - Shows the results of the analysis
 @app.route('/analysis', methods=['GET', 'POST'])
-@login_required
 def analysis():
     """Render the analysis page with the results of sales analysis."""
     # Load data
@@ -258,7 +274,6 @@ def analysis():
             payment=table_payment.to_html(classes='data', header=True, index=True, escape=False),
             average_sales=average_sales,
 
-            demo_mode=session.get('demo_mode', False),
             admin_mode=session.get('admin_mode', False),
 
             start_date = start_date.strftime('%Y-%m-%d') if start_date else '',
@@ -279,27 +294,9 @@ def analysis():
 
 
 
-@app.route('/verify_pin', methods=['POST'])
-@login_required
-def verify_pin():
-    """Handle PIN verification."""
-    pin = request.form.get('pin')  # Get PIN from the form
-    correct_pin = '1234'  # Set your correct PIN here
-
-    if pin == correct_pin:
-        # If the PIN is correct, mark the session as PIN verified
-        session['pin_verified'] = True
-        flash("PIN verified! Sensitive data is now visible.", "success")
-    else:
-        # If the PIN is incorrect, display an error message
-        flash("Incorrect PIN. Please try again.", "error")
-
-    return redirect(url_for('analysis'))
-
 
 # Predictions page - Placeholder for predictions results
 @app.route('/predictions')
-@login_required
 def predictions():
     """Render the predictions page with sales predictions."""
     # Placeholder logic for predictions (you will need to add real prediction code)

@@ -8,11 +8,3 @@
   {% endif %}
 {% endwith %}
 
-
-<a href="{{ url_for('toggle_demo_mode') }}">
-  {% if session.get('demo_mode', False) %}
-      Disable Demo Mode
-  {% else %}
-      Enable Demo Mode
-  {% endif %}
-</a>

@@ -356,3 +356,20 @@ section + section {
     color: green;
     font-weight: bold;
 }
+
+.empty-database {
+    background-color: black;      /* Black background for the box */
+    color: white;                 /* White text color for the content */
+    padding: 20px;                /* Padding inside the box for spacing */
+    border-radius: 8px;           /* Optional: rounded corners */
+    text-align: center;           /* Center the text inside the box */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);  /* Optional: subtle shadow around the box */
+}
+
+.empty-database h1{
+    color: white;
+}
+.empty-database p {
+    margin: 0; /* Remove margin for headings and paragraphs */
+    color: white;
+}

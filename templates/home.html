@@ -11,12 +11,13 @@
     <!-- Header Section -->
     <header>
         <h1>Sarasbeads & Jewellery Hub</h1>
-        <div class="demo-status">
-            <h2>Demo: {{ demo_mode }}</h2>
-        </div>
-        <div class="admin-status">
-            <h2>Admin: {{ admin_mode }}</h2>
-        </div>
+        {% if admin_mode %}
+            <h2 class="admin-status">Admin : ON </h2>
+            <a href="/exit_admin" class="admin">Exit Admin</a>
+        {% else %}
+            <h2 class="admin-status">Admin : OFF </h2>
+            <a href="/admin" class="admin">Access Admin</a>
+        {% endif %}
     </header>
 
     <!-- About Saras Beads Section -->
@@ -56,9 +57,7 @@
             <br><br/>
         </section>
     </main>
-
-    <!-- Logout Button -->
-    <a href="/logout" class="logout">Logout</a>
+         
 
     <!-- Footer Section -->
     <footer>

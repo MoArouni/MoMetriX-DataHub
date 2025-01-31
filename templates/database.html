@@ -14,9 +14,13 @@
         <button class="menu-button">Menu</button>
         <ul class="menu-options">
             <li><a href="/home">Back to Home</a></li>
-            <li><a href="/analysis">Analysis</a></li>
+            <li><a href="/database">View Database</a></li>
             <li><a href="/predictions">Predictions</a></li>
-            <li><a href="/logout">Logout</a></li>
+            {% if admin_mode %}
+                <li><a href="/exit_admin" class="admin">Exit Admin</a></li>
+            {% else %}
+                <li><a href="/admin" class="admin">Access Admin</a></li>
+            {% endif %}
         </ul>
     </nav>
     <div class="upload">

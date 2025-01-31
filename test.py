@@ -31,3 +31,4 @@ print(f"The latest date of sale in the database is: {latest_date}")
 
 
 
+# Protect routes with login requirement

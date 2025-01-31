@@ -46,30 +46,18 @@ h1 {
 }
 
 /* Status styling */
-.demo-status h2 {
+.admin-status h2 {
     margin-bottom: 100px;
     font-size: 2.3rem; /* Same size as the title */
     color: #002fff; /* Blue color for demonstrator mode */
 }
 
 /* Position the status on the right */
-.demo-status {
+.admin-status {
+    color : blue;
     position: absolute;
     top: 50%;
     right: 25px;
-    transform: translateY(-50%); /* Vertically center the status */
-}
-
-.admin-status h2 {
-    margin-top : 100px;
-    font-size: 2.3rem; /* Same size as the title */
-    color: #002fff; /* Blue color for demonstrator mode */
-}
-
-.admin-status {
-    position : absolute;
-    top : 50%;
-    right : 25px ;
     transform: translateY(-50%); /* Vertically center the status */
 }
 
@@ -163,7 +151,7 @@ main {
 }
 
 /* Logout button Styling */
-.logout {
+.admin {
     position: absolute;
     top: 30px;
     left: 30px;
@@ -181,7 +169,7 @@ main {
 }
 
 
-.logout:hover {
+.admin:hover {
     box-shadow: 0px 4px 6px rgba(255, 108, 108, 0.2); /* Add shadow to the button */
     background-color: #e07f7f; /* Slightly darker gold for hover */
     transform: scale(1.1); /* Logout button grows slightly on hover */

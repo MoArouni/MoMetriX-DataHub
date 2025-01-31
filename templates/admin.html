@@ -4,21 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="/static/css/login.css">
-    <script src="/static/javascript/hacker.js"></script> <!-- Link to the JS file -->
+    <link rel="stylesheet" href="/static/css/admin.css">
 </head>
+
+<nav class="menu-left">
+    <button class="menu-button">Menu</button>
+    <ul class="menu-options">
+        <li><a href="/home">Back to Home</a></li>
+    </ul>
+</nav>
+
 <body>
     <div class="login-container">
-        <h1 data-value="System Access">System Access</h1>
-        <form action="/login" method="POST">
+        <h1 data-value="System Access">Admin Access</h1>
+        <script src="/static/javascript/hacker.js"></script> <!-- Link to the JS file -->
+        <!-- Form with CSRF token -->
+        <form action="/admin" method="POST">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
-            <button type="submit">Login</button>
+            <button type="submit">Access</button>
         </form>
     </div>
-
-
 </body>
 </html>

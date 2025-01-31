@@ -1,15 +1,18 @@
 import pandas as pd 
+import os 
+import logging
+
+logging.basicConfig(level=logging.ERROR)
 
 def get_latest_date(file_path):
-    """Returns the latest date from the CSV file."""
     try:
         data = pd.read_csv(file_path)
         last_row = data.iloc[-1]
         latest_date = f"{last_row['Day of the sale']}"
-
         return latest_date
     except Exception as e:
-        return f"An error occurred: {e}"
+        logging.error(f"Error in get_latest_date: {e}")
+        return "An error occurred while processing the data."
     
 def get_amount_rows(file_path):
     """Returns the amount of lines in the CSV file."""
@@ -22,12 +25,12 @@ def get_amount_rows(file_path):
 def load_data():
     """Loads the CSV data."""
     try:
-        data = pd.read_csv("data/sales.csv")  # Replace with the correct path
+        file_path = os.getenv('CSV_FILE_PATH')
+        data = pd.read_csv(file_path)
         return data
     except Exception as e:
         print(f"Error loading CSV: {e}")
         return None
-
 
 
 def percentage(sub_total, total):
