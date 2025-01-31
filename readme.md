@@ -1,3 +1,1 @@
-This project will take a database, in csv format pasted by the user, on the most recent version of the database for Sarasbeads business. 
-It gives the user 2 main choices, to analyse the data or to make predictions. 
-Those 2 big branches allow for more detailed analysis that the User chooses.
+This is a project about data analysis tools for Small Jewerelly businesses that started as a analysis page for My family's business, sarasbeads and is now growing to be a source for analysis for all jewerelly businesses that would like to explore insights and sales analysis simply and efficiently.
