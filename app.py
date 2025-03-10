@@ -4,8 +4,13 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 #importing the class from the analysis file
 from analysis.sales_trend import SalesAnalysis
 
+from forms import SaleForm, SalesEntryForm
+
 #some functions used in the application but don't have impact on the app itself
 from main import load_data, get_latest_date, get_amount_rows, percentage  # Import functions from main.py
+
+#imports the csv module 
+import csv 
 
 #pandas for analysis 
 import pandas as pd 
@@ -158,6 +163,22 @@ def access_admin():
     flash("You are now in Admin Mode.", "success")
     return redirect(url_for('home'))  # Redirect to home
 
+@app.route('/access_mod')
+def access_mod():
+    session.clear()  # Clear session or authentication
+    session['mod_mode'] = True  # Enable mod mode
+    session['uploaded_file'] = "data/sales.csv"
+    flash("You are now in Mod Mode.", "success")
+    return redirect(url_for('home'))  # Redirect to home
+
+
+@app.route('/exit_mode')
+def exit_mod():
+    session.pop('mod_mode', None)  # Completely remove mod mode from session
+    session.modified = True  # Ensure session updates
+    flash("Mode disabled.", "info")
+    return redirect(request.referrer or url_for('home'))  # Reload previous page or home
+
 @app.route('/exit_admin')
 def exit_admin():
     session.pop('admin_mode', None)  # Completely remove admin mode from session
@@ -190,20 +211,165 @@ def database():
         data = pd.read_csv(filepath)
         data = data.drop(columns=["Timestamp"])
         data_html = data.to_html(classes='data', index=False)
-        return render_template('database.html', latest_date=latest_date, rows=rows, data_table=data_html)
+        return render_template('sarasbeads/database.html', latest_date=latest_date, rows=rows, data_table=data_html)
     except Exception as e:
         return f"Error loading data: {e}", 500
 
+CSV_COLUMNS = [
+    "Day of the Sale", "Quantity", "Month of the Year", "Day of the Week",
+    "Price", "Card amount paid", "Cash amount paid", "Product type",
+    "Handmade / Beaded collections", "Sterling Silver collections", "Gold Plated collections",
+    "details", "Zirconia Color", "Mohave type", "Birth Stone type",
+    "How many items in the set", "Set type"
+]
+
+CSV_FILE = 'dummy_sales.csv'
+
+# Ensure the CSV file exists with headers
+if not os.path.exists(CSV_FILE):
+    with open(CSV_FILE, mode='w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+        writer.writeheader()
+
+def get_field(form, field, index, default=""):
+    """Safely get a field from the submitted form."""
+    values = form.getlist(field)
+    return values[index] if len(values) > index else default
+
+@app.route('/forms', methods=['GET', 'POST'])
+def forms():
+    if request.method == 'POST':
+        # Ensure the number of sales is provided and valid.
+        num_sales_str = request.form.get('num_sales')
+        if not num_sales_str or not num_sales_str.isdigit():
+            return "Error: Number of sales is missing or invalid.", 400
+        num_sales = int(num_sales_str)
+        
+        sales = []
+        for i in range(num_sales):
+            # Retrieve all expected fields from the form.
+            # Retrieve fields from the form
+            day_of_sale    = get_field(request.form, 'day_of_sale', i)
+            quantity       = get_field(request.form, 'quantity', i)
+            month          = get_field(request.form, 'month', i)
+            day_of_week    = get_field(request.form, 'day_of_week', i)
+            price          = get_field(request.form, 'price', i)
+            card_amount    = get_field(request.form, 'card_amount', i)
+            cash_amount    = get_field(request.form, 'cash_amount', i)
+            product_type   = get_field(request.form, 'product_type', i)
+            category       = get_field(request.form, 'category', i)
+            extra_detail   = get_field(request.form, 'extra_detail', i)
+            other_detail   = get_field(request.form, 'other_detail', i)
+            zirconia      = get_field(request.form, 'zirconia_detail', i)
+            mohave        = get_field(request.form, 'mohave_detail', i)
+            raw_stone     = get_field(request.form, 'raw_stone_detail', i)
+            set_type       = get_field(request.form, 'set_type', i)
+
+            # Determine the collection based on product type.
+            # For example, assume that "category" holds a collection value.
+            handmade_collection = category if product_type == "Handmade / Beaded" else ""
+            sterling_collection = category if product_type == "Sterling Silver" else ""
+            gold_collection     = category if product_type == "Gold Plated" else ""
+
+            # Determine details and the stone color column based on extra_detail.
+            if extra_detail == "mohave":
+                details        = "Mohave"
+                mohave_color   = mohave       # The stone color chosen for Mohave
+                zirconia_color = ""
+                raw_stone_color= ""
+            elif extra_detail == "zirconia":
+                details        = "Zirconia"
+                zirconia_color = zirconia     # The stone color chosen for Zirconia
+                mohave_color   = ""
+                raw_stone_color= ""
+            elif extra_detail == "raw_stone":
+                details        = "Raw Stone"
+                raw_stone_color= raw_stone    # The stone color chosen for Raw Stone
+                mohave_color   = ""
+                zirconia_color = ""
+            elif extra_detail == "other":
+                details        = other_detail   # Use the text provided by the user
+                mohave_color   = ""
+                zirconia_color = ""
+                raw_stone_color= ""
+            else:
+                details        = extra_detail
+                mohave_color   = ""
+                zirconia_color = ""
+                raw_stone_color= ""
+
+            # Build the sale record using the CSV structure.
+            sale = {
+                "Day of the Sale": day_of_sale,
+                "Quantity": quantity,
+                "Month of the Year": month,
+                "Day of the Week": day_of_week,
+                "Price": price,
+                "Card amount paid": card_amount,
+                "Cash amount paid": cash_amount,
+                "Product type": product_type,
+                "Handmade / Beaded collections": handmade_collection,
+                "Sterling Silver collections": sterling_collection,
+                "Gold Plated collections": gold_collection,
+                "details": details,                 # Holds the chosen extra detail or user text.
+                "Zirconia Color": zirconia_color,     # Filled if Zirconia was chosen.
+                "Mohave type": mohave_color,          # Filled if Mohave was chosen.
+                "Birth Stone type": raw_stone_color,  # Filled if Raw Stone was chosen.
+                "How many items in the set": "",      # Add logic if available.
+                "Set type": set_type
+            }
+
+            sales.append(sale)
+
+        # Append the data to the CSV file.
+        with open(CSV_FILE, mode='a', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+            writer.writerows(sales)
+
+        # After submission, you can show a success page.
+        return render_template('submission_success.html', num_sales=num_sales)
+
+    # For GET, render the form (pass any necessary data like product_categories and set_types)
+    return render_template('forms.html', product_categories={
+                               "Handmade / Beaded": ["Beaded Anklets", "Beaded Bracelets", "Beaded Necklaces", "Earing Charms", "Key Chains", "BookMarks", "SET"],
+                               "Sterling Silver": ["Sterling Silver Anklets", "Sterling Silver Bangles", "Sterling Silver Bracelets",
+                                                     "Sterling Silver Dangle Earrings", "Sterling Silver Necklaces", "Sterling Silver Nose Rings",
+                                                     "Sterling Silver Rings", "Sterling Silver Stud Earrings", "SET"],
+                               "Gold Plated": ["Bangles", "Cufflinks", "Bracelets", "Dangling Earrings", "Stud Earrings", "Rings", "Necklaces", "SET"]
+                           },
+                           set_types=[
+                               "Necklace & Studs", "Necklace & Earrings", "Necklace & Ring", "Necklace & Bracelet",
+                               "Necklace, Bracelet & Studs", "Necklace, Bracelet & Ring",
+                               "Necklace, Bracelet, Ring & Studs", "Bracelet & Studs", "Bracelet & Ring",
+                               "Bracelet, Ring & Studs", "Ring & Studs"
+                           ])
 
 @app.route('/home')
 def home():
     admin_mode = session.get('admin_mode', False)  # Check if admin mode is enabled
-    return render_template('home.html', admin_mode = admin_mode)  # Pass admin state to template
+    mod_mode = session.get('mod_mode', False)  # Check if mod mode is enabled
+    viewer_mode = not (admin_mode or mod_mode)  # Viewer mode is enabled if neither admin nor mod mode is enabled
+
+    if viewer_mode:
+        return render_template('sarasbeads/home.html', viewer_mode=True)
+    elif admin_mode:
+        return render_template('sarasbeads/home.html', admin_mode=True)
+    elif mod_mode:
+        return render_template('sarasbeads/home.html', mod_mode=True)
 
 @app.route('/')
 def index():
     """Render the HUB page as the default landing page."""
-    return render_template('hub.html')
+    admin_mode = session.get('admin_mode', False)  # Check if admin mode is enabled
+    mod_mode = session.get('mod_mode', False)  # Check if mod mode is enabled
+    viewer_mode = not (admin_mode or mod_mode)  # Viewer mode is enabled if neither admin nor mod mode is enabled
+
+    if viewer_mode:
+        return render_template('hub.html', viewer_mode=True)
+    elif admin_mode:
+        return render_template('hub.html', admin_mode=True)
+    elif mod_mode:
+        return render_template('hub.html', mod_mode=True)
 
 
 # Analysis page - Shows the results of the analysis
@@ -268,7 +434,7 @@ def analysis():
 
         # Render the analysis page with the filtered results and generated tables
         return render_template(
-            'analysis.html',
+            'sarasbeads/analysis.html',
             month=table_month.to_html(classes='data', header=True, index=True, escape=False),
             week=table_week.to_html(classes='data', header=True, index=True, escape=False),
             payment=table_payment.to_html(classes='data', header=True, index=True, escape=False),
@@ -276,8 +442,8 @@ def analysis():
 
             admin_mode=session.get('admin_mode', False),
 
-            start_date = start_date.strftime('%Y-%m-%d') if start_date else '',
-            end_date = end_date.strftime('%Y-%m-%d') if end_date else '',
+            start_date=start_date.strftime('%Y-%m-%d') if start_date else '',
+            end_date=end_date.strftime('%Y-%m-%d') if end_date else '',
 
             product_type_filter=product_type_filter,
             collection_filter=collection_filter,
@@ -292,15 +458,26 @@ def analysis():
         flash("Error: Could not load the data", "error")
         return redirect(url_for('analysis'))
 
-
-
-
-# Predictions page - Placeholder for predictions results
 @app.route('/predictions')
 def predictions():
     """Render the predictions page with sales predictions."""
     # Placeholder logic for predictions (you will need to add real prediction code)
-    return render_template('predictions.html')
+    return render_template('sarasbeads/predictions.html')
+
+@app.route('/features')
+def features():
+    """Render the features page."""
+    return render_template('features.html')
+
+@app.route('/getstarted')
+def getstarted():
+    """Render the get started page."""
+    return render_template('getstarted.html')
+
+@app.route('/redirect')
+def redirect_page():
+    """Render the redirect page."""
+    return render_template('redirect.html')
 
 # Main check
 if __name__ == '__main__':
