@@ -10,7 +10,7 @@
             <a href="{{ url_for('sales.new_sale') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Record New Sale
             </a>
-            <a href="{{ url_for('sales_setup.setup_stores') }}" class="btn btn-secondary">
+            <a href="{{ url_for('sales_setup.setup_wizard') }}" class="btn btn-secondary">
                 <i class="fas fa-cog"></i> Configure Sales
             </a>
         </div>
@@ -25,6 +25,13 @@
             <div class="setup-message">
                 <h3>Setup Not Complete</h3>
                 <p>You need to complete your sales database setup before you can record sales.</p>
+                {% if missing_setup %}
+                <ul class="setup-checklist">
+                    {% for item in missing_setup %}
+                    <li><i class="fas fa-times-circle"></i> Missing: {{ item|capitalize }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
             </div>
             <a href="{{ url_for('sales_setup.setup_stores') }}" class="btn btn-primary">
                 Complete Setup
@@ -217,6 +224,27 @@
     .setup-message h3 {
         color: #f1c40f;
         margin-bottom: 0.5rem;
+    }
+    
+    .setup-message p {
+        color: #f1c40f;
+        margin-bottom: 0.5rem;
+    }
+    
+    .setup-checklist {
+        list-style-type: none;
+        margin: 0.5rem 0 0 0;
+        padding: 0;
+    }
+    
+    .setup-checklist li {
+        margin-bottom: 0.25rem;
+        color: #e74c3c;
+        font-size: 0.9rem;
+    }
+    
+    .setup-checklist li i {
+        margin-right: 0.5rem;
     }
     
     .stats-container {

@@ -14,8 +14,13 @@
             {{ form.hidden_tag() }}
             
             <div class="form-group">
-                {{ form.num_stores.label }}
-                {{ form.num_stores(class="form-control", min=1) }}
+                <div class="input-group">
+                    <label for="{{ form.num_stores.id }}">Number of Stores</label>
+                    <div class="input-with-button">
+                        {{ form.num_stores(class="form-control", min=1) }}
+                        <button type="submit" name="update_form" value="1" class="btn btn-secondary update-btn">Update Fields</button>
+                    </div>
+                </div>
                 {% if form.num_stores.errors %}
                     <div class="error-message">
                         {% for error in form.num_stores.errors %}
@@ -23,12 +28,17 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-                <button type="submit" class="btn btn-secondary update-btn">Update Form</button>
+                <div class="help-text">First, enter the number of stores and click "Update Fields" to generate the store name inputs.</div>
             </div>
             
             <hr>
             
             <div id="stores-container">
+                {% if form.stores %}
+                    <h3>Store Names</h3>
+                    <p class="help-text">Enter a name for each of your store locations.</p>
+                {% endif %}
+                
                 {% for store_form in form.stores %}
                     <div class="form-group store-entry">
                         <label>Store {{ loop.index }} Name</label>
@@ -44,9 +54,12 @@
                 {% endfor %}
             </div>
             
-            <div class="form-group">
-                {{ form.submit(class="btn btn-primary") }}
-            </div>
+            {% if form.stores %}
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <div class="help-text save-help">When you've filled in all store names, click "Save Stores" to save your changes.</div>
+                </div>
+            {% endif %}
         </form>
     </div>
 </div>
@@ -141,8 +154,17 @@
     }
     
     .update-btn {
-        margin-top: 0.5rem;
-        display: block;
+        margin-left: 0.5rem;
+    }
+    
+    .input-with-button {
+        display: flex;
+        align-items: center;
+    }
+    
+    .input-with-button .form-control {
+        flex: 1;
+        margin-right: 0.5rem;
     }
     
     hr {
@@ -155,5 +177,49 @@
         margin-top: 0.25rem;
         font-size: 0.85rem;
     }
+    
+    .help-text {
+        color: #999;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+    
+    .save-help {
+        margin-top: 1rem;
+    }
+    
+    h3 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .input-with-button {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .input-with-button .form-control {
+            margin-right: 0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .update-btn {
+            margin-left: 0;
+        }
+    }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Focus on any empty store name field
+    const storeInputs = document.querySelectorAll('#stores-container input');
+    for (const input of storeInputs) {
+        if (!input.value) {
+            input.focus();
+            break;
+        }
+    }
+});
+</script>
 {% endblock %} 

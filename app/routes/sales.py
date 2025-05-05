@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
 from flask_login import login_required, current_user
 from sqlalchemy import func, desc, and_
 from app import db
@@ -24,9 +24,32 @@ def index():
     # Check if company has stores, categories, and products set up
     stores = Store.query.filter_by(company_id=company_id).all()
     categories = ProductCategory.query.filter_by(company_id=company_id).all()
-    products = Product.query.filter_by(company_id=company_id).all()
     
-    setup_complete = bool(stores and categories and products)
+    # Check if session has a forced setup complete flag
+    if session.get('setup_complete', False):
+        setup_complete = True
+        missing_setup = []
+    else:
+        # Check if any categories have products
+        has_products = False
+        if categories:
+            for category in categories:
+                product_count = Product.query.filter_by(company_id=company_id, category_id=category.id).count()
+                if product_count > 0:
+                    has_products = True
+                    break
+        
+        # Setup is complete if there are stores, categories, and at least one product
+        setup_complete = bool(stores and categories and has_products)
+        
+        # If setup is not complete, determine what's missing
+        missing_setup = []
+        if not stores:
+            missing_setup.append('stores')
+        if not categories:
+            missing_setup.append('product categories')
+        if not has_products and categories:
+            missing_setup.append('products for your categories')
     
     # Get recent sales
     recent_sales = Sale.query.filter_by(company_id=company_id).order_by(desc(Sale.created_at)).limit(10).all()
@@ -48,9 +71,12 @@ def index():
     return render_template(
         'sales/index.html',
         setup_complete=setup_complete,
+        missing_setup=missing_setup,
         recent_sales=recent_sales,
         daily_sales=daily_sales,
-        monthly_sales=monthly_sales
+        monthly_sales=monthly_sales,
+        store_count=len(stores),
+        category_count=len(categories)
     )
 
 @sales_bp.route('/new', methods=['GET', 'POST'])

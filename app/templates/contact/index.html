@@ -10,59 +10,29 @@
             <p>Have questions or feedback? Reach out to us directly.</p>
         </div>
         
-        <form method="POST" action="{{ url_for('contact.index') }}">
-            {{ form.hidden_tag() }}
-            
+        <form action="https://formspree.io/f/mzzebdaq" method="POST">
             <div class="form-group">
-                {{ form.name.label }}
-                {{ form.name(class="form-control") }}
-                {% if form.name.errors %}
-                    <div class="error-message">
-                        {% for error in form.name.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ current_user.first_name ~ ' ' ~ current_user.last_name if current_user.is_authenticated else '' }}" required>
             </div>
             
             <div class="form-group">
-                {{ form.email.label }}
-                {{ form.email(class="form-control") }}
-                {% if form.email.errors %}
-                    <div class="error-message">
-                        {% for error in form.email.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email if current_user.is_authenticated else '' }}" required>
             </div>
             
             <div class="form-group">
-                {{ form.subject.label }}
-                {{ form.subject(class="form-control") }}
-                {% if form.subject.errors %}
-                    <div class="error-message">
-                        {% for error in form.subject.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                <label for="subject">Subject</label>
+                <input type="text" class="form-control" id="subject" name="subject" required>
             </div>
             
             <div class="form-group">
-                {{ form.message.label }}
-                {{ form.message(class="form-control", rows=5) }}
-                {% if form.message.errors %}
-                    <div class="error-message">
-                        {% for error in form.message.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                <label for="message">Message</label>
+                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
             </div>
             
             <div class="form-group">
-                {{ form.submit(class="btn btn-primary") }}
+                <button type="submit" class="btn btn-primary">Send Message</button>
             </div>
         </form>
     </div>
