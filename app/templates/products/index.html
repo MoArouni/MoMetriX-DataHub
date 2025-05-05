@@ -63,7 +63,7 @@
                         <tr data-category="{{ product.category_id }}" data-status="{{ 'active' if product.active else 'inactive' }}">
                             <td>{{ product.name }}</td>
                             <td>{{ product.category.name }}</td>
-                            <td>${{ product.base_price }}</td>
+                            <td>£{{ product.base_price }}</td>
                             <td>
                                 <span class="status-badge {{ 'active' if product.active else 'inactive' }}">
                                     {{ "Active" if product.active else "Inactive" }}
