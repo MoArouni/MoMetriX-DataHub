@@ -46,7 +46,7 @@
     
     .hero-buttons {
         display: flex;
-        gap: 1rem;
+        gap: 1.5rem;
         justify-content: center;
         animation: fadeInUp 1.6s ease-out;
     }
@@ -98,11 +98,12 @@
     
     /* Stats counter section */
     .stats-section {
-        padding: 4rem 0;
+        padding: 5rem 0;
         background-color: rgba(18, 18, 18, 0.8);
         backdrop-filter: blur(10px);
         border-top: 1px solid rgba(var(--primary-color-rgb), 0.2);
         border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.2);
+        margin-bottom: 3rem;
     }
     
     .stats-container {
@@ -115,15 +116,16 @@
     
     .stat-item {
         text-align: center;
-        padding: 1rem;
+        padding: 1.5rem;
         width: 250px;
+        margin: 1rem;
     }
     
     .stat-number {
         font-size: 3rem;
         font-weight: 700;
         color: var(--primary-color);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.8rem;
     }
     
     .stat-label {
@@ -131,123 +133,195 @@
         color: #cccccc;
     }
     
-    /* Original styles */
-    .hero-container2 {
-        padding: 2rem 0;
-    }
-
-    .project-image img {
-        width: auto;
-        height: 230px;
-        object-fit: cover;
-        padding: 1rem 0rem;
-        transition: transform 0.3s ease;
-    }
-    
-    .project-container:hover .project-image img {
-        transform: scale(1.05);
-    }
-
-    .project-description {
-        margin-top: 1rem;
-        height: 0;
-        overflow: hidden;
-        transition: height 0.3s ease;
-        opacity: 0;
-    }
-    
-    .project-description.active {
-        height: auto;
-        opacity: 1;
-    }
-
-    .read-more {
-        color: var(--primary-color);
-        cursor: pointer;
-        margin-top: 0.5rem;
-        transition: color 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-    }
-    
-    .read-more:hover {
-        color: var(--primary-color-light);
-    }
-    
-    .read-more::after {
-        content: '+';
-        margin-left: 0.3rem;
-        transition: transform 0.3s ease;
-    }
-    
-    .read-more.active::after {
-        content: '-';
-    }
-
-    #contact {
+    /* New Feature Highlight Section */
+    .feature-highlight-section {
+        padding: 7rem 0;
+        margin: 4rem 0;
         background-color: var(--surface-color);
-        padding: 3rem 0;
     }
-
-    .form {
-        max-width: 600px;
+    
+    .feature-highlight-container {
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 1rem;
+        padding: 0 2rem;
     }
-
-    .feature-list {
-        list-style: none;
-        padding: 0;
-        margin: 1rem 0;
+    
+    .section-title {
+        text-align: center;
+        margin-bottom: 4rem;
     }
-
-    .feature-list li {
-        margin-bottom: 1.5rem;
-        padding-left: 1.5rem;
-        position: relative;
-    }
-
-    .feature-list li::before {
-        content: "•";
+    
+    .section-title h2 {
+        font-size: 2.5rem;
         color: var(--primary-color);
-        font-size: 1.5rem;
-        position: absolute;
-        left: 0;
-        top: -0.25rem;
+        margin-bottom: 1.5rem;
     }
-
-    .features-section {
-        background-color: var(--surface-color);
-        padding: 4rem 0;
-        margin-top: 2rem;
+    
+    .section-title p {
+        color: #cccccc;
+        max-width: 800px;
+        margin: 0 auto;
+        font-size: 1.1rem;
     }
-
-    .features-grid {
+    
+    .feature-card-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 3rem;
     }
-
+    
     .feature-card {
         background-color: var(--card-bg);
-        padding: 1.5rem;
-        border-radius: 8px;
-        border: 1px solid var(--primary-color);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-top: 4px solid var(--primary-color);
+        height: 100%;
     }
     
     .feature-card:hover {
         transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
     }
-
-    .feature-card h3 {
+    
+    .feature-card-header {
+        padding: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .feature-card-header h3 {
+        font-size: 1.5rem;
+        margin: 0;
         color: var(--primary-color);
-        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    
+    .feature-card-header h3 i {
+        font-size: 1.6rem;
+    }
+    
+    .feature-card-body {
+        padding: 2rem;
+    }
+    
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .feature-list li {
+        margin-bottom: 1.2rem;
+        padding-left: 1.8rem;
+        position: relative;
+        color: #cccccc;
+        line-height: 1.6;
+    }
+    
+    .feature-list li:last-child {
+        margin-bottom: 0;
+    }
+    
+    .feature-list li::before {
+        content: "✓";
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-weight: bold;
+    }
+    
+    /* Two Column Feature Section */
+    .two-column-section {
+        padding: 7rem 0;
+        margin: 4rem 0;
+        background-color: rgba(18, 18, 18, 0.95);
+        position: relative;
+    }
+    
+    .two-column-section::before,
+    .two-column-section::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(var(--primary-color-rgb), 0.3), transparent);
+    }
+    
+    .two-column-section::before {
+        top: 0;
+    }
+    
+    .two-column-section::after {
+        bottom: 0;
+    }
+    
+    .two-column-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5rem;
+        align-items: center;
+    }
+    
+    .two-column-content {
+        padding: 2rem;
+    }
+    
+    .two-column-content h2 {
+        font-size: 2.2rem;
+        color: var(--primary-color);
+        margin-bottom: 1.8rem;
+    }
+    
+    .two-column-content p {
+        color: #cccccc;
+        margin-bottom: 1.8rem;
+        line-height: 1.7;
+        font-size: 1.05rem;
+    }
+    
+    .feature-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-top: 2rem;
+    }
+    
+    .pill {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        color: var(--primary-color);
+        padding: 0.7rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .pill i {
+        font-size: 0.9rem;
     }
     
     /* Mobile responsive */
+    @media (max-width: 992px) {
+        .two-column-container {
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+        
+        .two-column-content {
+            order: 2;
+            padding: 2rem 0;
+        }
+    }
+    
     @media (max-width: 768px) {
         .hero-title {
             font-size: 2.5rem;
@@ -267,7 +341,16 @@
         }
         
         .stat-item {
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .feature-card-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .feature-highlight-section,
+        .two-column-section {
+            padding: 5rem 0;
         }
     }
 </style>
@@ -277,7 +360,7 @@
     <!-- Modern Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
-            <h1 class="hero-title">Transform Your Data Into Business Insights</h1>
+            <h1 class="hero-title">Transform Your Data Into Actionable Insights</h1>
             <p class="hero-subtitle">A comprehensive platform for analyzing your data, predicting trends, and making smarter business decisions.</p>
             <div class="hero-buttons">
                 <a href="{{ url_for('auth.register') }}" class="hero-btn btn-primary">Get Started</a>
@@ -308,191 +391,189 @@
         </div>
     </section>
 
-    <section id="about" class="hero-container2">
-        <div class="grid">
-            <!-- Business Insights -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/data_hub_pic.jpg') }}" alt="Business Insights">
-                </div>
-    
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Tools for Business Insights</h3>
-                        <div class="read-more">Read More</div>
-                    </div>
-    
-                    <div class="project-info">
-                        <span>Advanced Analytics</span>
-                    </div>
-    
-                    <div class="project-description">
-                        <p><em>Gain a deeper understanding of your sales, customer behaviors, and market trends.</em></p>
-                        <p>Make data-driven decisions that enhance efficiency and drive growth for your business.</p>
-                    </div>
-                </div>
+    <!-- Core Features Section -->
+    <section class="feature-highlight-section">
+        <div class="feature-highlight-container">
+            <div class="section-title">
+                <h2>Your Sales Data Management System</h2>
+                <p>Fully customizable, secure, and intuitive – designed for businesses of all sizes</p>
             </div>
-    
-            <!-- Role-Based Access -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/RBAC.png') }}" alt="Role-Based Access">
-                </div>
-    
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Role-Based Access Control</h3>
-                        <div class="read-more">Read More</div>
+            
+            <div class="feature-card-container">
+                <!-- Customizable Sales System -->
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <h3><i class="fas fa-cogs"></i> Customizable Sales System</h3>
                     </div>
-    
-                    <div class="project-info">
-                        <span>Admin, Moderator, Subscriber</span>
-                    </div>
-    
-                    <div class="project-description">
-                        <p><em>Manage access with precision.</em></p>
-                        <p>Assign roles to control who can edit data, view analytics, or modify your system.</p>
+                    <div class="feature-card-body">
+                        <ul class="feature-list">
+                            <li>Define your own product types and categories</li>
+                            <li>Set up multiple sales locations</li>
+                            <li>Tailor the database to your unique business setup</li>
+                            <li>Flexible forms that adapt to your structure</li>
+                        </ul>
                     </div>
                 </div>
-            </div>
-    
-            <!-- Data Entry -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/data-entry-form.png') }}" alt="Integrated Data Entry">
+                
+                <!-- Easy Data Entry -->
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <h3><i class="fas fa-keyboard"></i> Easy Data Entry</h3>
+                    </div>
+                    <div class="feature-card-body">
+                        <ul class="feature-list">
+                            <li>Dynamic forms for manual sales recording</li>
+                            <li>CSV upload for batch processing</li>
+                            <li>Real-time data validation</li>
+                            <li>User-friendly interfaces for all skill levels</li>
+                        </ul>
+                    </div>
                 </div>
-    
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Integrated Data Entry</h3>
-                        <div class="read-more">Read More</div>
+                
+                <!-- Sales Analytics & Insights -->
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <h3><i class="fas fa-chart-bar"></i> Sales Analytics & Insights</h3>
                     </div>
-    
-                    <div class="project-info">
-                        <span>Built-in Forms</span>
-                    </div>
-    
-                    <div class="project-description">
-                        <p><em>Streamline your workflow without third-party apps.</em></p>
-                        <p>Secure, efficient, and fully integrated data input right from the platform.</p>
+                    <div class="feature-card-body">
+                        <ul class="feature-list">
+                            <li>Real-time dashboards with comprehensive metrics</li>
+                            <li>Product and category performance breakdowns</li>
+                            <li>Location-based sales insights</li>
+                            <li>Trend analysis with filterable date ranges</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </section>
     
-    <section id="services" class="hero-container2">
-        <div class="grid">
-            <!-- Analysis Service -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/analysis.png') }}" alt="Analysis">
-                </div>
-
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Analysis</h3>
-                        <div class="read-more">Read More +</div>
-                    </div>
-
-                    <div class="project-info">
-                        <span>Sales & Trends Insights</span>
-                    </div>
-
-                    <div class="project-description" style="display: none;">
-                        <p>We provide <strong>in-depth analysis</strong> of your sales, customer behaviors, and trends.</p>
-                        <p>Make smarter, data-driven decisions to optimize your business performance.</p>
-                    </div>
+    <!-- Team & Workspace Section -->
+    <section class="two-column-section">
+        <div class="two-column-container">
+            <div class="two-column-content">
+                <h2>Secure Team Collaboration</h2>
+                <p>Build your company workspace and invite team members to collaborate efficiently while maintaining control over sensitive data.</p>
+                
+                <ul class="feature-list">
+                    <li>Each business gets its own private, secure workspace</li>
+                    <li>Invite staff with different permission levels (Moderator, Viewer)</li>
+                    <li>Control who can view, edit, or manage data</li>
+                    <li>All data protected with robust authentication</li>
+                </ul>
+                
+                <div class="feature-pills">
+                    <div class="pill"><i class="fas fa-lock"></i> Secure Access</div>
+                    <div class="pill"><i class="fas fa-users"></i> Team Management</div>
+                    <div class="pill"><i class="fas fa-shield-alt"></i> Data Protection</div>
                 </div>
             </div>
-
-            <!-- Predictions Service -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/predictions.webp') }}" alt="Predictions">
+            
+            <div class="two-column-content">
+                <div class="section-title">
+                    <h2>Role-Based Access Control</h2>
+                    <p>Assign specific roles and permissions to your team members</p>
                 </div>
-
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Predictions</h3>
-                        <div class="read-more">Read More +</div>
-                    </div>
-
-                    <div class="project-info">
-                        <span>Forecasting with AI</span>
-                    </div>
-
-                    <div class="project-description" style="display: none;">
-                        <p>Using historical data, we provide <strong>predictive analytics</strong> for forecasting sales, customer behavior, and trends.</p>
-                        <p>Plan ahead with confidence using our AI-driven models.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Security Service -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/security.jpg') }}" alt="Security">
-                </div>
-
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Security</h3>
-                        <div class="read-more">Read More +</div>
-                    </div>
-
-                    <div class="project-info">
-                        <span>Data Protection</span>
-                    </div>
-
-                    <div class="project-description" style="display: none;">
-                        <p>Your data's safety is our top priority. We use <strong>encryption</strong> and strict access controls.</p>
-                        <p>Store your business data in a <strong>secure environment</strong> with peace of mind.</p>
-                    </div>
-                </div>
+                
+                <ul class="feature-list">
+                    <li>Website-wide roles: Admin, Subscriber, Viewer</li>
+                    <li>Company-specific roles with customizable permissions</li>
+                    <li>Control who can see, edit, or manage specific data</li>
+                    <li>Detailed permission system for each function</li>
+                </ul>
             </div>
         </div>
     </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-        <div class="container">
-            <h2>Platform Features</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <h3>Company Management</h3>
-                    <ul class="feature-list">
-                        <li>Create and manage your company profile</li>
-                        <li>Customize database structure</li>
-                        <li>Real-time data entry and updates</li>
-                    </ul>
+    
+    <!-- Data Management Section -->
+    <section class="two-column-section" style="background-color: var(--surface-color);">
+        <div class="two-column-container">
+            <div class="two-column-content">
+                <h2>Your Data, Your Way</h2>
+                <p>A powerful yet intuitive system designed specifically for sales data management with no unnecessary complexity.</p>
+                
+                <ul class="feature-list">
+                    <li>Fast setup – be operational in minutes</li>
+                    <li>Add or remove products, locations, and categories anytime</li>
+                    <li>Customize your dashboard to focus on metrics that matter</li>
+                    <li>Set company preferences (timezone, date format, etc.)</li>
+                </ul>
+                
+                <div class="feature-pills">
+                    <div class="pill"><i class="fas fa-tachometer-alt"></i> Simple Dashboard</div>
+                    <div class="pill"><i class="fas fa-magic"></i> Easy Customization</div>
+                    <div class="pill"><i class="fas fa-bolt"></i> Rapid Setup</div>
                 </div>
-
-                <div class="feature-card">
-                    <h3>Role-Based Access</h3>
-                    <ul class="feature-list">
-                        <li>Website-wide roles (Admin, Subscriber, Viewer)</li>
-                        <li>Company-specific roles (Admin, Moderator, Viewer)</li>
-                        <li>Granular permission control</li>
-                    </ul>
+            </div>
+            
+            <div class="two-column-content">
+                <div class="section-title">
+                    <h2>Dynamic Data Forms</h2>
+                    <p>Fully adaptable to your specific business needs</p>
                 </div>
-
+                
+                <ul class="feature-list">
+                    <li>Flexible form fields that match your sales process</li>
+                    <li>Add custom fields for unique product attributes</li>
+                    <li>Real-time validation prevents data entry errors</li>
+                    <li>Intuitive interface designed for efficiency</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Analytics Section -->
+    <section class="feature-highlight-section" style="background-color: rgba(18, 18, 18, 0.95);">
+        <div class="feature-highlight-container">
+            <div class="section-title">
+                <h2>Turn Your Sales Data Into Business Intelligence</h2>
+                <p>Advanced analytics tools combined with easy-to-understand visualizations</p>
+            </div>
+            
+            <div class="feature-card-container">
+                <!-- Company Management -->
                 <div class="feature-card">
-                    <h3>Data Analysis</h3>
-                    <ul class="feature-list">
-                        <li>Interactive data visualization</li>
-                        <li>Sales and trend analysis</li>
-                        <li>Predictive analytics</li>
-                    </ul>
+                    <div class="feature-card-header">
+                        <h3><i class="fas fa-building"></i> Company Management</h3>
+                    </div>
+                    <div class="feature-card-body">
+                        <ul class="feature-list">
+                            <li>Manage your business profile and settings</li>
+                            <li>Configure sales categories and product types</li>
+                            <li>Setup multiple store locations</li>
+                            <li>Customize your workspace preferences</li>
+                        </ul>
+                    </div>
                 </div>
-
+                
+                <!-- Visual Analytics -->
                 <div class="feature-card">
-                    <h3>Team Collaboration</h3>
-                    <ul class="feature-list">
-                        <li>Invite team members</li>
-                        <li>Assign roles and permissions</li>
-                        <li>Share insights and reports</li>
-                    </ul>
+                    <div class="feature-card-header">
+                        <h3><i class="fas fa-chart-pie"></i> Visual Analytics</h3>
+                    </div>
+                    <div class="feature-card-body">
+                        <ul class="feature-list">
+                            <li>Interactive charts and graphs</li>
+                            <li>Filter data by product, location, or date</li>
+                            <li>Export reports for presentations</li>
+                            <li>Monitor trends and identify opportunities</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Secure Access -->
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <h3><i class="fas fa-lock"></i> Secure Role-Based Access</h3>
+                    </div>
+                    <div class="feature-card-body">
+                        <ul class="feature-list">
+                            <li>Protected with JWT authentication</li>
+                            <li>Assign specific roles to team members</li>
+                            <li>Limit access to sensitive information</li>
+                            <li>Audit logs for security monitoring</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -501,15 +582,6 @@
 
 {% block extra_js %}
 <script>
-    // Read More Toggle
-    document.querySelectorAll('.read-more').forEach(button => {
-        button.addEventListener('click', function() {
-            const description = this.closest('.project-text').querySelector('.project-description');
-            description.classList.toggle('active');
-            this.classList.toggle('active');
-        });
-    });
-    
     // Animate number counters
     function animateStats() {
         const statElements = document.querySelectorAll('.stat-number');
