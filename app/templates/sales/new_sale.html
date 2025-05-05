@@ -3,236 +3,416 @@
 {% block title %}Record New Sale{% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="auth-box" style="max-width: 800px;">
-        <div class="auth-header">
-            <h2>Record New Sale</h2>
-            <p>Enter the details of your sale.</p>
+<div class="sale-container">
+    <div class="sale-header">
+        <h2><i class="fas fa-cash-register"></i> Record New Sale</h2>
+        <div class="breadcrumb">
+            <a href="{{ url_for('sales.index') }}"><i class="fas fa-chart-line"></i> Sales</a>
+            <span class="separator">/</span>
+            <span class="current">New Sale</span>
         </div>
-        
+    </div>
+    
+    <div class="sale-form-container">
         <form method="POST" action="{{ url_for('sales.new_sale') }}" id="saleForm">
             {{ form.hidden_tag() }}
             
-            <div class="form-group">
-                {{ form.store_id.label }}
-                {{ form.store_id(class="form-control") }}
-                {% if form.store_id.errors %}
-                    <div class="error-message">
-                        {% for error in form.store_id.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="category_id">Product Category</label>
-                <select id="category_id" class="form-control" required>
-                    <option value="">-- Select Category --</option>
-                    {% for category_id, data in product_choices.items() %}
-                        <option value="{{ category_id }}">{{ data.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div class="form-group">
-                {{ form.product_id.label }}
-                <select id="product_id" name="product_id" class="form-control" required disabled>
-                    <option value="">-- Select Product --</option>
-                </select>
-                {% if form.product_id.errors %}
-                    <div class="error-message">
-                        {% for error in form.product_id.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                {{ form.quantity.label }}
-                {{ form.quantity(class="form-control", min=1) }}
-                {% if form.quantity.errors %}
-                    <div class="error-message">
-                        {% for error in form.quantity.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="payment-section">
-                <h3>Payment Details</h3>
-                <div class="payment-fields">
-                    <div class="form-group">
-                        {{ form.cash_amount.label }}
-                        {{ form.cash_amount(class="form-control payment-amount", min=0) }}
-                        {% if form.cash_amount.errors %}
-                            <div class="error-message">
-                                {% for error in form.cash_amount.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+            <div class="form-grid">
+                <!-- Left Column - Basic Info -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-info-circle"></i> Sale Information</h3>
+                        <span class="section-hint">Enter the basic details of this sale</span>
                     </div>
                     
-                    <div class="form-group">
-                        {{ form.card_amount.label }}
-                        {{ form.card_amount(class="form-control payment-amount", min=0) }}
-                        {% if form.card_amount.errors %}
-                            <div class="error-message">
-                                {% for error in form.card_amount.errors %}
-                                    {{ error }}
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form.store_id.label }} <span class="required-star">*</span>
+                            <select id="store_id" name="store_id" class="form-control" required>
+                                <option value="">-- Select Store --</option>
+                                {% for store in stores %}
+                                <option value="{{ store.id }}">{{ store.name }}</option>
                                 {% endfor %}
+                            </select>
+                            {% if form.store_id.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.store_id.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">
+                                {% if stores|length > 0 %}
+                                    Select the store where this sale occurred
+                                {% else %}
+                                    No stores available. Please create a store first.
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category_id">Product Category <span class="required-star">*</span></label>
+                            <select id="category_id" class="form-control" required>
+                                <option value="">-- Select Category --</option>
+                                {% for category_id, data in product_choices.items() %}
+                                    <option value="{{ category_id }}">{{ data.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form.product_id.label }} <span class="required-star">*</span>
+                            <select id="product_id" name="product_id" class="form-control" required disabled>
+                                <option value="">-- Select Product --</option>
+                            </select>
+                            {% if form.product_id.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.product_id.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form.quantity.label }} <span class="required-star">*</span>
+                            {{ form.quantity(class="form-control no-spinner", min=1) }}
+                            {% if form.quantity.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.quantity.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form.total_price.label }} <span class="required-star">*</span>
+                            <div class="input-group">
+                                <div class="input-group-text">£</div>
+                                {{ form.total_price(class="form-control", placeholder="0.00", id="total_price") }}
                             </div>
-                        {% endif %}
+                            {% if form.total_price.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.total_price.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form.notes.label }}
+                            {{ form.notes(class="form-control", rows=3, placeholder="Optional notes about this sale") }}
+                            {% if form.notes.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.notes.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 
-                <div class="total-amount">
-                    <span>Total: £<span id="total-price">0.00</span></span>
-                    <span class="payment-method" id="payment-method">Unknown</span>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                {{ form.notes.label }}
-                {{ form.notes(class="form-control", rows=3, placeholder="Optional notes about this sale") }}
-                {% if form.notes.errors %}
-                    <div class="error-message">
-                        {% for error in form.notes.errors %}
-                            {{ error }}
-                        {% endfor %}
+                <!-- Right Column - Payment & Features -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-money-bill-wave"></i> Payment Details</h3>
+                        <span class="section-hint">Enter the payment method and amount</span>
                     </div>
-                {% endif %}
-            </div>
-            
-            <div class="product-features">
-                <h3>Product Features <button type="button" id="add-feature" class="btn-feature-add">+ Add Feature</button></h3>
-                <div id="features-container">
-                    <!-- Dynamic features will be added here -->
+                    
+                    <div class="payment-info">
+                        <div class="form-row payment-split">
+                            <div class="form-group">
+                                {{ form.cash_amount.label }}
+                                <div class="input-group">
+                                    <div class="input-group-text">£</div>
+                                    {{ form.cash_amount(class="form-control payment-amount no-spinner", min=0, placeholder="0.00", id="cash_amount") }}
+                                </div>
+                                {% if form.cash_amount.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.cash_amount.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                {{ form.card_amount.label }}
+                                <div class="input-group">
+                                    <div class="input-group-text">£</div>
+                                    {{ form.card_amount(class="form-control payment-amount no-spinner", min=0, placeholder="0.00", id="card_amount") }}
+                                </div>
+                                {% if form.card_amount.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.card_amount.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="summary-box">
+                            <div class="total-amount">
+                                <div class="label">Payment Total:</div>
+                                <div class="value">£<span id="payment-total">0.00</span></div>
+                            </div>
+                            <div class="payment-method-display">
+                                <div class="payment-method" id="payment-method">No Payment Entered</div>
+                            </div>
+                            <div class="balance-display" id="balance-container">
+                                <div class="balance" id="balance">Balance: £0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-header mt-4">
+                        <h3><i class="fas fa-tags"></i> Product Features</h3>
+                        <span class="section-hint">Add any specific features for this product</span>
+                    </div>
+                    
+                    <div class="features-container">
+                        <div id="features-container">
+                            <!-- Dynamic features will be added here -->
+                        </div>
+                        
+                        <button type="button" id="add-feature" class="btn-feature-add">
+                            <i class="fas fa-plus"></i> Add Feature
+                        </button>
+                    </div>
                 </div>
             </div>
             
-            <div class="form-group">
+            <div class="form-actions">
+                <a href="{{ url_for('sales.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
                 {{ form.submit(class="btn btn-primary") }}
             </div>
         </form>
-        
-        <div class="navigation-buttons">
-            <a href="{{ url_for('sales.index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Sales
-            </a>
-        </div>
     </div>
 </div>
 
 <style>
-    .auth-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+    .sale-container {
+        max-width: 1200px;
         margin: 2rem auto;
     }
     
-    .auth-box {
+    .sale-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .sale-header h2 {
+        color: var(--primary-color);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        color: #999;
+        font-size: 0.9rem;
+    }
+    
+    .breadcrumb a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .breadcrumb a:hover {
+        color: var(--primary-color-light);
+    }
+    
+    .separator {
+        margin: 0 0.5rem;
+        color: #666;
+    }
+    
+    .current {
+        color: #ccc;
+    }
+    
+    .sale-form-container {
         background-color: var(--card-bg);
         border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         padding: 2rem;
-        width: 100%;
     }
     
-    .auth-header {
-        text-align: center;
-        margin-bottom: 2rem;
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
     }
     
-    .auth-header h2 {
+    .form-section {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-header h3 {
+        font-size: 1.2rem;
         color: var(--primary-color);
         margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     
-    .auth-header p {
-        color: #999;
+    .section-hint {
+        color: #888;
+        font-size: 0.85rem;
+    }
+    
+    .form-row {
+        margin-bottom: 1.5rem;
     }
     
     .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 0;
     }
     
     .form-group label {
         display: block;
         margin-bottom: 0.5rem;
         color: #ddd;
+        font-weight: 500;
     }
     
-    .form-control {
-        width: 100%;
-        padding: 0.75rem;
-        background-color: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-        color: #fff;
-        transition: border-color 0.3s ease;
+    .required-star {
+        color: var(--primary-color);
+        margin-left: 0.25rem;
     }
     
-    .form-control:focus {
-        outline: none;
-        border-color: var(--primary-color);
+    .form-text {
+        display: block;
+        font-size: 0.8rem;
+        color: #999;
+        margin-top: 0.5rem;
     }
     
-    .payment-section {
+    .payment-info {
         background-color: rgba(255, 255, 255, 0.03);
-        padding: 1.5rem;
         border-radius: 8px;
+        padding: 1.5rem;
         margin-bottom: 1.5rem;
     }
     
-    .payment-section h3 {
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
-    }
-    
-    .payment-fields {
+    .payment-split {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
     }
     
+    .input-group {
+        display: flex;
+        align-items: stretch;
+    }
+    
+    .input-group-text {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0.75rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px 0 0 4px;
+        border-right: none;
+        color: #ccc;
+        font-weight: 500;
+    }
+    
+    .input-group .form-control {
+        border-radius: 0 4px 4px 0;
+    }
+    
+    .summary-box {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1.2rem;
+        margin-top: 1.5rem;
+    }
+    
     .total-amount {
         display: flex;
         justify-content: space-between;
-        padding: 1rem 0;
-        margin-top: 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        font-size: 1.1rem;
-        font-weight: 600;
+        align-items: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    
+    .payment-method-display {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
     }
     
     .payment-method {
-        padding: 0.25rem 0.75rem;
+        padding: 0.5rem 1rem;
         border-radius: 20px;
         font-size: 0.85rem;
         background-color: rgba(255, 255, 255, 0.1);
+        text-align: center;
+        min-width: 120px;
     }
     
-    .product-features {
-        background-color: rgba(255, 255, 255, 0.03);
-        padding: 1.5rem;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-    }
-    
-    .product-features h3 {
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
+    .balance-display {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        justify-content: center;
+    }
+    
+    .balance {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        text-align: center;
+        min-width: 120px;
+    }
+    
+    .balance.positive {
+        background-color: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+    }
+    
+    .balance.negative {
+        background-color: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+    }
+    
+    .balance.balanced {
+        background-color: rgba(52, 152, 219, 0.2);
+        color: #3498db;
+    }
+    
+    .features-container {
+        background-color: rgba(255, 255, 255, 0.03);
+        border-radius: 8px;
+        padding: 1.5rem;
     }
     
     .btn-feature-add {
@@ -240,10 +420,13 @@
         color: var(--primary-color);
         border: 1px solid var(--primary-color);
         border-radius: 20px;
-        padding: 0.25rem 0.75rem;
+        padding: 0.5rem 1rem;
         font-size: 0.85rem;
         cursor: pointer;
         transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     
     .btn-feature-add:hover {
@@ -273,8 +456,19 @@
         transform: scale(1.1);
     }
     
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
     .btn {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
         padding: 0.75rem 1.5rem;
         border-radius: 4px;
         font-weight: 600;
@@ -287,8 +481,6 @@
     .btn-primary {
         background-color: var(--primary-color);
         color: #000;
-        width: 100%;
-        margin-bottom: 1rem;
     }
     
     .btn-secondary {
@@ -301,29 +493,55 @@
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     }
     
-    .navigation-buttons {
-        display: flex;
-        justify-content: flex-start;
+    .filter-select option,
+    select.form-control option {
+        background-color: #2c3e50;
+        color: #fff;
     }
     
-    .error-message {
-        color: #ff5555;
-        margin-top: 0.25rem;
-        font-size: 0.85rem;
+    .no-spinner::-webkit-inner-spin-button, 
+    .no-spinner::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
     }
     
-    .btn i {
-        margin-right: 0.5rem;
+    .no-spinner {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+    
+    .mt-4 {
+        margin-top: 2rem;
     }
     
     /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .sale-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+    }
+    
     @media (max-width: 767px) {
-        .payment-fields {
+        .payment-split,
+        .feature-row {
             grid-template-columns: 1fr;
         }
         
-        .feature-row {
-            grid-template-columns: 1fr;
+        .sale-form-container {
+            padding: 1.5rem;
+        }
+        
+        .payment-info,
+        .features-container {
+            padding: 1rem;
         }
     }
 </style>
@@ -333,10 +551,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.getElementById('category_id');
     const productSelect = document.getElementById('product_id');
+    const totalPriceInput = document.getElementById('total_price');
     const cashAmountInput = document.getElementById('cash_amount');
     const cardAmountInput = document.getElementById('card_amount');
-    const totalPriceElement = document.getElementById('total-price');
+    const paymentTotalElement = document.getElementById('payment-total');
     const paymentMethodElement = document.getElementById('payment-method');
+    const balanceElement = document.getElementById('balance');
+    const balanceContainer = document.getElementById('balance-container');
     const addFeatureBtn = document.getElementById('add-feature');
     const featuresContainer = document.getElementById('features-container');
     
@@ -359,37 +580,77 @@ document.addEventListener('DOMContentLoaded', function() {
                     productSelect.appendChild(option);
                 });
             }
+            
+            // Focus on the product select after category is chosen
+            setTimeout(() => productSelect.focus(), 100);
         } else {
             productSelect.disabled = true;
         }
     });
     
-    // Calculate total and update payment method
-    function updateTotal() {
+    // Calculate total payment and update display
+    function updatePaymentSummary() {
+        const totalPrice = parseFloat(totalPriceInput.value) || 0;
         const cashAmount = parseFloat(cashAmountInput.value) || 0;
         const cardAmount = parseFloat(cardAmountInput.value) || 0;
-        const total = cashAmount + cardAmount;
+        const paymentTotal = cashAmount + cardAmount;
+        const balance = paymentTotal - totalPrice;
         
-        totalPriceElement.textContent = total.toFixed(2);
+        // Update payment total
+        paymentTotalElement.textContent = paymentTotal.toFixed(2);
         
         // Update payment method
         if (cashAmount > 0 && cardAmount > 0) {
-            paymentMethodElement.textContent = 'Both (Card + Cash)';
+            paymentMethodElement.textContent = 'Split Payment';
             paymentMethodElement.style.backgroundColor = '#8e44ad';
         } else if (cardAmount > 0) {
-            paymentMethodElement.textContent = 'Card';
+            paymentMethodElement.textContent = 'Card Payment';
             paymentMethodElement.style.backgroundColor = '#3498db';
         } else if (cashAmount > 0) {
-            paymentMethodElement.textContent = 'Cash';
+            paymentMethodElement.textContent = 'Cash Payment';
             paymentMethodElement.style.backgroundColor = '#2ecc71';
         } else {
-            paymentMethodElement.textContent = 'Unknown';
+            paymentMethodElement.textContent = 'No Payment Entered';
             paymentMethodElement.style.backgroundColor = '#e74c3c';
+        }
+        
+        // Update balance
+        balanceElement.textContent = `Balance: £${Math.abs(balance).toFixed(2)}`;
+        
+        if (Math.abs(balance) < 0.01) {
+            balanceElement.className = 'balance balanced';
+        } else if (balance > 0) {
+            balanceElement.className = 'balance positive';
+            balanceElement.textContent = `Overpayment: £${balance.toFixed(2)}`;
+        } else {
+            balanceElement.className = 'balance negative';
+            balanceElement.textContent = `Due: £${Math.abs(balance).toFixed(2)}`;
         }
     }
     
-    cashAmountInput.addEventListener('input', updateTotal);
-    cardAmountInput.addEventListener('input', updateTotal);
+    // Initialize card and cash amounts when total price changes
+    totalPriceInput.addEventListener('input', function() {
+        const totalPrice = parseFloat(this.value) || 0;
+        
+        // By default, put the full amount on card payment
+        cardAmountInput.value = totalPrice.toFixed(2);
+        cashAmountInput.value = "0.00";
+        
+        updatePaymentSummary();
+    });
+    
+    // Update summary when payment amounts change
+    cashAmountInput.addEventListener('input', function() {
+        const totalPrice = parseFloat(totalPriceInput.value) || 0;
+        const cashAmount = parseFloat(this.value) || 0;
+        
+        // Auto-fill card amount to match total
+        cardAmountInput.value = Math.max(0, totalPrice - cashAmount).toFixed(2);
+        
+        updatePaymentSummary();
+    });
+    
+    cardAmountInput.addEventListener('input', updatePaymentSummary);
     
     // Add feature button
     addFeatureBtn.addEventListener('click', function() {
@@ -429,6 +690,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         featuresContainer.appendChild(featureRow);
         
+        // Set focus to the new feature name field
+        nameInput.focus();
+        
         // Set up autocomplete (simplified - you might want to use a library for better UX)
         setupFeatureAutocomplete(nameInput, valueInput);
     }
@@ -448,12 +712,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Initialize with one feature row
-    // addFeatureRow();
-    
     // Initial update
-    updateTotal();
+    updatePaymentSummary();
 });
 </script>
 {% endblock %}
-{% endblock %} 
+{% endblock %}
