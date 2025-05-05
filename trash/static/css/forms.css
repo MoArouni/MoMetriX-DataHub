@@ -1,0 +1,65 @@
+/* everything to do with the form styling, 
+the contanct form, the login form, the blog form */
+form {
+    padding: 3rem;
+    display: flex; 
+    flex-direction: column;
+    margin: auto; /* Center the form horizontally */
+    text-align: left;
+}
+.form { 
+    display: flex; 
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap : 2rem; /* Adjust the gap as needed */
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+}
+.form .text { 
+    display: flex; 
+    flex-direction: column;
+    text-align: left;
+}
+
+label {
+    display: block; /* Each label on a new line (behaviour of a block element */
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+body.dark-mode label {
+    color: rgb(255, 255, 255);
+}
+
+input, textarea {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+    border : 2px solid rgb(255, 255, 255);
+    background: rgba(173, 170, 170, 0.1);
+    color: var(--primary-color);
+    font-size: 1rem;
+    transition: background 0.3s ease-in-out;
+    resize: none;
+}
+input:focus, textarea:focus {
+    background: rgb(255, 255, 255);
+    outline: none;
+}
+
+body.dark-mode input, 
+body.dark-mode textarea {
+    background: rgb(255, 255, 255);
+    color: black;
+    border : 2px solid rgb(0, 0, 0);
+}
+body.dark-mode input:focus, 
+body.dark-mode textarea:focus {
+    background: rgba(255, 255, 255, 1);
+    outline: none;
+}
+

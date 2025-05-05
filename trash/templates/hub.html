@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+    <title>Data Analysis Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ovo&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <nav>
+        <script src="../static/javascript/hub/toggle-darkmode.js"></script>
+        <div class="dark-mode-toggle">
+            <button id="dark-mode-toggle" aria-label="Toggle dark mode" style = "margin-right: 2rem;">
+                <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="{{ url_for('scalable.features') }}">Join Us</a></li>
+            <li><a href="/Blog">Blog</a></li>
+            <li><a href="#contact">Contact</a></li>
+            {% if admin_mode %}
+                <li><a href="/logout">Logout</a></li>
+            {% else %}
+                <li><a href="/login">Login</a></li>
+            {% endif %}
+        </ul>
+        
+        <div class="role-label-container">
+            {% if global_role %}
+                <div class="user-label global-role {{ global_role|lower }}">{{ global_role }}</div>
+            {% endif %}
+            
+            {% if company_role %}
+                <div class="user-label company-role {{ company_role|lower|replace(' ', '-') }}">{{ company_role }}</div>
+            {% endif %}
+        </div>
+      
+        <script src="static/javascript/hub/hamburger_menu.js"></script>
+        <button class="hamburger" id="hamburger">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </button>
+        
+        <div class="right-menu" id="right-menu">
+            <ul>
+                <li><a href="#about">About this Platform</a></li>
+                <div class="underline2" style="width: 90%;"></div>
+                <li><a href="#services">Our Services</a></li>
+                <div class="underline2" style="width: 90%;"></div>
+                <li><a href="#get-started">Get Started</a></li>
+                <div class="underline2" style="width: 90%;"></div>
+                <li><a href="#contact">Contact</a></li>
+                <div class="underline2" style="width: 90%;"></div>
+                <li><a href="/Blog">Blog</a></li>
+                <div class="underline2" style="width: 90%;"></div>
+                {% if admin_mode %}
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                {% endif %}
+                <div class="underline2" style="width: 90%;"></div>
+            </ul>
+        </div>
+        <script src="static/javascript/hub/anti-scroll-menu.js"></script>        
+    </nav>
+
+
+
+    <section id="about" class="hero-container2">
+        <div class="grid">
+    
+            <!-- Business Insights -->
+            <div class="section-box project-container">
+                <div class="project-image">
+                    <img src="/static/images/data_hub_pic.jpg" alt="Business Insights">
+                </div>
+    
+                <div class="project-text">
+                    <div class="project-title">
+                        <h3>Tools for Business Insights</h3>
+                        <div class="read-more">Read More +</div>
+                    </div>
+    
+                    <div class="project-info">
+                        <span>Advanced Analytics</span>
+                    </div>
+    
+                    <div class="project-description" style="display: none;">
+                        <p><em>Gain a deeper understanding of your sales, customer behaviors, and market trends.</em></p>
+                        <p>Make data-driven decisions that enhance efficiency and drive growth for your business.</p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Role-Based Access -->
+            <div class="section-box project-container">
+                <div class="project-image">
+                    <img src="/static/images/RBAC.png" alt="Role-Based Access">
+                </div>
+    
+                <div class="project-text">
+                    <div class="project-title">
+                        <h3>Role-Based Access Control</h3>
+                        <div class="read-more">Read More +</div>
+                    </div>
+    
+                    <div class="project-info">
+                        <span>Admin, Moderator, Viewer</span>
+                    </div>
+    
+                    <div class="project-description" style="display: none;">
+                        <p><em>Manage access with precision.</em></p>
+                        <p>Assign roles to control who can edit data, view analytics, or modify your system.</p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Data Entry -->
+            <div class="section-box project-container">
+                <div class="project-image">
+                    <img src="/static/images/data-entry-form.png" alt="Integrated Data Entry">
+                </div>
+    
+                <div class="project-text">
+                    <div class="project-title">
+                        <h3>Integrated Data Entry</h3>
+                        <div class="read-more">Read More +</div>
+                    </div>
+    
+                    <div class="project-info">
+                        <span>Built-in Forms</span>
+                    </div>
+    
+                    <div class="project-description" style="display: none;">
+                        <p><em>Streamline your workflow without third-party apps.</em></p>
+                        <p>Secure, efficient, and fully integrated data input right from the platform.</p>
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+    </section>
+    
+    <section id="services" class="hero-container2">
+        <div class="grid">
+
+            <!-- Analysis Service -->
+            <div class="section-box project-container">
+                <div class="project-image">
+                    <img src="/static/images/analysis.png" alt="Analysis">
+                </div>
+
+                <div class="project-text">
+                    <div class="project-title">
+                        <h3>Analysis</h3>
+                        <div class="read-more">Read More +</div>
+                    </div>
+
+                    <div class="project-info">
+                        <span>Sales & Trends Insights</span>
+                    </div>
+
+                    <div class="project-description" style="display: none;">
+                        <p>We provide <strong>in-depth analysis</strong> of your sales, customer behaviors, and trends.</p>
+                        <p>Make smarter, data-driven decisions to optimize your business performance.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predictions Service -->
+            <div class="section-box project-container">
+                <div class="project-image">
+                    <img src="/static/images/predictions.webp" alt="Predictions">
+                </div>
+
+                <div class="project-text">
+                    <div class="project-title">
+                        <h3>Predictions</h3>
+                        <div class="read-more">Read More +</div>
+                    </div>
+
+                    <div class="project-info">
+                        <span>Forecasting with AI</span>
+                    </div>
+
+                    <div class="project-description" style="display: none;">
+                        <p>Using historical data, we provide <strong>predictive analytics</strong> for forecasting sales, customer behavior, and trends.</p>
+                        <p>Plan ahead with confidence using our AI-driven models.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Service -->
+            <div class="section-box project-container">
+                <div class="project-image">
+                    <img src="/static/images/security.jpg" alt="Security">
+                </div>
+
+                <div class="project-text">
+                    <div class="project-title">
+                        <h3>Security</h3>
+                        <div class="read-more">Read More +</div>
+                    </div>
+
+                    <div class="project-info">
+                        <span>Data Protection</span>
+                    </div>
+
+                    <div class="project-description" style="display: none;">
+                        <p>Your data's safety is our top priority. We use <strong>encryption</strong> and strict access controls.</p>
+                        <p>Store your business data in a <strong>secure environment</strong> with peace of mind.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="get-started" class="hero-container2">
+        <div class="grid">
+    
+            <!-- Learn More -->
+            <div class="section-box project-container">
+                <div class="project-text">
+                    <div class="project-title">
+                        <h3>Learn More</h3>
+
+                        <a href="{{ url_for('scalable.features') }}" class="cta-button">Explore Features</a>
+                        
+                        <div class="read-more">Read More +</div>
+                    </div>
+    
+                    <div class="project-info">
+                        <span>Understand Our Features</span>
+                    </div>
+    
+                    <div class="project-description" style="display: none;">
+                        <p>Discover how our platform empowers your business through role-based tools, analytics, and secure access.</p>
+                        
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Get Started -->
+            <div class="section-box project-container">
+                <div class="project-text">
+                    <div class="project-title">
+                        <h3>Get Started</h3>
+
+                        <a href="{{ url_for('scalable.getstarted') }}" class="cta-button">Start Now</a>
+                        <div class="read-more">Read More +</div>
+                    </div>
+    
+                    <div class="project-info">
+                        <span>Launch Your Journey</span>
+                    </div>
+    
+                    <div class="project-description" style="display: none;">
+                        <p>Register your account, create your team, and start using data-driven tools tailored for your business needs.</p>
+                        
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Sarasbeads -->
+            <div class="section-box project-container">
+    
+                <div class="project-text">
+                    <div class="project-title">
+                        <h3>Example Tool: Sarasbeads</h3>
+                        <a href="{{ url_for('sarasbeads.home') }}" class="cta-button">Visit Sarasbeads</a>
+                        <div class="read-more">Read More +</div>
+                    </div>
+    
+                    <div class="project-info">
+                        <span>Demo Project</span>
+                    </div>
+    
+                    <div class="project-description" style="display: none;">
+                        <p>See a working example of a real business using our platform's capabilities to track products, sales, and customer activity.</p>
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+    </section>
+    
+    <script src = "../static/javascript/hub/readMore.js"></script>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="intro-section">
+            <h1 style="font-size: 2rem; text-align: center;">Contact Me</h1>
+        </div>
+        <form action="https://formspree.io/f/mldgykon" method="POST">
+            <div class = "form">
+                <div class = "form text">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class = "form text">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+            </div>
+            <div class = "form">
+                <div class = "form text">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" required ></textarea>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="cta-button" type="submit">Send</button>
+            </div>
+        </form>
+        <script src="js/contact-form.js"></script>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <p><strong>Email:</strong>mohamadarouni5@gmail.com</p>
+        <p><strong>Phone Number:</strong> +44 7484239767</p>
+        &copy; 2024 Data Analysis Hub
+    </footer>
+</body>
+</html>

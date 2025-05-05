@@ -1,0 +1,190 @@
+/* General Styles */
+body {
+    font-family: 'Roboto', 'Courier', 'monospace';
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    font-weight: bold;
+    flex-direction: column; /* Allow vertical stacking for sections */
+    align-items: center; /* Center horizontally */
+    justify-content: flex-start; /* Align at the top */
+    min-height: 100vh; /* Ensure the full height of the viewport */
+}
+
+/* Center the H1 header at the top */
+h1 {
+    text-align: center;
+    margin: 20px 0; /* Add spacing from the top */
+    color: #333; /* A subtle text color */
+}
+
+/* Style for the analysis sections */
+div {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 80%; /* Make sections narrower */
+    max-width: fit-content; /* Limit the width */
+    margin: 20px auto; /* Add spacing between sections */
+}
+
+/* Style for data tables */
+table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+
+table.data, table.data th, table.data td {
+    border: 1px solid black;
+}
+
+table.data th, table.data td {
+    padding: 8px;
+    text-align: left;
+}
+
+.table-container {
+    max-height: 70vh; /* Adjust as needed */
+    overflow-x: auto;
+    overflow-y: auto;
+    border: 1px solid #ccc; /* Optional: for clarity */
+    padding: 10px;
+}
+
+/* Add spacing between sections */
+div + div {
+    margin-top: 20px;
+}
+
+/* Button styles for potential interactions */
+button {
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #FFA8A8;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #f07b7b;
+}
+
+nav.menu {
+    position: fixed; /* Keeps it at the top */
+    top: 30px; /* Space from the top */
+    left: 30px; /* Space from the left */
+    z-index: 1000; /* Ensure it stays above other content */
+}
+
+
+.menu-button {
+    background-color: #FFA8A8;
+    color: #fff;
+    box-shadow: #e18383;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 30px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.menu-button:hover {
+    background-color: #e18383;
+}
+
+.menu-options {
+    display: none; /* Hidden by default */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+    background-color: #f4f4f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.menu-options li {
+    padding: 10px;
+}
+
+.menu-options li a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 14px;
+}
+
+.menu-options li a:hover {
+    color: #0056b3;
+}
+
+.menu:hover .menu-options {
+    display: block; /* Show options on hover */
+}
+
+
+/* Modernized Upload Section */
+.upload {
+    background-color: #fff; /* Maintain the same white background */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px; /* Set a max width */
+    margin: 20px auto;
+    text-align: center;
+}
+
+.upload label {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+    display: block; /* Make it block-level for better spacing */
+}
+
+.upload input[type="file"] {
+    background-color: #f4f4f9;
+    border: 5px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    color: #333;
+    width: 100%;
+    transition: border-color 0.3s ease;
+}
+
+.upload input[type="file"]:hover {
+    border-color: #FFA8A8; /* Match the color theme */
+}
+
+.upload button {
+    background-color: #FFA8A8;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-block: 10px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.upload button:hover {
+    background-color: #f07b7b;
+}
+
+/* Additional spacing for the upload form */
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* Add spacing between the form elements */
+}

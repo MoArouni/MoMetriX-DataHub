@@ -1,0 +1,43 @@
+.role-label-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    right: 1rem;
+}
+
+.user-label {
+    padding: 0.4rem 0.8rem;
+    border-radius: 1rem;
+    font-weight: bold;
+    font-size: 0.85rem;
+    color: white;
+    text-transform: uppercase;
+}
+
+.global-role.admin {
+    background-color: #D32F2F;
+}
+
+.global-role.moderator {
+    background-color: #FFA000;
+}
+
+.global-role.subscriber {
+    background-color: #1976D2;
+}
+
+.global-role.viewer {
+    background-color: #757575;
+}
+
+.company-role.admin {
+    background-color: #388E3C;
+}
+
+.company-role.moderator {
+    background-color: #00796B;
+}
+
+.company-role.viewer {
+    background-color: #5D4037;
+}

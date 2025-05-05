@@ -1,15 +1,13 @@
-# Ignore the secure.env file containing sensitive information
-.env
-
-# Ignore the uploads and data folders
-uploads/
-data/
-dummy_sales.csv
-
-# Ignore other potentially sensitive or unnecessary files/folders
-*.pyc
+# Create .gitignore file with common Python/Flask exclusions
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv
+env/
+venv/
+ENV/
 instance/
-.vscode/
-
-forms.py
+.webassets-cache
+*.sqlite

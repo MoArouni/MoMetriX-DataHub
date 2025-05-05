@@ -1,0 +1,30 @@
+:root {
+    --primary-color: white;
+    --background-color: #000000;
+    --hover-effect: rgba(255, 255, 255, 0.6);
+}
+
+body.dark-mode {
+    --primary-color: rgb(0, 0, 0);
+    --background-color: rgb(255, 251, 249); 
+    --hover-effect: rgba(0, 0, 0, 0.6);
+}
+
+
+
+footer { 
+    width: 100%;
+    position: relative;
+    border-top : 2px solid rgb(255, 255, 255);
+    text-align: center;
+    padding: 2rem;
+    background: #090909;
+}
+.footer figcaption {
+    font-size: 1rem;
+}
+body.dark-mode footer {
+    background: rgb(254, 244, 241); 
+    color: rgb(0, 0, 0);
+    border-top : 2px solid rgb(0, 0, 0);
+}
