@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Company Role{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Manage Company Role</h2>
+        <p class="auth-subtitle">Update your role within your company</p>
+        
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.role_company.label }}
+                {{ form.role_company(class="form-control") }}
+                {% if form.role_company.errors %}
+                <div class="form-error">
+                    {% for error in form.role_company.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary btn-block") }}
+            </div>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Return to <a href="{{ url_for('dashboard.index') }}">Dashboard</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

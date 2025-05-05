@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Select Category{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section-header">
+        <h1>Select Product Category</h1>
+        <a href="{{ url_for('products.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Products
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2>Choose a Category</h2>
+            <p>Select which category the new product belongs to.</p>
+        </div>
+        
+        <div class="card-body">
+            {% if categories %}
+            <div class="categories-grid">
+                {% for category in categories %}
+                <a href="{{ url_for('schema.data_entry', category_id=category.id) }}" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h3>{{ category.name }}</h3>
+                    <div class="category-stats">
+                        <span>
+                            <i class="fas fa-box"></i> {{ category.products.count() }} Products
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <h3>No Categories Found</h3>
+                <p>You need to create categories before adding products.</p>
+                <a href="{{ url_for('products.new_category') }}" class="btn btn-primary">
+                    Create First Category
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .section-header h1 {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin: 0;
+    }
+    
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+    
+    .btn-secondary {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .btn-primary:hover, .btn-secondary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn i {
+        margin-right: 0.5rem;
+    }
+    
+    .card {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card-header h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+    }
+    
+    .card-header p {
+        margin: 0;
+        color: #999;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .category-card {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        text-decoration: none;
+        color: #fff;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border-color: var(--primary-color);
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+    
+    .category-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .category-card h3 {
+        margin: 0 0 1rem 0;
+        font-size: 1.2rem;
+    }
+    
+    .category-stats {
+        color: #999;
+        font-size: 0.9rem;
+    }
+    
+    .category-stats i {
+        margin-right: 0.25rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem 0;
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        color: rgba(255, 255, 255, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-state h3 {
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state p {
+        color: #999;
+        margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

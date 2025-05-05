@@ -1,0 +1,222 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Manage Blog Posts - Admin{% endblock %}
+
+{% block admin_content %}
+<div class="admin-blogs">
+    <div class="admin-header">
+        <div class="admin-title">
+            <h1>Blog Posts</h1>
+            <p>Manage all blog posts on your site</p>
+        </div>
+        <div class="admin-actions">
+            <a href="{{ url_for('admin.create_blog') }}" class="admin-btn">
+                <i class="fas fa-plus"></i> New Blog Post
+            </a>
+        </div>
+    </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="blog-list-container">
+        <table class="blog-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th>Author</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if posts.items %}
+                    {% for post in posts.items %}
+                    <tr>
+                        <td class="blog-title">{{ post.title }}</td>
+                        <td>{{ post.created_at.strftime('%B %d, %Y') }}</td>
+                        <td>{{ post.author.username }}</td>
+                        <td class="blog-actions">
+                            <a href="{{ url_for('admin.edit_blog', post_id=post.id) }}" class="action-btn edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ url_for('blog.view_post', post_id=post.id) }}" class="action-btn view" target="_blank">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('admin.delete_blog', post_id=post.id) }}" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                                <button type="submit" class="action-btn delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="5" class="no-data">No blog posts found</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        
+        {% if posts.pages > 1 %}
+        <div class="pagination">
+            {% if posts.has_prev %}
+                <a href="{{ url_for('admin.blogs', page=posts.prev_num) }}" class="page-btn">&laquo; Previous</a>
+            {% endif %}
+            
+            {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                {% if page_num %}
+                    {% if posts.page == page_num %}
+                        <span class="page-btn active">{{ page_num }}</span>
+                    {% else %}
+                        <a href="{{ url_for('admin.blogs', page=page_num) }}" class="page-btn">{{ page_num }}</a>
+                    {% endif %}
+                {% else %}
+                    <span class="page-ellipsis">...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if posts.has_next %}
+                <a href="{{ url_for('admin.blogs', page=posts.next_num) }}" class="page-btn">Next &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .blog-list-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .blog-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .blog-table th {
+        background-color: #f5f5f5;
+        text-align: left;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        border-bottom: 1px solid var(--admin-border);
+    }
+    
+    .blog-table td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--admin-border);
+    }
+    
+    .blog-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .blog-table .blog-title {
+        font-weight: 500;
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .blog-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        color: white;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .action-btn.edit {
+        background-color: #2196f3;
+    }
+    
+    .action-btn.view {
+        background-color: #4caf50;
+    }
+    
+    .action-btn.delete {
+        background-color: #f44336;
+    }
+    
+    .delete-form {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .no-data {
+        text-align: center;
+        padding: 2rem;
+        color: #777;
+    }
+    
+    .pagination {
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+        border-top: 1px solid var(--admin-border);
+    }
+    
+    .page-btn {
+        padding: 0.5rem 0.75rem;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #333;
+    }
+    
+    .page-btn.active {
+        background-color: var(--admin-primary);
+        color: white;
+    }
+    
+    .page-ellipsis {
+        padding: 0.5rem;
+        color: #777;
+    }
+    
+    .alert {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+    
+    .alert-success {
+        background-color: rgba(76, 175, 80, 0.1);
+        border: 1px solid #4caf50;
+        color: #2e7d32;
+    }
+    
+    .alert-error {
+        background-color: rgba(244, 67, 54, 0.1);
+        border: 1px solid #f44336;
+        color: #c62828;
+    }
+</style>
+{% endblock %} 

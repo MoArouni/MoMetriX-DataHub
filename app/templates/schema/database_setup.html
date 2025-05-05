@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Database Structure Setup{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Database Structure Setup</h1>
+        <div>
+            <a href="{{ url_for('schema.index') }}" class="btn btn-secondary">
+                <i class="fas fa-chevron-left"></i> Back to Schema
+            </a>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        Define your company's database structure by adding product categories and store locations.
+    </div>
+
+    <form method="POST" action="{{ url_for('schema.database_setup') }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-tags me-2"></i> Product Categories</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">Define the categories that your products will be organized into.</p>
+                
+                <div class="categories-container">
+                    {% for category_form in form.categories %}
+                    <div class="row mb-3 category-row">
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                {{ category_form.name(class="form-control", placeholder="Category Name") }}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger btn-block remove-category">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <button type="button" class="btn btn-outline-primary add-category mt-2">
+                    <i class="fas fa-plus"></i> Add Category
+                </button>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-store me-2"></i> Store Locations</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">Define the locations where your sales occur.</p>
+                
+                <div class="locations-container">
+                    {% for location_form in form.locations %}
+                    <div class="row mb-3 location-row">
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                {{ location_form.name(class="form-control", placeholder="Store Location Name") }}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger btn-block remove-location">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <button type="button" class="btn btn-outline-success add-location mt-2">
+                    <i class="fas fa-plus"></i> Add Location
+                </button>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{{ url_for('schema.index') }}" class="btn btn-secondary me-md-2">Cancel</a>
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add Category Button
+    document.querySelector('.add-category').addEventListener('click', function() {
+        const categoryContainer = document.querySelector('.categories-container');
+        const categoryRowTemplate = document.querySelector('.category-row').cloneNode(true);
+        
+        // Clear input values
+        categoryRowTemplate.querySelector('input').value = '';
+        
+        // Add event listener to remove button
+        categoryRowTemplate.querySelector('.remove-category').addEventListener('click', function() {
+            this.closest('.category-row').remove();
+        });
+        
+        categoryContainer.appendChild(categoryRowTemplate);
+    });
+    
+    // Add Location Button
+    document.querySelector('.add-location').addEventListener('click', function() {
+        const locationContainer = document.querySelector('.locations-container');
+        const locationRowTemplate = document.querySelector('.location-row').cloneNode(true);
+        
+        // Clear input values
+        locationRowTemplate.querySelector('input').value = '';
+        
+        // Add event listener to remove button
+        locationRowTemplate.querySelector('.remove-location').addEventListener('click', function() {
+            this.closest('.location-row').remove();
+        });
+        
+        locationContainer.appendChild(locationRowTemplate);
+    });
+    
+    // Add event listeners to existing remove buttons
+    document.querySelectorAll('.remove-category').forEach(function(button) {
+        button.addEventListener('click', function() {
+            this.closest('.category-row').remove();
+        });
+    });
+    
+    document.querySelectorAll('.remove-location').forEach(function(button) {
+        button.addEventListener('click', function() {
+            this.closest('.location-row').remove();
+        });
+    });
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 550px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        border: 1px solid var(--primary-color);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: var(--surface-color);
+        border: 1px solid var(--primary-color);
+        border-radius: 4px;
+        color: var(--text-color);
+    }
+
+    .role-selection {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--primary-color);
+    }
+
+    .role-card {
+        border: 1px solid var(--surface-color);
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .role-card.selected {
+        border-color: var(--primary-color);
+        background-color: rgba(187, 134, 252, 0.1);
+    }
+
+    .role-card:hover {
+        border-color: var(--primary-color);
+    }
+
+    .role-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .role-radio {
+        margin-right: 0.5rem;
+    }
+
+    .role-description {
+        font-size: 0.9rem;
+        margin-left: 1.5rem;
+    }
+
+    .form-actions {
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    .login-link {
+        display: block;
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .role-switch-section {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--primary-color);
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header">
+        <h2>Create an Account</h2>
+        <p>Join our data analytics platform</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.register') }}">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            {{ form.email(class="form-control", placeholder="Enter your email") }}
+            {% if form.email.errors %}
+                <div class="error">
+                    {% for error in form.email.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            {{ form.username(class="form-control", placeholder="Choose a username") }}
+            {% if form.username.errors %}
+                <div class="error">
+                    {% for error in form.username.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            {{ form.first_name(class="form-control", placeholder="Your first name") }}
+            {% if form.first_name.errors %}
+                <div class="error">
+                    {% for error in form.first_name.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            {{ form.last_name(class="form-control", placeholder="Your last name") }}
+            {% if form.last_name.errors %}
+                <div class="error">
+                    {% for error in form.last_name.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            {{ form.password(class="form-control", placeholder="Create a password") }}
+            {% if form.password.errors %}
+                <div class="error">
+                    {% for error in form.password.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="password2">Confirm Password</label>
+            {{ form.password2(class="form-control", placeholder="Confirm your password") }}
+            {% if form.password2.errors %}
+                <div class="error">
+                    {% for error in form.password2.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Register</button>
+        </div>
+
+        <a href="{{ url_for('auth.login') }}" class="login-link">Already have an account? Log in</a>
+    </form>
+
+    <div class="role-switch-section">
+        <h3>Existing Users: Switch Roles</h3>
+        <p>Already have an account but want to upgrade?</p>
+        <a href="{{ url_for('auth.upgrade_role') }}" class="btn">Upgrade Account</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Make the entire role card clickable
+    document.getElementById('viewer-role').addEventListener('click', function() {
+        document.getElementById('role-viewer').checked = true;
+        updateSelectedState();
+    });
+    
+    document.getElementById('subscriber-role').addEventListener('click', function() {
+        document.getElementById('role-subscriber').checked = true;
+        updateSelectedState();
+    });
+    
+    // Update the selected state of role cards
+    function updateSelectedState() {
+        const viewerCard = document.getElementById('viewer-role');
+        const subscriberCard = document.getElementById('subscriber-role');
+        const viewerRadio = document.getElementById('role-viewer');
+        const subscriberRadio = document.getElementById('role-subscriber');
+        
+        viewerCard.classList.toggle('selected', viewerRadio.checked);
+        subscriberCard.classList.toggle('selected', subscriberRadio.checked);
+    }
+    
+    // Initialize the selected state
+    updateSelectedState();
+    
+    // Also update when radio buttons are directly clicked
+    document.getElementById('role-viewer').addEventListener('change', updateSelectedState);
+    document.getElementById('role-subscriber').addEventListener('change', updateSelectedState);
+</script>
+{% endblock %} 

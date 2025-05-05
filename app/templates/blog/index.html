@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="blog-header">
+        <h1>Blog Posts</h1>
+        {% if current_user.is_admin %}
+        <a href="{{ url_for('blog.create_post') }}" class="btn btn-primary">Create New Post</a>
+        {% endif %}
+    </div>
+
+    <div class="blog-posts">
+        {% for post in posts.items %}
+        <article class="blog-post">
+            <h2><a href="{{ url_for('blog.view_post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            <div class="post-meta">
+                <span>By {{ post.author.username }}</span>
+                <span>{{ post.created_at.strftime('%B %d, %Y') }}</span>
+                {% if current_user.is_admin %}
+                <div class="admin-actions">
+                    <a href="{{ url_for('blog.edit_post', post_id=post.id) }}" class="admin-action-btn">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <form action="{{ url_for('blog.delete_post', post_id=post.id) }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="admin-action-btn" onclick="return confirm('Are you sure you want to delete this post?');">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            <div class="post-preview">
+                {{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}
+            </div>
+            <a href="{{ url_for('blog.view_post', post_id=post.id) }}" class="read-more">Read More</a>
+        </article>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if posts.has_prev %}
+        <a href="{{ url_for('blog.index', page=posts.prev_num) }}">&laquo; Previous</a>
+        {% endif %}
+        {% if posts.has_next %}
+        <a href="{{ url_for('blog.index', page=posts.next_num) }}">Next &raquo;</a>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .blog-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 2rem 0;
+    }
+
+    .blog-posts {
+        display: grid;
+        gap: 2rem;
+    }
+
+    .blog-post {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+    }
+
+    .blog-post:hover {
+        transform: translateY(-5px);
+    }
+
+    .post-meta {
+        display: flex;
+        gap: 1rem;
+        color: #666;
+        margin: 0.5rem 0 1rem;
+        font-size: 0.9rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .admin-actions {
+        margin-left: auto;
+    }
+
+    .admin-action-btn {
+        background: transparent;
+        border: none;
+        color: var(--primary-color);
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+        text-decoration: none;
+    }
+
+    .admin-action-btn:hover {
+        color: var(--primary-color-light);
+    }
+
+    .post-preview {
+        color: #ccc;
+        margin: 1rem 0;
+        line-height: 1.6;
+    }
+
+    .read-more {
+        display: inline-block;
+        color: var(--primary-color);
+        text-decoration: none;
+        margin-top: 1rem;
+        transition: color 0.3s ease;
+    }
+
+    .read-more:hover {
+        color: var(--primary-color-light);
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .pagination a {
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .pagination a:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+</style>
+{% endblock %} 

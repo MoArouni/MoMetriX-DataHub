@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Select Category - Setup Products{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box" style="max-width: 800px;">
+        <div class="auth-header">
+            <h2>Setup Products by Category</h2>
+            <p>Select a category to add products to:</p>
+        </div>
+        
+        <div class="categories-grid">
+            {% for category in categories %}
+                <a href="{{ url_for('sales_setup.setup_category_products', category_id=category.id) }}" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h3>{{ category.name }}</h3>
+                    <div class="category-status">
+                        {% set product_count = category.products.count() %}
+                        {% if product_count > 0 %}
+                            <span class="status-complete">
+                                <i class="fas fa-check-circle"></i> {{ product_count }} Products
+                            </span>
+                        {% else %}
+                            <span class="status-pending">
+                                <i class="fas fa-exclamation-circle"></i> No Products Yet
+                            </span>
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        
+        <div class="navigation-buttons">
+            <a href="{{ url_for('sales_setup.setup_categories') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Categories
+            </a>
+            <a href="{{ url_for('sales.index') }}" class="btn btn-primary">
+                <i class="fas fa-check-circle"></i> Finish Setup
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 2rem auto;
+    }
+    
+    .auth-box {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        padding: 2rem;
+        width: 100%;
+    }
+    
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .auth-header h2 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .auth-header p {
+        color: #999;
+    }
+    
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .category-card {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        text-decoration: none;
+        color: #fff;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border-color: var(--primary-color);
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+    
+    .category-icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .category-card h3 {
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .category-status {
+        margin-top: auto;
+        font-size: 0.9rem;
+    }
+    
+    .status-complete {
+        color: #4CAF50;
+    }
+    
+    .status-pending {
+        color: #FFC107;
+    }
+    
+    .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+    
+    .btn-secondary {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .btn-primary:hover, .btn-secondary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn i {
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %} 

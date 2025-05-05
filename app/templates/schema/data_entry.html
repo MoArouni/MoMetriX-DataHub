@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Data Entry - {{ category.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Data Entry: {{ category.name }}</h1>
+        <div>
+            <a href="{{ url_for('products.index') }}" class="btn btn-secondary">
+                <i class="fas fa-chevron-left"></i> Back to Products
+            </a>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        Add new products to the <strong>{{ category.name }}</strong> category. Fields are dynamically generated based on your schema settings.
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i> Add New Product</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('schema.data_entry', category_id=category.id) }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.name.id }}">{{ form.name.label }}</label>
+                            {{ form.name(class="form-control") }}
+                            {% if form.name.errors %}
+                            <div class="text-danger">
+                                {% for error in form.name.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.base_price.id }}">{{ form.base_price.label }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                {{ form.base_price(class="form-control") }}
+                            </div>
+                            {% if form.base_price.errors %}
+                            <div class="text-danger">
+                                {% for error in form.base_price.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Dynamically generated fields -->
+                        {% for field_name, field in form._fields.items() %}
+                            {% if field_name.startswith('field_') %}
+                                <div class="form-group mb-3">
+                                    <label for="{{ field.id }}">{{ field.label }}</label>
+                                    
+                                    {% if field.type == 'StringField' and form[field_name].render_kw and form[field_name].render_kw.get('data-type') == 'color' %}
+                                        {{ field(class="form-control form-control-color", type="color") }}
+                                    {% elif field.type == 'StringField' and form[field_name].render_kw and form[field_name].render_kw.get('data-type') == 'date' %}
+                                        {{ field(class="form-control", type="date") }}
+                                    {% elif field.type == 'TextAreaField' %}
+                                        {{ field(class="form-control", rows=3) }}
+                                    {% elif field.type == 'BooleanField' %}
+                                        <div class="form-check">
+                                            {{ field(class="form-check-input") }}
+                                        </div>
+                                    {% elif field.type == 'SelectField' %}
+                                        {{ field(class="form-select") }}
+                                    {% else %}
+                                        {{ field(class="form-control") }}
+                                    {% endif %}
+                                    
+                                    {% if field.errors %}
+                                    <div class="text-danger">
+                                        {% for error in field.errors %}
+                                        <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i> {{ category.name }} Products</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if products %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Custom Fields</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                <tr>
+                                    <td>{{ product.name }}</td>
+                                    <td>${{ product.base_price }}</td>
+                                    <td>
+                                        {% if product.additional_fields %}
+                                            <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#fieldsModal{{ product.id }}">
+                                                <i class="fas fa-eye"></i> View
+                                            </button>
+                                            
+                                            <!-- Custom Fields Modal -->
+                                            <div class="modal fade" id="fieldsModal{{ product.id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Custom Fields: {{ product.name }}</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <dl class="row">
+                                                            {% for field_id, value in product.additional_fields.items() %}
+                                                                {% set schema_id = field_id.split('_')[1]|int %}
+                                                                {% set schema_field = namespace(found=none) %}
+                                                                {% for field in category.schema_fields %}
+                                                                    {% if field.schema_id == schema_id %}
+                                                                        {% set schema_field.found = field %}
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                
+                                                                {% if schema_field.found %}
+                                                                <dt class="col-sm-4">{{ schema_field.found.field_name }}</dt>
+                                                                <dd class="col-sm-8">
+                                                                    {% if schema_field.found.field_type == 'color' %}
+                                                                    <span class="color-swatch" style="--swatch-bg: {{ value|safe }};"></span>
+                                                                    {% elif schema_field.found.field_type == 'checkbox' %}
+                                                                    {{ 'Yes' if value else 'No' }}
+                                                                    {% else %}
+                                                                    {{ value|safe }}
+                                                                    {% endif %}
+                                                                </dd>
+                                                                {% else %}
+                                                                <dt class="col-sm-4">{{ field_id }}</dt>
+                                                                <dd class="col-sm-8">{{ value }}</dd>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            </dl>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">None</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('products.edit_product', product_id=product.id) }}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+                        <h3>No Products Found</h3>
+                        <p class="text-muted">You haven't added any products to this category yet.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.color-swatch {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    vertical-align: middle;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Store Locations{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section-header">
+        <h1>Store Locations</h1>
+        <a href="{{ url_for('sales_setup.setup_stores') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Manage Stores
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2>Your Stores</h2>
+            <p>These are the physical or online locations where your sales take place.</p>
+        </div>
+        
+        <div class="card-body">
+            {% if stores %}
+            <div class="store-grid">
+                {% for store in stores %}
+                <div class="store-card">
+                    <div class="store-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3>{{ store.name }}</h3>
+                    <div class="store-stats">
+                        {% set sales_count = store.sales.count() %}
+                        <span>
+                            <i class="fas fa-receipt"></i> {{ sales_count }} Sales
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-store-slash"></i>
+                </div>
+                <h3>No Stores Set Up</h3>
+                <p>You haven't set up any store locations yet.</p>
+                <a href="{{ url_for('sales_setup.setup_stores') }}" class="btn btn-primary">
+                    Set Up Stores
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="section-info">
+        <h3>About Store Locations</h3>
+        <p>Store locations help you track where sales are taking place. These can be physical store locations, online marketplaces, pop-up shops, or any other sales channels you use.</p>
+        <p>You can set up as many stores as you need and track sales performance for each one.</p>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .section-header h1 {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin: 0;
+    }
+    
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn i {
+        margin-right: 0.5rem;
+    }
+    
+    .card {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card-header h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+    }
+    
+    .card-header p {
+        margin: 0;
+        color: #999;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .store-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .store-card {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .store-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border-color: var(--primary-color);
+    }
+    
+    .store-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .store-card h3 {
+        margin: 0 0 1rem 0;
+        font-size: 1.2rem;
+    }
+    
+    .store-stats {
+        color: #999;
+        font-size: 0.9rem;
+    }
+    
+    .store-stats i {
+        margin-right: 0.25rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem 0;
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        color: rgba(255, 255, 255, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-state h3 {
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state p {
+        color: #999;
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-info {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+    
+    .section-info h3 {
+        color: var(--primary-color);
+        margin-top: 0;
+    }
+    
+    .section-info p:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

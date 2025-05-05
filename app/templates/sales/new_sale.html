@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+
+{% block title %}Record New Sale{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box" style="max-width: 800px;">
+        <div class="auth-header">
+            <h2>Record New Sale</h2>
+            <p>Enter the details of your sale.</p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('sales.new_sale') }}" id="saleForm">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.store_id.label }}
+                {{ form.store_id(class="form-control") }}
+                {% if form.store_id.errors %}
+                    <div class="error-message">
+                        {% for error in form.store_id.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="category_id">Product Category</label>
+                <select id="category_id" class="form-control" required>
+                    <option value="">-- Select Category --</option>
+                    {% for category_id, data in product_choices.items() %}
+                        <option value="{{ category_id }}">{{ data.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                {{ form.product_id.label }}
+                <select id="product_id" name="product_id" class="form-control" required disabled>
+                    <option value="">-- Select Product --</option>
+                </select>
+                {% if form.product_id.errors %}
+                    <div class="error-message">
+                        {% for error in form.product_id.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.quantity.label }}
+                {{ form.quantity(class="form-control", min=1) }}
+                {% if form.quantity.errors %}
+                    <div class="error-message">
+                        {% for error in form.quantity.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="payment-section">
+                <h3>Payment Details</h3>
+                <div class="payment-fields">
+                    <div class="form-group">
+                        {{ form.cash_amount.label }}
+                        {{ form.cash_amount(class="form-control payment-amount", min=0) }}
+                        {% if form.cash_amount.errors %}
+                            <div class="error-message">
+                                {% for error in form.cash_amount.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.card_amount.label }}
+                        {{ form.card_amount(class="form-control payment-amount", min=0) }}
+                        {% if form.card_amount.errors %}
+                            <div class="error-message">
+                                {% for error in form.card_amount.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="total-amount">
+                    <span>Total: £<span id="total-price">0.00</span></span>
+                    <span class="payment-method" id="payment-method">Unknown</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                {{ form.notes.label }}
+                {{ form.notes(class="form-control", rows=3, placeholder="Optional notes about this sale") }}
+                {% if form.notes.errors %}
+                    <div class="error-message">
+                        {% for error in form.notes.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="product-features">
+                <h3>Product Features <button type="button" id="add-feature" class="btn-feature-add">+ Add Feature</button></h3>
+                <div id="features-container">
+                    <!-- Dynamic features will be added here -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+        
+        <div class="navigation-buttons">
+            <a href="{{ url_for('sales.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Sales
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 2rem auto;
+    }
+    
+    .auth-box {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        padding: 2rem;
+        width: 100%;
+    }
+    
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .auth-header h2 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .auth-header p {
+        color: #999;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #ddd;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        color: #fff;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    
+    .payment-section {
+        background-color: rgba(255, 255, 255, 0.03);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .payment-section h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .payment-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .total-amount {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem 0;
+        margin-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .payment-method {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .product-features {
+        background-color: rgba(255, 255, 255, 0.03);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .product-features h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .btn-feature-add {
+        background-color: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        border-radius: 20px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-feature-add:hover {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+    
+    .feature-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        align-items: center;
+    }
+    
+    .feature-remove {
+        background-color: transparent;
+        color: #ff5555;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        padding: 0.25rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-remove:hover {
+        transform: scale(1.1);
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #000;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .btn-secondary {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .btn-primary:hover, .btn-secondary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .navigation-buttons {
+        display: flex;
+        justify-content: flex-start;
+    }
+    
+    .error-message {
+        color: #ff5555;
+        margin-top: 0.25rem;
+        font-size: 0.85rem;
+    }
+    
+    .btn i {
+        margin-right: 0.5rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 767px) {
+        .payment-fields {
+            grid-template-columns: 1fr;
+        }
+        
+        .feature-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('category_id');
+    const productSelect = document.getElementById('product_id');
+    const cashAmountInput = document.getElementById('cash_amount');
+    const cardAmountInput = document.getElementById('card_amount');
+    const totalPriceElement = document.getElementById('total-price');
+    const paymentMethodElement = document.getElementById('payment-method');
+    const addFeatureBtn = document.getElementById('add-feature');
+    const featuresContainer = document.getElementById('features-container');
+    
+    // Product choices from Jinja
+    const productChoices = JSON.parse('{{ product_choices|tojson }}');
+    
+    // Update product dropdown when category changes
+    categorySelect.addEventListener('change', function() {
+        const categoryId = this.value;
+        productSelect.innerHTML = '<option value="">-- Select Product --</option>';
+        
+        if (categoryId) {
+            productSelect.disabled = false;
+            
+            if (productChoices[categoryId] && productChoices[categoryId].products) {
+                productChoices[categoryId].products.forEach(function(product) {
+                    const option = document.createElement('option');
+                    option.value = product[0];
+                    option.textContent = product[1];
+                    productSelect.appendChild(option);
+                });
+            }
+        } else {
+            productSelect.disabled = true;
+        }
+    });
+    
+    // Calculate total and update payment method
+    function updateTotal() {
+        const cashAmount = parseFloat(cashAmountInput.value) || 0;
+        const cardAmount = parseFloat(cardAmountInput.value) || 0;
+        const total = cashAmount + cardAmount;
+        
+        totalPriceElement.textContent = total.toFixed(2);
+        
+        // Update payment method
+        if (cashAmount > 0 && cardAmount > 0) {
+            paymentMethodElement.textContent = 'Both (Card + Cash)';
+            paymentMethodElement.style.backgroundColor = '#8e44ad';
+        } else if (cardAmount > 0) {
+            paymentMethodElement.textContent = 'Card';
+            paymentMethodElement.style.backgroundColor = '#3498db';
+        } else if (cashAmount > 0) {
+            paymentMethodElement.textContent = 'Cash';
+            paymentMethodElement.style.backgroundColor = '#2ecc71';
+        } else {
+            paymentMethodElement.textContent = 'Unknown';
+            paymentMethodElement.style.backgroundColor = '#e74c3c';
+        }
+    }
+    
+    cashAmountInput.addEventListener('input', updateTotal);
+    cardAmountInput.addEventListener('input', updateTotal);
+    
+    // Add feature button
+    addFeatureBtn.addEventListener('click', function() {
+        addFeatureRow();
+    });
+    
+    // Add a new feature row
+    function addFeatureRow() {
+        const featureRow = document.createElement('div');
+        featureRow.className = 'feature-row';
+        
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.name = 'feature_name[]';
+        nameInput.className = 'form-control feature-name';
+        nameInput.placeholder = 'Feature Name (e.g. Color)';
+        nameInput.required = true;
+        
+        const valueInput = document.createElement('input');
+        valueInput.type = 'text';
+        valueInput.name = 'feature_value[]';
+        valueInput.className = 'form-control feature-value';
+        valueInput.placeholder = 'Feature Value (e.g. Gold)';
+        valueInput.required = true;
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'feature-remove';
+        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        removeBtn.addEventListener('click', function() {
+            featuresContainer.removeChild(featureRow);
+        });
+        
+        featureRow.appendChild(nameInput);
+        featureRow.appendChild(valueInput);
+        featureRow.appendChild(removeBtn);
+        
+        featuresContainer.appendChild(featureRow);
+        
+        // Set up autocomplete (simplified - you might want to use a library for better UX)
+        setupFeatureAutocomplete(nameInput, valueInput);
+    }
+    
+    // Set up autocomplete for features
+    function setupFeatureAutocomplete(nameInput, valueInput) {
+        // When feature name changes, fetch possible values
+        nameInput.addEventListener('change', function() {
+            if (this.value) {
+                fetch('/sales/setup/api/feature-values?name=' + encodeURIComponent(this.value))
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
+                        // Here you could populate a datalist or implement autocomplete
+                        console.log('Available values:', data);
+                    });
+            }
+        });
+    }
+    
+    // Initialize with one feature row
+    // addFeatureRow();
+    
+    // Initial update
+    updateTotal();
+});
+</script>
+{% endblock %}
+{% endblock %} 

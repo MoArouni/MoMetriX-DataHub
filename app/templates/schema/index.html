@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Schema Management{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Schema Fields</h1>
+        <div>
+            <a href="{{ url_for('schema.database_setup') }}" class="btn btn-success me-2">
+                <i class="fas fa-database"></i> Database Structure
+            </a>
+            <a href="{{ url_for('schema.new_field') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> New Field
+            </a>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        Custom schema fields allow you to add extra data to your products based on category.
+    </div>
+
+    {% if fields %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Field Name</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Required</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for field in fields %}
+                        <tr>
+                            <td>{{ field.field_name }}</td>
+                            <td>
+                                {% if field.field_type == 'text' %}
+                                <span class="badge bg-primary">Text</span>
+                                {% elif field.field_type == 'number' %}
+                                <span class="badge bg-success">Number</span>
+                                {% elif field.field_type == 'select' %}
+                                <span class="badge bg-info">Select</span>
+                                {% elif field.field_type == 'checkbox' %}
+                                <span class="badge bg-warning">Checkbox</span>
+                                {% elif field.field_type == 'date' %}
+                                <span class="badge bg-secondary">Date</span>
+                                {% elif field.field_type == 'color' %}
+                                <span class="badge bg-danger">Color</span>
+                                {% elif field.field_type == 'textarea' %}
+                                <span class="badge bg-dark">Text Area</span>
+                                {% elif field.field_type == 'radio' %}
+                                <span class="badge bg-primary">Radio</span>
+                                {% else %}
+                                <span class="badge bg-dark">{{ field.field_type }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ field.category.name if field.category else 'All Categories' }}</td>
+                            <td>
+                                {% if field.is_required %}
+                                <i class="fas fa-check-circle text-success"></i>
+                                {% else %}
+                                <i class="fas fa-times-circle text-danger"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('schema.edit_field', schema_id=field.schema_id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger" 
+                                           data-bs-toggle="modal" data-bs-target="#deleteModal{{ field.schema_id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="deleteModal{{ field.schema_id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirm Delete</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete the <strong>{{ field.field_name }}</strong> field?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <form action="{{ url_for('schema.delete_field', schema_id=field.schema_id) }}" method="post">
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-table fa-4x text-muted mb-3"></i>
+            <h3>No Custom Fields Found</h3>
+            <p class="text-muted">You haven't created any custom fields yet.</p>
+            <div class="mt-3">
+                <a href="{{ url_for('schema.database_setup') }}" class="btn btn-success me-2">
+                    Set Up Database Structure
+                </a>
+                <a href="{{ url_for('schema.new_field') }}" class="btn btn-primary">
+                    Create Your First Field
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+    }
+    
+    .admin-login-card {
+        background: rgba(18, 18, 18, 0.8);
+        border-radius: 10px;
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+    
+    .admin-login-card h2 {
+        margin-bottom: 1rem;
+        text-align: center;
+        color: var(--primary-color);
+    }
+    
+    .admin-login-description {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #999;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    
+    .form-check {
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-check-input {
+        margin-right: 0.5rem;
+    }
+    
+    .form-errors {
+        margin-top: 0.5rem;
+    }
+    
+    .error-message {
+        color: #ff5555;
+        font-size: 0.875rem;
+    }
+    
+    .form-actions {
+        margin-top: 2rem;
+    }
+    
+    .btn-primary {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--primary-color);
+        color: #000;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.3s;
+    }
+    
+    .btn-primary:hover {
+        background: var(--primary-color-light);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-login-container">
+    <div class="admin-login-card">
+        <h2>Administrator Login</h2>
+        <p class="admin-login-description">Secure access for administrative users only.</p>
+        
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control", placeholder="Enter your email") }}
+                {% if form.email.errors %}
+                <div class="form-errors">
+                    {% for error in form.email.errors %}
+                    <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control", placeholder="Enter your password") }}
+                {% if form.password.errors %}
+                <div class="form-errors">
+                    {% for error in form.password.errors %}
+                    <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

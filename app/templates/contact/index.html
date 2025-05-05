@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}Data Analysis Hub - Contact Us{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <div class="auth-header">
+            <h2>Contact Us</h2>
+            <p>Have questions or feedback? Reach out to us directly.</p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('contact.index') }}">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.name.label }}
+                {{ form.name(class="form-control") }}
+                {% if form.name.errors %}
+                    <div class="error-message">
+                        {% for error in form.name.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.email.label }}
+                {{ form.email(class="form-control") }}
+                {% if form.email.errors %}
+                    <div class="error-message">
+                        {% for error in form.email.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.subject.label }}
+                {{ form.subject(class="form-control") }}
+                {% if form.subject.errors %}
+                    <div class="error-message">
+                        {% for error in form.subject.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.message.label }}
+                {{ form.message(class="form-control", rows=5) }}
+                {% if form.message.errors %}
+                    <div class="error-message">
+                        {% for error in form.message.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+    
+    <div class="contact-info">
+        <h3>Additional Ways to Reach Us</h3>
+        <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <p>mohamadarouni5@gmail.com</p>
+        </div>
+        <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <p>+44 7484239767</p>
+        </div>
+        <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <p>Greater London, United Kingdom</p>
+        </div>
+        
+        <div class="social-links">
+            <a href="https://x.com/mo_arouni" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.linkedin.com/in/mohamad-arouni-578168293/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://github.com/MohamadArouni" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://www.instagram.com/mohamad_arouni/" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        margin: 2rem auto;
+        max-width: 800px;
+    }
+    
+    .auth-box {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        padding: 2rem;
+        width: 100%;
+    }
+    
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .auth-header h2 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .auth-header p {
+        color: #999;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #ddd;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        color: #fff;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-color-light);
+        transform: translateY(-3px);
+    }
+    
+    .error-message {
+        color: #ff5555;
+        margin-top: 0.25rem;
+        font-size: 0.85rem;
+    }
+    
+    .contact-info {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        padding: 2rem;
+        width: 100%;
+    }
+    
+    .contact-info h3 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-item i {
+        color: var(--primary-color);
+        margin-right: 1rem;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .social-links a {
+        color: #ccc;
+        font-size: 1.5rem;
+        transition: color 0.3s ease, transform 0.3s ease;
+    }
+    
+    .social-links a:hover {
+        color: var(--primary-color);
+        transform: translateY(-3px);
+    }
+    
+    /* Make contact form responsive */
+    @media (min-width: 768px) {
+        .auth-container {
+            flex-direction: row;
+            align-items: stretch;
+        }
+        
+        .auth-box, .contact-info {
+            width: 48%;
+        }
+    }
+</style>
+{% endblock %} 

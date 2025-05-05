@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ title }}</h1>
+        <div>
+            <a href="{{ url_for('schema.index') }}" class="btn btn-secondary">
+                <i class="fas fa-chevron-left"></i> Back to Schema
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i> {{ title }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('schema.edit_field', schema_id=field.schema_id) if field else url_for('schema.new_field') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.field_name.id }}">{{ form.field_name.label }}</label>
+                            {{ form.field_name(class="form-control") }}
+                            {% if form.field_name.errors %}
+                            <div class="text-danger">
+                                {% for error in form.field_name.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.field_type.id }}">{{ form.field_type.label }}</label>
+                            {{ form.field_type(class="form-select") }}
+                            {% if form.field_type.errors %}
+                            <div class="text-danger">
+                                {% for error in form.field_type.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.category_id.id }}">{{ form.category_id.label }}</label>
+                            {{ form.category_id(class="form-select") }}
+                            {% if form.category_id.errors %}
+                            <div class="text-danger">
+                                {% for error in form.category_id.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Choose a specific category or 'All Categories' to apply this field globally.</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.default_value.id }}">{{ form.default_value.label }}</label>
+                            {{ form.default_value(class="form-control") }}
+                            {% if form.default_value.errors %}
+                            <div class="text-danger">
+                                {% for error in form.default_value.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Default value for this field (optional).</small>
+                        </div>
+
+                        <div id="options-container" class="form-group mb-3">
+                            <label for="{{ form.options.id }}">{{ form.options.label }}</label>
+                            {{ form.options(class="form-control", rows=4) }}
+                            {% if form.options.errors %}
+                            <div class="text-danger">
+                                {% for error in form.options.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">For Select/Radio fields, enter one option per line.</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.display_order.id }}">{{ form.display_order.label }}</label>
+                            {{ form.display_order(class="form-control", type="number") }}
+                            {% if form.display_order.errors %}
+                            <div class="text-danger">
+                                {% for error in form.display_order.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Order in which this field appears on forms (lower values appear first).</small>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            {{ form.is_required(class="form-check-input") }}
+                            <label class="form-check-label" for="{{ form.is_required.id }}">{{ form.is_required.label }}</label>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('schema.index') }}" class="btn btn-secondary me-md-2">Cancel</a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fieldTypeSelect = document.getElementById('{{ form.field_type.id }}');
+    const optionsContainer = document.getElementById('options-container');
+    
+    function toggleOptionsVisibility() {
+        if (fieldTypeSelect.value === 'select' || fieldTypeSelect.value === 'radio') {
+            optionsContainer.style.display = 'block';
+        } else {
+            optionsContainer.style.display = 'none';
+        }
+    }
+    
+    // Initial check
+    toggleOptionsVisibility();
+    
+    // Add event listener
+    fieldTypeSelect.addEventListener('change', toggleOptionsVisibility);
+});
+</script>
+{% endblock %} 

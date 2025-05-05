@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Data Analytics Hub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 450px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        border: 1px solid var(--primary-color);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: var(--surface-color);
+        border: 1px solid var(--primary-color);
+        border-radius: 4px;
+        color: var(--text-color);
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .form-check-input {
+        margin-right: 0.5rem;
+    }
+
+    .form-actions {
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+
+    .btn:hover {
+        opacity: 0.9;
+    }
+
+    .links-section {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--primary-color);
+        text-align: center;
+    }
+
+    .auth-link {
+        display: block;
+        margin-top: 1rem;
+        text-align: center;
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .auth-link:hover {
+        opacity: 0.8;
+    }
+
+    .error {
+        color: #ff5252;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header">
+        <h2>Welcome Back</h2>
+        <p>Log in to your account</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.login') }}">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            {{ form.email(class="form-control", placeholder="Enter your email") }}
+            {% if form.email.errors %}
+                <div class="error">
+                    {% for error in form.email.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            {{ form.password(class="form-control", placeholder="Enter your password") }}
+            {% if form.password.errors %}
+                <div class="error">
+                    {% for error in form.password.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            {{ form.submit(class="btn") }}
+        </div>
+
+        <a href="{{ url_for('auth.password_reset_request') }}" class="auth-link">Forgot your password?</a>
+    </form>
+
+    <div class="links-section">
+        <h3>New to Data Analytics Hub?</h3>
+        <p>Create an account to start your data journey</p>
+        <a href="{{ url_for('auth.register') }}" class="btn">Create Account</a>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Companies{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="admin-header">
+        <h1>Manage Companies</h1>
+        <div class="action-buttons">
+            <a href="{{ url_for('dashboard.dashboard') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="filter-section">
+        <div class="search-box">
+            <input type="text" id="searchCompany" placeholder="Search companies...">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="filter-options">
+            <select id="statusFilter">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="companies-table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Company Name</th>
+                    <th>Admin</th>
+                    <th>Members</th>
+                    <th>Created On</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if companies %}
+                    {% for company in companies %}
+                    <tr>
+                        <td>{{ company.id }}</td>
+                        <td>{{ company.company_name }}</td>
+                        <td>{{ company.admin.username if company.admin else 'No Admin' }}</td>
+                        <td>{{ company.members|length }}</td>
+                        <td>{{ company.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td class="actions">
+                            <button class="action-btn view-btn" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn edit-btn" title="Edit Company">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete-btn" title="Delete Company">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="empty-message">No companies found</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if pagination %}
+    <div class="pagination">
+        {% if pagination.has_prev %}
+        <a href="{{ url_for('admin.companies', page=pagination.prev_num) }}">&laquo; Previous</a>
+        {% endif %}
+        
+        {% for page_num in pagination.iter_pages() %}
+            {% if page_num %}
+                {% if page_num == pagination.page %}
+                <span class="current-page">{{ page_num }}</span>
+                {% else %}
+                <a href="{{ url_for('admin.companies', page=page_num) }}">{{ page_num }}</a>
+                {% endif %}
+            {% else %}
+                <span class="ellipsis">...</span>
+            {% endif %}
+        {% endfor %}
+        
+        {% if pagination.has_next %}
+        <a href="{{ url_for('admin.companies', page=pagination.next_num) }}">Next &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .admin-header h1 {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin: 0;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .filter-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+    
+    .search-box {
+        position: relative;
+        width: 300px;
+    }
+    
+    .search-box input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        color: #fff;
+    }
+    
+    .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+    }
+    
+    .filter-options select {
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+    }
+    
+    .companies-table-container {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .data-table th {
+        background: rgba(0, 0, 0, 0.2);
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    
+    .data-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .status-active {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+    }
+    
+    .status-inactive {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+    }
+    
+    .actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        border-radius: 4px;
+        color: #ccc;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .action-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .view-btn:hover {
+        color: #3498db;
+    }
+    
+    .edit-btn:hover {
+        color: #f39c12;
+    }
+    
+    .delete-btn:hover {
+        color: #e74c3c;
+    }
+    
+    .empty-message {
+        text-align: center;
+        padding: 2rem;
+        color: #999;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+    }
+    
+    .pagination a,
+    .pagination .current-page,
+    .pagination .ellipsis {
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+    }
+    
+    .pagination a {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+    
+    .pagination a:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .pagination .current-page {
+        background: var(--primary-color);
+        color: #000;
+    }
+    
+    .pagination .ellipsis {
+        color: #999;
+    }
+    
+    @media (max-width: 992px) {
+        .filter-section {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .search-box {
+            width: 100%;
+        }
+        
+        .companies-table-container {
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchCompany');
+        const statusFilter = document.getElementById('statusFilter');
+        const tableRows = document.querySelectorAll('.data-table tbody tr');
+        
+        // Search functionality
+        searchInput.addEventListener('keyup', filterCompanies);
+        statusFilter.addEventListener('change', filterCompanies);
+        
+        function filterCompanies() {
+            const searchValue = searchInput.value.toLowerCase();
+            const statusValue = statusFilter.value;
+            
+            tableRows.forEach(row => {
+                const companyName = row.cells[1].textContent.toLowerCase();
+                const status = row.cells[5].textContent.toLowerCase();
+                
+                const matchesSearch = companyName.includes(searchValue);
+                const matchesStatus = statusValue === 'all' || status.includes(statusValue);
+                
+                if (matchesSearch && matchesStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="admin-header">
+        <h1>Manage Users</h1>
+        <div class="action-buttons">
+            <a href="{{ url_for('dashboard.dashboard') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <div class="filter-section">
+        <div class="search-box">
+            <input type="text" id="searchUser" placeholder="Search users...">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="filter-options">
+            <select id="roleFilter">
+                <option value="all">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="subscriber">Subscriber</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="users-table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Website Role</th>
+                    <th>Company</th>
+                    <th>Joined</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if users %}
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if user.is_admin %}
+                                <span class="role-badge role-admin">Admin</span>
+                            {% else %}
+                                <span class="role-badge role-subscriber">{{ user.role_website|capitalize }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.company.company_name if user.company else 'N/A' }}</td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ user.last_login.strftime('%Y-%m-%d') if user.last_login else 'Never' }}</td>
+                        <td class="actions">
+                            <button class="action-btn view-btn" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn edit-btn" title="Edit User">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete-btn" title="Delete User">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="empty-message">No users found</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if pagination %}
+    <div class="pagination">
+        {% if pagination.has_prev %}
+        <a href="{{ url_for('admin.users', page=pagination.prev_num) }}">&laquo; Previous</a>
+        {% endif %}
+        
+        {% for page_num in pagination.iter_pages() %}
+            {% if page_num %}
+                {% if page_num == pagination.page %}
+                <span class="current-page">{{ page_num }}</span>
+                {% else %}
+                <a href="{{ url_for('admin.users', page=page_num) }}">{{ page_num }}</a>
+                {% endif %}
+            {% else %}
+                <span class="ellipsis">...</span>
+            {% endif %}
+        {% endfor %}
+        
+        {% if pagination.has_next %}
+        <a href="{{ url_for('admin.users', page=pagination.next_num) }}">Next &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .admin-header h1 {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin: 0;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .filter-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+    
+    .search-box {
+        position: relative;
+        width: 300px;
+    }
+    
+    .search-box input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        color: #fff;
+    }
+    
+    .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+    }
+    
+    .filter-options select {
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+    }
+    
+    .users-table-container {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .data-table th {
+        background: rgba(0, 0, 0, 0.2);
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    
+    .data-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .role-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .role-admin {
+        background: rgba(var(--primary-color-rgb), 0.2);
+        color: var(--primary-color);
+    }
+    
+    .role-subscriber {
+        background: rgba(52, 152, 219, 0.2);
+        color: #3498db;
+    }
+    
+    .role-viewer {
+        background: rgba(142, 142, 142, 0.2);
+        color: #8e8e8e;
+    }
+    
+    .actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        border-radius: 4px;
+        color: #ccc;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .action-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .view-btn:hover {
+        color: #3498db;
+    }
+    
+    .edit-btn:hover {
+        color: #f39c12;
+    }
+    
+    .delete-btn:hover {
+        color: #e74c3c;
+    }
+    
+    .empty-message {
+        text-align: center;
+        padding: 2rem;
+        color: #999;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+    }
+    
+    .pagination a,
+    .pagination .current-page,
+    .pagination .ellipsis {
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+    }
+    
+    .pagination a {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+    
+    .pagination a:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .pagination .current-page {
+        background: var(--primary-color);
+        color: #000;
+    }
+    
+    .pagination .ellipsis {
+        color: #999;
+    }
+    
+    @media (max-width: 992px) {
+        .filter-section {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .search-box {
+            width: 100%;
+        }
+        
+        .users-table-container {
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchUser');
+        const roleFilter = document.getElementById('roleFilter');
+        const tableRows = document.querySelectorAll('.data-table tbody tr');
+        
+        // Search functionality
+        searchInput.addEventListener('keyup', filterUsers);
+        roleFilter.addEventListener('change', filterUsers);
+        
+        function filterUsers() {
+            const searchValue = searchInput.value.toLowerCase();
+            const roleValue = roleFilter.value.toLowerCase();
+            
+            tableRows.forEach(row => {
+                const username = row.cells[0].textContent.toLowerCase();
+                const email = row.cells[1].textContent.toLowerCase();
+                const roleBadge = row.cells[2].querySelector('.role-badge');
+                const role = roleBadge ? roleBadge.textContent.toLowerCase() : '';
+                
+                const matchesSearch = username.includes(searchValue) || email.includes(searchValue);
+                const matchesRole = roleValue === 'all' || role.includes(roleValue);
+                
+                if (matchesSearch && matchesRole) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %} 

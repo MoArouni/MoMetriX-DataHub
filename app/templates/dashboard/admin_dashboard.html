@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-dashboard {
+        padding: 2rem 0;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: rgba(30, 30, 30, 0.8);
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .stat-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        color: #ccc;
+    }
+    
+    .stat-icon {
+        font-size: 1.3rem;
+        margin-right: 0.8rem;
+        color: var(--primary-color);
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #999;
+    }
+    
+    .dashboard-section {
+        background: rgba(30, 30, 30, 0.8);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        color: #fff;
+    }
+    
+    .section-action {
+        background: rgba(var(--primary-color-rgb), 0.2);
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .section-action:hover {
+        background: var(--primary-color);
+        color: #000;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .data-table th, 
+    .data-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .data-table th {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    
+    .data-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .status-active {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+    }
+    
+    .status-pending {
+        background: rgba(241, 196, 15, 0.2);
+        color: #f1c40f;
+    }
+    
+    .status-inactive {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+    }
+    
+    .action-btn {
+        background: transparent;
+        border: none;
+        font-size: 1rem;
+        color: #ccc;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        margin-right: 0.5rem;
+    }
+    
+    .action-btn:hover {
+        color: var(--primary-color);
+    }
+    
+    .qa-item {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .qa-question {
+        margin-bottom: 0.5rem;
+        color: #fff;
+    }
+    
+    .qa-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #999;
+    }
+    
+    .blog-item {
+        display: flex;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .blog-content {
+        flex: 1;
+    }
+    
+    .blog-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: #fff;
+    }
+    
+    .blog-meta {
+        font-size: 0.8rem;
+        color: #999;
+    }
+    
+    .blog-actions {
+        display: flex;
+        align-items: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container admin-dashboard">
+    <h1>Admin Dashboard</h1>
+    
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-title">
+                <i class="fas fa-users stat-icon"></i>
+                <span>Total Users</span>
+            </div>
+            <div class="stat-value">{{ stats.users }}</div>
+            <div class="stat-label">Registered users</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-title">
+                <i class="fas fa-building stat-icon"></i>
+                <span>Companies</span>
+            </div>
+            <div class="stat-value">{{ stats.companies }}</div>
+            <div class="stat-label">Registered companies</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-title">
+                <i class="fas fa-question-circle stat-icon"></i>
+                <span>Open Questions</span>
+            </div>
+            <div class="stat-value">{{ stats.questions }}</div>
+            <div class="stat-label">Questions needing answers</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-title">
+                <i class="fas fa-newspaper stat-icon"></i>
+                <span>Blog Posts</span>
+            </div>
+            <div class="stat-value">{{ stats.blog_posts }}</div>
+            <div class="stat-label">Published blog posts</div>
+        </div>
+    </div>
+    
+    <!-- Users Management Section -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">User Management</h2>
+            <a href="#" class="section-action">View All Users</a>
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Company</th>
+                    <th>Status</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in recent_users %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role_website }}</td>
+                    <td>{{ user.company.company_name if user.company else 'N/A' }}</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                    <td>{{ user.last_login.strftime('%Y-%m-%d %H:%M') if user.last_login else 'Never' }}</td>
+                    <td>
+                        <button class="action-btn"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Companies Management Section -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Company Management</h2>
+            <a href="#" class="section-action">View All Companies</a>
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Company Name</th>
+                    <th>Admin</th>
+                    <th>Members</th>
+                    <th>Created On</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in recent_companies %}
+                <tr>
+                    <td>{{ company.company_name }}</td>
+                    <td>{{ company.admin.username if company.admin else 'N/A' }}</td>
+                    <td>{{ company.members|length }}</td>
+                    <td>{{ company.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                    <td>
+                        <button class="action-btn"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn"><i class="fas fa-eye"></i></button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Q&A Management Section -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Q&A Management</h2>
+            <a href="{{ url_for('qa.index') }}" class="section-action">View All Questions</a>
+        </div>
+        
+        <div class="qa-list">
+            {% for question in recent_questions %}
+            <div class="qa-item">
+                <div class="qa-question">{{ question.title }}</div>
+                <div class="qa-meta">
+                    <span>From: {{ question.author.username }}</span>
+                    <span>Posted: {{ question.created_at.strftime('%Y-%m-%d') }}</span>
+                    <a href="{{ url_for('qa.view_question', question_id=question.id) }}" class="action-btn"><i class="fas fa-reply"></i> Answer</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Blog Management Section -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Blog Management</h2>
+            <a href="{{ url_for('blog.create_post') }}" class="section-action">Create New Post</a>
+        </div>
+        
+        <div class="blog-list">
+            {% for post in recent_posts %}
+            <div class="blog-item">
+                <div class="blog-content">
+                    <div class="blog-title">{{ post.title }}</div>
+                    <div class="blog-meta">Published: {{ post.created_at.strftime('%Y-%m-%d') }}</div>
+                </div>
+                <div class="blog-actions">
+                    <a href="{{ url_for('blog.view_post', post_id=post.id) }}" class="action-btn"><i class="fas fa-eye"></i></a>
+                    <button class="action-btn"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

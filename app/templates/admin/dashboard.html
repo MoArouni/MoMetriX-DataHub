@@ -1,0 +1,96 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block admin_content %}
+<div class="admin-dashboard">
+    <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome to the administrative area. Manage your site content and users.</p>
+    </div>
+    
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-data">
+                <h3>{{ user_count }}</h3>
+                <p>Total Users</p>
+            </div>
+            <a href="{{ url_for('admin.users') }}" class="stat-link">Manage Users</a>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-newspaper"></i>
+            </div>
+            <div class="stat-data">
+                <h3>{{ blog_count }}</h3>
+                <p>Blog Posts</p>
+            </div>
+            <a href="{{ url_for('admin.blogs') }}" class="stat-link">Manage Blogs</a>
+        </div>
+    </div>
+    
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2>Recent Blog Posts</h2>
+                <a href="{{ url_for('admin.create_blog') }}" class="btn">+ New Post</a>
+            </div>
+            
+            <div class="card-content">
+                {% if recent_blogs %}
+                <ul class="blog-list">
+                    {% for blog in recent_blogs %}
+                    <li class="blog-item">
+                        <h3>{{ blog.title }}</h3>
+                        <div class="blog-meta">
+                            <span class="date">{{ blog.created_at.strftime('%B %d, %Y') }}</span>
+                        </div>
+                        <div class="blog-actions">
+                            <a href="{{ url_for('admin.edit_blog', post_id=blog.id) }}" class="action-link">Edit</a>
+                            <a href="{{ url_for('blog.view_post', post_id=blog.id) }}" class="action-link" target="_blank">View</a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="no-data">No blog posts yet.</p>
+                {% endif %}
+                
+                <a href="{{ url_for('admin.blogs') }}" class="view-all">View All Blog Posts</a>
+            </div>
+        </div>
+        
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2>Recent Users</h2>
+            </div>
+            
+            <div class="card-content">
+                {% if recent_users %}
+                <ul class="user-list">
+                    {% for user in recent_users %}
+                    <li class="user-item">
+                        <div class="user-info">
+                            <h3>{{ user.username }}</h3>
+                            <p>{{ user.email }}</p>
+                        </div>
+                        <div class="user-meta">
+                            <span class="date">Joined: {{ user.created_at.strftime('%B %d, %Y') }}</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="no-data">No users yet.</p>
+                {% endif %}
+                
+                <a href="{{ url_for('admin.users') }}" class="view-all">View All Users</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

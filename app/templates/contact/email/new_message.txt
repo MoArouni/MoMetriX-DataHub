@@ -1,0 +1,14 @@
+New Contact Message
+
+You have received a new message from the contact form on Data Analytics Hub.
+
+Name: {{ name }}
+Email: {{ email }}
+Subject: {{ subject }}
+
+Message:
+{{ message }}
+
+You can reply directly to the sender by using their email address.
+
+This message was sent via the contact form on Data Analytics Hub. 

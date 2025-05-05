@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section-header">
+        <h1>{{ product.name }}</h1>
+        <div class="button-group">
+            <a href="{{ url_for('products.edit_product', product_id=product.id) }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit Product
+            </a>
+            <a href="{{ url_for('products.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Products
+            </a>
+        </div>
+    </div>
+    
+    <div class="product-details">
+        <div class="product-info card">
+            <div class="card-header">
+                <h2>Product Information</h2>
+            </div>
+            <div class="card-body">
+                <div class="detail-item">
+                    <div class="detail-label">Category</div>
+                    <div class="detail-value">{{ product.category.name }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Base Price</div>
+                    <div class="detail-value">${{ product.base_price }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">
+                        <span class="status-badge {{ 'active' if product.active else 'inactive' }}">
+                            {{ "Active" if product.active else "Inactive" }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Created</div>
+                    <div class="detail-value">{{ product.created_at.strftime('%b %d, %Y') }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Last Updated</div>
+                    <div class="detail-value">{{ product.updated_at.strftime('%b %d, %Y') }}</div>
+                </div>
+            </div>
+        </div>
+        
+        {% if custom_fields %}
+        <div class="custom-fields card">
+            <div class="card-header">
+                <h2>Custom Fields</h2>
+            </div>
+            <div class="card-body">
+                {% for field_name, field_data in custom_fields.items() %}
+                <div class="detail-item">
+                    <div class="detail-label">
+                        {% if field_data is mapping %}
+                            {{ field_data.label }}
+                        {% else %}
+                            {{ field_name|replace('_', ' ')|title }}
+                        {% endif %}
+                    </div>
+                    <div class="detail-value">
+                        {% if field_data is mapping %}
+                            {% if field_data.type == 'select' %}
+                                {{ field_data.value }}
+                            {% elif field_data.type == 'date' %}
+                                {{ field_data.value }}
+                            {% elif field_data.type == 'number' %}
+                                {{ field_data.value }}
+                            {% else %}
+                                {{ field_data.value }}
+                            {% endif %}
+                        {% else %}
+                            {{ field_data }}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="section-actions">
+        <a href="{{ url_for('products.category_products', category_id=product.category_id) }}" class="btn btn-secondary">
+            <i class="fas fa-tags"></i> View Category Products
+        </a>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .section-header h1 {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin: 0;
+    }
+    
+    .button-group {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+    
+    .btn-secondary {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn i {
+        margin-right: 0.5rem;
+    }
+    
+    .product-details {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    @media (min-width: 768px) {
+        .product-details {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    
+    .card {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        height: fit-content;
+    }
+    
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .detail-item {
+        margin-bottom: 1.25rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .detail-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .detail-label {
+        font-size: 0.875rem;
+        color: #999;
+        margin-bottom: 0.5rem;
+    }
+    
+    .detail-value {
+        font-size: 1.1rem;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .status-badge.active {
+        background-color: rgba(46, 213, 115, 0.2);
+        color: #2ed573;
+    }
+    
+    .status-badge.inactive {
+        background-color: rgba(255, 71, 87, 0.2);
+        color: #ff4757;
+    }
+    
+    .section-actions {
+        margin-top: 2rem;
+        text-align: center;
+    }
+</style>
+{% endblock %} 
