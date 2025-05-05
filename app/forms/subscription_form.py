@@ -16,3 +16,4 @@ class SubscriptionForm(FlaskForm):
         """Check if email is already subscribed"""
         if MailingList.query.filter_by(email=field.data.lower()).first():
             raise ValidationError('This email is already subscribed to our newsletter.') 
+
