@@ -9,6 +9,7 @@ from app.models.company import Company
 from app.forms.sales_setup_forms import (
     StoresSetupForm, CategoriesSetupForm, ProductsSetupForm, SaleEntryForm, CompanySetupForm
 )
+from app.forms.company import CompanyForm
 from app.utils.decorators import company_required, subscriber_required
 
 # Create blueprint
@@ -33,22 +34,51 @@ def setup_wizard():
     current_step = 1
     
     # Step 1: Company setup
-    if not company or not company.name:
+    if not company or not company.company_name:
         current_step = 1
+        # Redirect to company setup if viewing the wizard
+        if request.args.get('redirect', 'false') == 'true':
+            return redirect(url_for('sales_setup.setup_company'))
     # Step 2: Categories
     elif not categories:
         current_step = 2
+        # Redirect to categories setup if viewing the wizard
+        if request.args.get('redirect', 'false') == 'true':
+            return redirect(url_for('sales_setup.setup_categories'))
     # Step 3: Products
     elif not products_count:
         current_step = 3
+        # Redirect to products setup if viewing the wizard
+        if request.args.get('redirect', 'false') == 'true':
+            return redirect(url_for('sales_setup.setup_products'))
     # Step 4: Stores
     elif not stores:
         current_step = 4
+        # Redirect to stores setup if viewing the wizard
+        if request.args.get('redirect', 'false') == 'true':
+            return redirect(url_for('sales_setup.setup_stores'))
     # Step 5: Complete!
     else:
         current_step = 5
         # Mark setup as complete in session
         session['setup_complete'] = True
+        
+        # Redirect to completion page if viewing the wizard
+        if request.args.get('redirect', 'false') == 'true':
+            return redirect(url_for('sales_setup.setup_complete'))
+    
+    # Check if the user is asking to go to the current step
+    if request.args.get('goto_current', 'false') == 'true':
+        if current_step == 1:
+            return redirect(url_for('sales_setup.setup_company'))
+        elif current_step == 2:
+            return redirect(url_for('sales_setup.setup_categories'))
+        elif current_step == 3:
+            return redirect(url_for('sales_setup.setup_products'))
+        elif current_step == 4:
+            return redirect(url_for('sales_setup.setup_stores'))
+        elif current_step == 5:
+            return redirect(url_for('sales_setup.setup_complete'))
     
     # Count completed categories with products
     categories_with_products = 0
@@ -64,29 +94,58 @@ def setup_wizard():
         'sales/setup_wizard.html',
         current_step=current_step,
         company=company,
-        categories_count=len(categories),
+        categories_count=len(categories) if categories else 0,
         products_count=products_count,
-        stores_count=len(stores),
+        stores_count=len(stores) if stores else 0,
         categories_with_products=categories_with_products,
         categories_without_products=categories_without_products
     )
 
 @sales_setup_bp.route('/company', methods=['GET', 'POST'])
 @login_required
-@company_required
 def setup_company():
     """Route for setting up company details"""
-    company_id = current_user.company_id
-    company = Company.query.get(company_id)
+    # Check if user already has a company
+    if current_user.company_id:
+        company = Company.query.get(current_user.company_id)
+    else:
+        company = None
     
-    form = CompanySetupForm(obj=company)
+    form = CompanySetupForm()
+    
+    # Pre-populate the form with existing company data if it exists
+    if request.method == 'GET' and company:
+        form.company_name.data = company.company_name
+        form.company_email.data = company.company_email
+        form.phone.data = company.phone
     
     if form.validate_on_submit():
-        # Update company details
-        form.populate_obj(company)
+        if company:
+            # Update existing company
+            company.company_name = form.company_name.data
+            company.company_email = form.company_email.data
+            company.phone = form.phone.data
+        else:
+            # Create new company
+            company = Company(
+                company_name=form.company_name.data,
+                company_email=form.company_email.data,
+                phone=form.phone.data
+            )
+            db.session.add(company)
+            db.session.flush()  # Get the company ID
+            
+            # Associate the company with the user
+            current_user.company_id = company.id
+        
         db.session.commit()
         flash('Company details have been successfully saved.', 'success')
-        return redirect(url_for('sales_setup.setup_wizard'))
+        
+        # Mark the setup step as completed
+        session['company_setup_completed'] = True
+        
+        # Redirect to the next setup step
+        return redirect(url_for('sales_setup.setup_categories'))
     
     return render_template('sales/setup_company.html', form=form)
 
@@ -97,14 +156,8 @@ def setup_stores():
     """Route for setting up stores"""
     company_id = current_user.company_id
     
-    # Debug information
-    print(f"Method: {request.method}")
-    if request.method == 'POST':
-        print(f"Form Data: {request.form}")
-    
     # Check if stores already exist
     existing_stores = Store.query.filter_by(company_id=company_id).all()
-    print(f"Existing stores: {len(existing_stores)}")
     
     form = StoresSetupForm()
     
@@ -116,77 +169,46 @@ def setup_stores():
                 store_form = {'name': store.name}
                 form.stores.append_entry(store_form)
     
-    # Handle form submission
-    if request.method == 'POST':
-        # Check if the "Update Fields" button was pressed (before form validation)
-        if 'update_form' in request.form:
-            print("Update Fields button pressed")
+    # Handle the update_form button click
+    if 'update_form' in request.form:
+        num_stores = int(request.form.get('num_stores', 0))
+        form.num_stores.data = num_stores
+        
+        # Adjust the form fields
+        while len(form.stores) < num_stores:
+            form.stores.append_entry({})
+        while len(form.stores) > num_stores:
+            form.stores.pop_entry()
             
-            # Basic validation for num_stores
-            try:
-                num_stores = int(request.form.get('num_stores', 0))
-                if num_stores < 1:
-                    flash('You must have at least one store', 'error')
-                    return render_template('sales/setup_stores.html', form=form)
-                    
-                form.num_stores.data = num_stores
-                
-                # Clear existing entries and add new ones
-                form.stores.entries = []
-                for i in range(num_stores):
-                    form.stores.append_entry({})
-                    
-                return render_template('sales/setup_stores.html', form=form)
-            except ValueError:
-                flash('Please enter a valid number of stores', 'error')
-                return render_template('sales/setup_stores.html', form=form)
+        return render_template('sales/setup_stores.html', form=form)
     
-        # For the Save button, we validate the whole form
-        if form.validate_on_submit():
-            print(f"Form validated. Number of stores in form: {form.num_stores.data}")
-            print(f"Number of store subforms: {len(form.stores)}")
-            
-            # Validate that all store names are provided
-            all_valid = True
-            for i, store_form in enumerate(form.stores):
-                print(f"Store {i+1} name: '{store_form.name.data}'")
-                if not store_form.name.data or not store_form.name.data.strip():
-                    flash(f'Store {i+1} name cannot be empty', 'error')
-                    all_valid = False
-            
-            if not all_valid:
-                return render_template('sales/setup_stores.html', form=form)
-                    
-            # Delete existing stores
-            if existing_stores:
-                print(f"Deleting {len(existing_stores)} existing stores")
-                for store in existing_stores:
-                    db.session.delete(store)
-                
-            # Create new stores
-            print("Creating new stores")
-            for store_form in form.stores:
+    if form.validate_on_submit() and 'submit' in request.form:
+        # Delete existing stores
+        if existing_stores:
+            for store in existing_stores:
+                db.session.delete(store)
+        
+        # Create new stores
+        for i in range(form.num_stores.data):
+            store_name = request.form.get(f'stores-{i}-name')
+            if store_name:
                 new_store = Store(
-                    name=store_form.name.data.strip(),
+                    name=store_name,
                     company_id=company_id
                 )
                 db.session.add(new_store)
-            
-            try:
-                db.session.commit()
-                print("Successfully committed store changes to database")
-                flash('Stores have been successfully saved.', 'success')
-                
-                # Redirect to the setup wizard to continue the process
-                return redirect(url_for('sales_setup.setup_wizard'))
-            except Exception as e:
-                db.session.rollback()
-                print(f"Error saving stores: {str(e)}")
-                flash(f'Error saving stores: {str(e)}', 'error')
-                return render_template('sales/setup_stores.html', form=form)
-        else:
-            print(f"Form validation failed. Errors: {form.errors}")
-            return render_template('sales/setup_stores.html', form=form)
+        
+        db.session.commit()
+        flash('Stores have been successfully saved.', 'success')
+        
+        # Mark the setup step as completed
+        session['stores_setup_completed'] = True
+        
+        # All required setup steps are now completed
+        session['setup_complete'] = True
+        
+        # Redirect to setup complete page
+        return redirect(url_for('sales_setup.setup_complete'))
     
     return render_template('sales/setup_stores.html', form=form)
 
@@ -327,28 +349,43 @@ def setup_category_products(category_id):
                 product_form = {'name': product.name}
                 form.products.append_entry(product_form)
     
-    if form.validate_on_submit():
-        # If number of products has changed, adjust the form
-        if len(form.products) != form.num_products.data:
-            while len(form.products) < form.num_products.data:
+    # Handle the Update Form button click
+    if 'Update Form' in request.form.values():
+        try:
+            num_products = int(request.form.get('num_products', 0))
+            if num_products < 1:
+                flash('You must have at least one product', 'error')
+                return render_template('sales/setup_products.html', form=form, category=category)
+                
+            form.num_products.data = num_products
+            
+            # Clear existing entries and add new ones
+            form.products.entries = []
+            for i in range(num_products):
                 form.products.append_entry({})
-            while len(form.products) > form.num_products.data:
-                form.products.pop_entry()
+                
             return render_template('sales/setup_products.html', form=form, category=category)
-        
+        except ValueError:
+            flash('Please enter a valid number of products', 'error')
+            return render_template('sales/setup_products.html', form=form, category=category)
+    
+    if form.validate_on_submit() and 'submit' in request.form:
         # Delete existing products
         if existing_products:
             for product in existing_products:
                 db.session.delete(product)
-            
-        # Create new products
-        for product_form in form.products:
-            new_product = Product(
-                name=product_form.name.data,
-                category_id=category_id,
-                company_id=company_id
-            )
-            db.session.add(new_product)
+        
+        # Create new products from form data
+        for i in range(form.num_products.data):
+            product_name = request.form.get(f'products-{i}-name')
+            if product_name and product_name.strip():
+                new_product = Product(
+                    name=product_name.strip(),
+                    category_id=category_id,
+                    company_id=company_id,
+                    additional_fields='{}'  # Empty JSON object as string
+                )
+                db.session.add(new_product)
         
         db.session.commit()
         flash(f'Products for {category.name} have been successfully saved.', 'success')
@@ -364,7 +401,10 @@ def setup_category_products(category_id):
             return redirect(url_for('sales_setup.setup_products'))
         else:
             flash('All categories now have products! Your sales database is ready to use.', 'success')
-            return redirect(url_for('sales_setup.setup_wizard'))
+            # Mark the products setup as completed
+            session['products_setup_completed'] = True
+            # Redirect to the next step - stores
+            return redirect(url_for('sales_setup.setup_stores'))
     
     return render_template('sales/setup_products.html', form=form, category=category)
 
@@ -400,11 +440,81 @@ def feature_values_api():
     result = [{'value': f.value, 'usage_count': f.usage_count} for f in features]
     return jsonify(result)
 
-@sales_setup_bp.route('/complete', methods=['GET'])
+@sales_setup_bp.route('/mods', methods=['GET', 'POST'])
+@login_required
+@company_required
+def setup_mods():
+    """Route for setting up optional modifications/features"""
+    # This could be expanded to include custom fields or options
+    
+    if request.method == 'POST':
+        # Process and save any mods
+        
+        # Mark the setup step as completed
+        session['mods_setup_completed'] = True
+        
+        # Redirect to the next step
+        return redirect(url_for('sales_setup.setup_payment'))
+    
+    # If skipping this step
+    if request.args.get('skip'):
+        session['mods_skipped'] = True
+        return redirect(url_for('sales_setup.setup_payment'))
+    
+    return render_template('sales/setup_mods.html')
+
+@sales_setup_bp.route('/payment', methods=['GET', 'POST'])
+@login_required
+@company_required
+def setup_payment():
+    """Route for setting up payment options"""
+    # This would be for integrating payment processing
+    
+    if request.method == 'POST':
+        # Process and save payment info
+        
+        # Mark the setup step as completed
+        session['payment_setup_completed'] = True
+        
+        # Redirect to completion
+        return redirect(url_for('sales_setup.setup_complete'))
+    
+    # If skipping this step
+    if request.args.get('skip'):
+        session['payment_skipped'] = True
+        return redirect(url_for('sales_setup.setup_complete'))
+    
+    return render_template('sales/setup_payment.html')
+
+@sales_setup_bp.route('/complete')
 @login_required
 @company_required
 def setup_complete():
-    """Mark setup as complete and redirect to dashboard"""
-    session['setup_complete'] = True
-    flash('Congratulations! Your sales database setup is complete.', 'success')
-    return redirect(url_for('sales.index')) 
+    """Route for setup completion"""
+    company_id = current_user.company_id
+    
+    # Check if all required steps are completed
+    company = Company.query.get(current_user.company_id)
+    stores = Store.query.filter_by(company_id=company_id).all()
+    categories = ProductCategory.query.filter_by(company_id=company_id).all()
+    products_count = Product.query.filter_by(company_id=company_id).count()
+    
+    # If any required steps are incomplete, redirect to the wizard to continue setup
+    if not company or not company.company_name or not categories or not products_count or not stores:
+        flash('Please complete all setup steps before proceeding.', 'warning')
+        return redirect(url_for('sales_setup.setup_wizard'))
+    
+    # Mark setup as fully completed
+    session['setup_completed'] = True
+    
+    # Get summary information for the completion page
+    company_name = company.company_name if company else "Your Company"
+    categories_count = len(categories)
+    stores_count = len(stores)
+    
+    flash('Setup complete! You can now start using your sales database.', 'success')
+    return render_template('sales/setup_complete.html', 
+                          company_name=company_name,
+                          categories_count=categories_count,
+                          products_count=products_count,
+                          stores_count=stores_count)

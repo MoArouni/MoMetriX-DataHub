@@ -1,32 +1,20 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FieldList, FormField, SubmitField, TextAreaField
+from wtforms import StringField, IntegerField, FieldList, FormField, SubmitField, TextAreaField, EmailField, TelField
 from wtforms.validators import DataRequired, NumberRange, Length, Optional, Email
 
 class CompanySetupForm(FlaskForm):
-    """Form for setting up company details"""
-    name = StringField('Company Name', validators=[
+    """Form for setting up company details in the sales setup wizard"""
+    company_name = StringField('Company Name', validators=[
         DataRequired(),
-        Length(min=1, max=100, message="Company name must be between 1 and 100 characters")
+        Length(min=2, max=100, message="Company name must be between 2 and 100 characters")
     ])
-    industry = StringField('Industry', validators=[
-        Optional(),
-        Length(max=50, message="Industry must be less than 50 characters")
+    company_email = EmailField('Company Email', validators=[
+        DataRequired(),
+        Email(),
+        Length(max=100, message="Email must be less than 100 characters")
     ])
-    description = TextAreaField('Description', validators=[
-        Optional(),
-        Length(max=500, message="Description must be less than 500 characters")
-    ])
-    address = TextAreaField('Address', validators=[
-        Optional(),
-        Length(max=200, message="Address must be less than 200 characters")
-    ])
-    phone = StringField('Phone', validators=[
-        Optional(),
-        Length(max=20, message="Phone must be less than 20 characters")
-    ])
-    website = StringField('Website', validators=[
-        Optional(),
-        Length(max=100, message="Website must be less than 100 characters")
+    phone = TelField('Phone Number', validators=[
+        Length(max=20, message="Phone number must be less than 20 characters")
     ])
     submit = SubmitField('Save Company Details')
 

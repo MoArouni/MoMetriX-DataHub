@@ -3,12 +3,26 @@
 {% block title %}Company Setup - Sales Database{% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="auth-box" style="max-width: 800px;">
-        <div class="auth-header">
-            <h2>Company Details</h2>
-            <p>Enter information about your business to personalize your experience.</p>
+<div class="setup-container">
+    <div class="setup-header">
+        <h2>Company Details</h2>
+        <p>Step 1 of 5: Enter information about your business</p>
+        <div class="progress-bar">
+            <div class="progress" style="width: 20%"></div>
         </div>
+        <p class="progress-text">Setup Progress: 1/5</p>
+    </div>
+    
+    <div class="setup-box">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         
         <form method="POST" action="{{ url_for('sales_setup.setup_company') }}">
             {{ form.hidden_tag() }}
@@ -97,7 +111,7 @@
 </div>
 
 <style>
-    .auth-container {
+    .setup-container {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -105,26 +119,47 @@
         margin: 2rem auto;
     }
     
-    .auth-box {
+    .setup-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .setup-header h2 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .setup-header p {
+        color: #999;
+    }
+    
+    .progress-bar {
+        background-color: #ddd;
+        border-radius: 10px;
+        height: 20px;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .progress {
+        background-color: var(--primary-color);
+        border-radius: 10px;
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+        color: #999;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    
+    .setup-box {
         background-color: var(--card-bg);
         border-radius: 8px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         padding: 2rem;
         width: 100%;
-    }
-    
-    .auth-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    
-    .auth-header h2 {
-        color: var(--primary-color);
-        margin-bottom: 0.5rem;
-    }
-    
-    .auth-header p {
-        color: #999;
     }
     
     .form-group {
@@ -199,6 +234,31 @@
             flex-direction: column;
             gap: 0;
         }
+    }
+    
+    .alert {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    
+    .alert-success {
+        background-color: rgba(46, 204, 113, 0.2);
+        border: 1px solid rgba(46, 204, 113, 0.4);
+        color: #2ecc71;
+    }
+    
+    .alert-warning {
+        background-color: rgba(241, 196, 15, 0.2);
+        border: 1px solid rgba(241, 196, 15, 0.4);
+        color: #f1c40f;
+    }
+    
+    .alert-error, .alert-danger {
+        background-color: rgba(231, 76, 60, 0.2);
+        border: 1px solid rgba(231, 76, 60, 0.4);
+        color: #e74c3c;
     }
 </style>
 {% endblock %} 
