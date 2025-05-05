@@ -25,6 +25,9 @@ def index():
     stores = Store.query.filter_by(company_id=company_id).all()
     categories = ProductCategory.query.filter_by(company_id=company_id).all()
     
+    # Get all products for filter
+    products = Product.query.filter_by(company_id=company_id).all()
+    
     # Check if session has a forced setup complete flag
     if session.get('setup_complete', False):
         setup_complete = True
@@ -76,7 +79,9 @@ def index():
         daily_sales=daily_sales,
         monthly_sales=monthly_sales,
         store_count=len(stores),
-        category_count=len(categories)
+        category_count=len(categories),
+        stores=stores,
+        products=products
     )
 
 @sales_bp.route('/new', methods=['GET', 'POST'])
@@ -191,6 +196,128 @@ def view_sale(sale_id):
     features = ProductFeature.query.filter_by(sale_id=sale_id).all()
     
     return render_template('sales/view_sale.html', sale=sale, features=features)
+
+@sales_bp.route('/edit/<int:sale_id>', methods=['GET', 'POST'])
+@login_required
+@company_required
+def edit_sale(sale_id):
+    """Edit an existing sale"""
+    company_id = current_user.company_id
+    
+    # Get the sale record and ensure it belongs to the user's company
+    sale = Sale.query.filter_by(id=sale_id, company_id=company_id).first_or_404()
+    
+    # Get stores, categories, and products
+    stores = Store.query.filter_by(company_id=company_id).all()
+    categories = ProductCategory.query.filter_by(company_id=company_id).all()
+    
+    # Initialize the form
+    form = SaleEntryForm(obj=sale)
+    
+    # Get product choices grouped by category
+    product_choices_by_category = {}
+    for category in categories:
+        category_products = Product.query.filter_by(company_id=company_id, category_id=category.id).all()
+        product_choices_by_category[category.id] = {
+            'name': category.name,
+            'products': [(product.id, product.name) for product in category_products]
+        }
+    
+    # Set the product's category for the form
+    product = Product.query.get(sale.product_id)
+    if product:
+        category_id = product.category_id
+    else:
+        category_id = None
+    
+    # Set choices for the store dropdown
+    form.store_id.choices = [(store.id, store.name) for store in stores]
+    
+    # Set the total price initially (cash + card)
+    if not form.total_price.data:
+        form.total_price.data = sale.cash_amount + sale.card_amount
+    
+    # Get existing features
+    existing_features = ProductFeature.query.filter_by(sale_id=sale_id).all()
+    
+    if form.validate_on_submit():
+        # Update the sale
+        sale.store_id = form.store_id.data
+        sale.product_id = form.product_id.data
+        sale.quantity = form.quantity.data
+        sale.cash_amount = form.cash_amount.data
+        sale.card_amount = form.card_amount.data
+        sale.notes = form.notes.data if form.notes.data else None
+        
+        # Delete existing features (they'll be recreated)
+        ProductFeature.query.filter_by(sale_id=sale_id).delete()
+        
+        # Process dynamic product features
+        feature_names = request.form.getlist('feature_name[]')
+        feature_values = request.form.getlist('feature_value[]')
+        
+        for i in range(len(feature_names)):
+            if feature_names[i] and feature_values[i]:
+                # Add to product features
+                feature = ProductFeature(
+                    sale_id=sale.id,
+                    company_id=company_id,
+                    name=feature_names[i],
+                    value=feature_values[i]
+                )
+                db.session.add(feature)
+                
+                # Update feature registry
+                registry_entry = FeatureRegistry.query.filter_by(
+                    company_id=company_id,
+                    name=feature_names[i],
+                    value=feature_values[i]
+                ).first()
+                
+                if registry_entry:
+                    registry_entry.usage_count += 1
+                    registry_entry.updated_at = datetime.utcnow()
+                else:
+                    registry_entry = FeatureRegistry(
+                        company_id=company_id,
+                        name=feature_names[i],
+                        value=feature_values[i]
+                    )
+                    db.session.add(registry_entry)
+        
+        db.session.commit()
+        flash('Sale updated successfully!', 'success')
+        return redirect(url_for('sales.view_sale', sale_id=sale.id))
+    
+    return render_template(
+        'sales/edit_sale.html',
+        form=form,
+        sale=sale,
+        stores=stores,
+        product_choices=product_choices_by_category,
+        category_id=category_id,
+        features=existing_features
+    )
+
+@sales_bp.route('/delete/<int:sale_id>', methods=['POST'])
+@login_required
+@company_required
+def delete_sale(sale_id):
+    """Delete a sale and its associated features"""
+    company_id = current_user.company_id
+    
+    # Get the sale and check if it belongs to the user's company
+    sale = Sale.query.filter_by(id=sale_id, company_id=company_id).first_or_404()
+    
+    # Delete associated features
+    ProductFeature.query.filter_by(sale_id=sale_id).delete()
+    
+    # Delete the sale
+    db.session.delete(sale)
+    db.session.commit()
+    
+    flash('Sale deleted successfully!', 'success')
+    return redirect(url_for('sales.index'))
 
 @sales_bp.route('/locations')
 @login_required

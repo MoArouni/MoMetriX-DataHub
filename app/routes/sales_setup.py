@@ -11,6 +11,7 @@ from app.forms.sales_setup_forms import (
 )
 from app.forms.company import CompanyForm
 from app.utils.decorators import company_required, subscriber_required
+import json
 
 # Create blueprint
 sales_setup_bp = Blueprint('sales_setup', __name__, url_prefix='/sales/setup')
@@ -383,7 +384,7 @@ def setup_category_products(category_id):
                     name=product_name.strip(),
                     category_id=category_id,
                     company_id=company_id,
-                    additional_fields='{}'  # Empty JSON object as string
+                    additional_fields=json.dumps({})  # Properly serialized empty JSON object
                 )
                 db.session.add(new_product)
         

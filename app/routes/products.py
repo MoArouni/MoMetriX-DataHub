@@ -306,8 +306,7 @@ def view_product(product_id):
     # Get custom fields if they exist
     custom_fields = None
     if product.additional_fields:
-        import json
-        custom_fields = json.loads(product.additional_fields)
+        custom_fields = product.additional_fields
         
         # Get field definitions for better display
         if custom_fields:
