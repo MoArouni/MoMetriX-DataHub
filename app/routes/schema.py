@@ -219,7 +219,7 @@ def data_entry(category_id):
                 name=form.name.data,
                 category_id=form.category_id.data,
                 base_price=form.base_price.data,
-                additional_fields=dynamic_fields
+                additional_fields=dynamic_fields  # The model will handle serialization now
             )
             
             db.session.add(product)
