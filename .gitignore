@@ -11,3 +11,9 @@ ENV/
 instance/
 .webassets-cache
 *.sqlite
+
+# Temporary testing files 
+create_admin.py 
+dev.sqlite
+create_tables.py
+reset_database.py
