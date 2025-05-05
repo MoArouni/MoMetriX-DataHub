@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FieldList, FormField, SubmitField, TextAreaField, EmailField, TelField
-from wtforms.validators import DataRequired, NumberRange, Length, Optional, Email
+from wtforms import StringField, IntegerField, FieldList, FormField, SubmitField, TextAreaField, EmailField, TelField, DecimalField
+from wtforms.validators import DataRequired, NumberRange, Length, Optional, Email, ValidationError
 
 class CompanySetupForm(FlaskForm):
     """Form for setting up company details in the sales setup wizard"""
@@ -87,9 +87,22 @@ class SaleEntryForm(FlaskForm):
         DataRequired(),
         NumberRange(min=1, message="Quantity must be at least 1")
     ])
-    cash_amount = IntegerField('Cash Amount (£)', default=0)
-    card_amount = IntegerField('Card Amount (£)', default=0)
+    total_price = DecimalField('Total Price (£)', places=2, validators=[
+        DataRequired(),
+        NumberRange(min=0.01, message="Price must be greater than 0")
+    ])
+    cash_amount = DecimalField('Cash Amount (£)', places=2, default=0)
+    card_amount = DecimalField('Card Amount (£)', places=2, default=0)
     notes = StringField('Notes', validators=[Length(max=500)])
     
     # Dynamic feature fields will be added programmatically
-    submit = SubmitField('Record Sale') 
+    submit = SubmitField('Record Sale')
+    
+    def validate_card_amount(self, field):
+        """Validate that cash + card equals total price"""
+        if hasattr(self, 'cash_amount') and hasattr(self, 'total_price'):
+            total_payment = (self.cash_amount.data or 0) + (field.data or 0)
+            total_price = self.total_price.data or 0
+            
+            if abs(total_payment - total_price) > 0.01:  # Allow for small rounding errors
+                raise ValidationError(f"Total payment (£{total_payment:.2f}) must equal the total price (£{total_price:.2f})") 
