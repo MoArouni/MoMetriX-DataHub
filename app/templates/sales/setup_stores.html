@@ -32,7 +32,7 @@
                 {% for store_form in form.stores %}
                     <div class="form-group store-entry">
                         <label>Store {{ loop.index }} Name</label>
-                        {{ store_form.name(class="form-control", placeholder="Enter store name") }}
+                        <input class="form-control" id="{{ store_form.name.id }}" name="{{ store_form.name.name }}" placeholder="Enter store name" required type="text" value="{{ store_form.name.data or '' }}">
                         {% if store_form.name.errors %}
                             <div class="error-message">
                                 {% for error in store_form.name.errors %}

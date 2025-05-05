@@ -8,6 +8,10 @@ class StoreForm(FlaskForm):
         DataRequired(),
         Length(min=1, max=100, message="Store name must be between 1 and 100 characters")
     ])
+    
+    # Disable CSRF for subforms
+    class Meta:
+        csrf = False
 
 class StoresSetupForm(FlaskForm):
     """Form for setting up stores"""
@@ -24,6 +28,10 @@ class CategoryForm(FlaskForm):
         DataRequired(),
         Length(min=1, max=100, message="Category name must be between 1 and 100 characters")
     ])
+    
+    # Disable CSRF for subforms
+    class Meta:
+        csrf = False
 
 class CategoriesSetupForm(FlaskForm):
     """Form for setting up product categories"""
@@ -40,6 +48,10 @@ class ProductForm(FlaskForm):
         DataRequired(),
         Length(min=1, max=100, message="Product name must be between 1 and 100 characters")
     ])
+    
+    # Disable CSRF for subforms
+    class Meta:
+        csrf = False
 
 class ProductsSetupForm(FlaskForm):
     """Form for setting up products within a category"""
