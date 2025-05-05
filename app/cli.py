@@ -2,7 +2,7 @@ import click
 from flask.cli import with_appcontext
 from app import db
 from app.utils.db_init import initialize_database
-from app.scripts.update_user import update_test_user
+
 
 def register_commands(app):
     """Register Flask CLI commands"""
@@ -71,7 +71,3 @@ def register_commands(app):
         
         print(f"Admin user '{username}' created successfully!")
         
-    @app.cli.command('update-test-user')
-    def update_test_user_command():
-        """Update the test user with email test@gmail.com"""
-        update_test_user() 
