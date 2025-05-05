@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Message Sent - Thank You{% endblock %}
+
+{% block content %}
+<div class="thank-you-container">
+    <div class="thank-you-box">
+        <div class="thank-you-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h2>Thank You!</h2>
+        <p>Your message has been sent successfully. We'll get back to you as soon as possible.</p>
+        <div class="button-container">
+            <a href="{{ url_for('contact.index') }}" class="btn btn-secondary">Back to Contact</a>
+            <a href="{{ url_for('dashboard.dashboard') if current_user.is_authenticated else url_for('main.index') }}" class="btn btn-primary">Go to Home</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .thank-you-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 5rem auto;
+        max-width: 600px;
+    }
+    
+    .thank-you-box {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        padding: 3rem;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .thank-you-icon {
+        color: var(--primary-color);
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .thank-you-box h2 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .thank-you-box p {
+        color: #999;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+    
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+    
+    .btn-secondary {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% endblock %} 
