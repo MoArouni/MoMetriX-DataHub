@@ -10,6 +10,16 @@
             <p>Enter the number of physical or online stores your business has. You can add more later if needed.</p>
         </div>
         
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
         <form method="POST" action="{{ url_for('sales_setup.setup_stores') }}">
             {{ form.hidden_tag() }}
             
@@ -41,8 +51,8 @@
                 
                 {% for store_form in form.stores %}
                     <div class="form-group store-entry">
-                        <label>Store {{ loop.index }} Name</label>
-                        <input class="form-control" id="{{ store_form.name.id }}" name="{{ store_form.name.name }}" placeholder="Enter store name" required type="text" value="{{ store_form.name.data or '' }}">
+                        {{ store_form.name.label }}
+                        <input type="text" name="stores-{{ loop.index0 }}-name" class="form-control" value="{{ store_form.data.name }}" placeholder="Enter store name">
                         {% if store_form.name.errors %}
                             <div class="error-message">
                                 {% for error in store_form.name.errors %}
@@ -207,6 +217,31 @@
         .update-btn {
             margin-left: 0;
         }
+    }
+    
+    .alert {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    
+    .alert-success {
+        background-color: rgba(46, 204, 113, 0.2);
+        border: 1px solid rgba(46, 204, 113, 0.4);
+        color: #2ecc71;
+    }
+    
+    .alert-warning {
+        background-color: rgba(241, 196, 15, 0.2);
+        border: 1px solid rgba(241, 196, 15, 0.4);
+        color: #f1c40f;
+    }
+    
+    .alert-error, .alert-danger {
+        background-color: rgba(231, 76, 60, 0.2);
+        border: 1px solid rgba(231, 76, 60, 0.4);
+        color: #e74c3c;
     }
 </style>
 
