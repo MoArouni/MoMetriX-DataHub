@@ -38,7 +38,7 @@
                         {% for product in products %}
                         <tr>
                             <td>{{ product.name }}</td>
-                            <td>${{ product.base_price }}</td>
+                            <td>£{{ product.base_price }}</td>
                             <td>
                                 <span class="status-badge {{ 'active' if product.active else 'inactive' }}">
                                     {{ "Active" if product.active else "Inactive" }}
