@@ -133,7 +133,7 @@
     
     .pricing-btn {
         display: inline-block;
-        padding: 1rem 2rem;
+        padding: 1rem;
         background-color: var(--primary-color);
         color: #000;
         font-weight: 600;
@@ -142,7 +142,7 @@
         transition: all 0.3s ease;
         border: none;
         cursor: pointer;
-        width: 100%;
+        width: 80%;
     }
     
     .pricing-btn:hover {
@@ -271,7 +271,7 @@
         </div>
         
         <div class="pricing-action">
-            <a href="{{ url_for('auth.signup') }}" class="pricing-btn {% if not plan.recommended %}secondary{% endif %}">Get Started</a>
+            <a href="{{ url_for('auth.login') }}" class="pricing-btn {% if not plan.recommended %}secondary{% endif %}">Get Started</a>
         </div>
     </div>
     {% endfor %}
