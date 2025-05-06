@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+
+{% block title %}Data Analysis Hub - Documentation{% endblock %}
+
+{% block extra_css %}
+<style>
+    .docs-container {
+        display: flex;
+        max-width: 1200px;
+        margin: 3rem auto;
+        min-height: calc(100vh - 250px);
+    }
+    
+    /* Sidebar */
+    .docs-sidebar {
+        width: 280px;
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+        margin-right: 2rem;
+        position: sticky;
+        top: 100px;
+        align-self: flex-start;
+        max-height: calc(100vh - 120px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .docs-sidebar-header {
+        padding: 1.5rem;
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .docs-sidebar-title {
+        font-size: 1.3rem;
+        color: var(--primary-color);
+        margin: 0;
+    }
+    
+    .docs-nav {
+        overflow-y: auto;
+        max-height: calc(100vh - 200px);
+        padding: 1rem 0;
+    }
+    
+    .docs-nav-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .docs-nav-section-title {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        color: #999;
+        padding: 0.5rem 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+    
+    .docs-nav-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .docs-nav-item {
+        display: block;
+    }
+    
+    .docs-nav-link {
+        display: block;
+        padding: 0.7rem 1.5rem;
+        color: #cccccc;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent;
+    }
+    
+    .docs-nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+    }
+    
+    .docs-nav-link.active {
+        color: var(--primary-color);
+        border-left-color: var(--primary-color);
+        background-color: rgba(var(--primary-color-rgb), 0.05);
+    }
+    
+    /* Content */
+    .docs-content {
+        flex-grow: 1;
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .docs-section {
+        margin-bottom: 4rem;
+        padding-top: 2rem;
+    }
+    
+    .docs-section:first-child {
+        padding-top: 0;
+    }
+    
+    .docs-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .docs-title {
+        font-size: 2.2rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .docs-section-title {
+        font-size: 1.8rem;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+        scroll-margin-top: 100px;
+    }
+    
+    .docs-subsection-title {
+        font-size: 1.4rem;
+        color: #ffffff;
+        margin: 2rem 0 1rem;
+        scroll-margin-top: 100px;
+    }
+    
+    .docs-text {
+        color: #cccccc;
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+    }
+    
+    .docs-code {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 6px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        overflow-x: auto;
+    }
+    
+    .docs-code pre {
+        color: #f8f8f8;
+        margin: 0;
+        font-family: monospace;
+        line-height: 1.5;
+    }
+    
+    .docs-list {
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+    }
+    
+    .docs-list li {
+        color: #cccccc;
+        margin-bottom: 0.5rem;
+        line-height: 1.7;
+    }
+    
+    .docs-image {
+        max-width: 100%;
+        height: auto;
+        margin: 2rem 0;
+        border-radius: 6px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .docs-tip {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        border-left: 4px solid var(--primary-color);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 6px;
+    }
+    
+    .docs-tip-title {
+        font-size: 1.1rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .docs-tip-text {
+        color: #cccccc;
+        margin: 0;
+        line-height: 1.7;
+    }
+    
+    .docs-warning {
+        background-color: rgba(255, 87, 51, 0.1);
+        border-left: 4px solid #ff5733;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 6px;
+    }
+    
+    .docs-warning-title {
+        font-size: 1.1rem;
+        color: #ff5733;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .docs-warning-text {
+        color: #cccccc;
+        margin: 0;
+        line-height: 1.7;
+    }
+    
+    .docs-step {
+        display: flex;
+        margin-bottom: 2rem;
+    }
+    
+    .docs-step-number {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--primary-color);
+        flex-shrink: 0;
+        margin-right: 1.5rem;
+    }
+    
+    .docs-step-content {
+        flex-grow: 1;
+    }
+    
+    .docs-step-title {
+        font-size: 1.3rem;
+        color: #ffffff;
+        margin-bottom: 0.5rem;
+    }
+    
+    .docs-step-text {
+        color: #cccccc;
+        line-height: 1.7;
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+        .docs-container {
+            flex-direction: column;
+            padding: 0 1.5rem;
+        }
+        
+        .docs-sidebar {
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 2rem;
+            position: relative;
+            top: 0;
+            max-height: none;
+        }
+        
+        .docs-nav {
+            max-height: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="docs-container">
+    <!-- Sidebar navigation -->
+    <div class="docs-sidebar">
+        <div class="docs-sidebar-header">
+            <h3 class="docs-sidebar-title">Documentation</h3>
+        </div>
+        <nav class="docs-nav">
+            <div class="docs-nav-section">
+                <h4 class="docs-nav-section-title">Getting Started</h4>
+                <ul class="docs-nav-items">
+                    <li class="docs-nav-item"><a href="#overview" class="docs-nav-link active">Platform Overview</a></li>
+                    <li class="docs-nav-item"><a href="#account-setup" class="docs-nav-link">Account Setup</a></li>
+                    <li class="docs-nav-item"><a href="#dashboard" class="docs-nav-link">Dashboard Navigation</a></li>
+                </ul>
+            </div>
+            
+            <div class="docs-nav-section">
+                <h4 class="docs-nav-section-title">Company Management</h4>
+                <ul class="docs-nav-items">
+                    <li class="docs-nav-item"><a href="#create-company" class="docs-nav-link">Creating a Company</a></li>
+                    <li class="docs-nav-item"><a href="#team-management" class="docs-nav-link">Team Management</a></li>
+                    <li class="docs-nav-item"><a href="#company-settings" class="docs-nav-link">Company Settings</a></li>
+                </ul>
+            </div>
+            
+            <div class="docs-nav-section">
+                <h4 class="docs-nav-section-title">Data Configuration</h4>
+                <ul class="docs-nav-items">
+                    <li class="docs-nav-item"><a href="#categories" class="docs-nav-link">Setting Up Categories</a></li>
+                    <li class="docs-nav-item"><a href="#products" class="docs-nav-link">Managing Products</a></li>
+                    <li class="docs-nav-item"><a href="#locations" class="docs-nav-link">Configuring Locations</a></li>
+                </ul>
+            </div>
+            
+            <div class="docs-nav-section">
+                <h4 class="docs-nav-section-title">Data Operations</h4>
+                <ul class="docs-nav-items">
+                    <li class="docs-nav-item"><a href="#sales-entry" class="docs-nav-link">Entering Sales Data</a></li>
+                    <li class="docs-nav-item"><a href="#import-export" class="docs-nav-link">Importing & Exporting Data</a></li>
+                    <li class="docs-nav-item"><a href="#data-validation" class="docs-nav-link">Data Validation</a></li>
+                </ul>
+            </div>
+            
+            <div class="docs-nav-section">
+                <h4 class="docs-nav-section-title">Analytics</h4>
+                <ul class="docs-nav-items">
+                    <li class="docs-nav-item"><a href="#sales-analytics" class="docs-nav-link">Sales Analytics</a></li>
+                    <li class="docs-nav-item"><a href="#reports" class="docs-nav-link">Reports</a></li>
+                    <li class="docs-nav-item"><a href="#insights" class="docs-nav-link">Insights & Recommendations</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    
+    <!-- Content area -->
+    <div class="docs-content">
+        <h1 class="docs-title">Platform Documentation</h1>
+        
+        <!-- Overview Section -->
+        <section class="docs-section" id="overview">
+            <h2 class="docs-section-title">Platform Overview</h2>
+            <p class="docs-text">
+                Welcome to the Data Analysis Hub documentation. Our platform is designed to help businesses of all sizes manage, analyze, and gain insights from their sales and product data. This comprehensive guide will help you navigate and maximize the platform's capabilities.
+            </p>
+            
+            <h3 class="docs-subsection-title">Key Platform Features</h3>
+            <ul class="docs-list">
+                <li><strong>Sales Tracking:</strong> Record and monitor sales data across multiple locations and time periods.</li>
+                <li><strong>Product Management:</strong> Create and organize products into categories for better organization.</li>
+                <li><strong>Advanced Analytics:</strong> Gain insights through visualization tools and analytical reports.</li>
+                <li><strong>Team Collaboration:</strong> Multiple team members can work together with role-based access control.</li>
+                <li><strong>Data Security:</strong> Enterprise-grade security measures to keep your business data safe.</li>
+            </ul>
+            
+            <div class="docs-tip">
+                <h4 class="docs-tip-title">Pro Tip</h4>
+                <p class="docs-tip-text">Take advantage of our structured onboarding process to get the most out of your experience. Following the steps in this guide will help you configure your account optimally for your business needs.</p>
+            </div>
+        </section>
+        
+        <!-- Account Setup Section -->
+        <section class="docs-section" id="account-setup">
+            <h2 class="docs-section-title">Account Setup</h2>
+            <p class="docs-text">
+                Setting up your account properly is the first step to success with our platform. This section guides you through the registration process and initial account configuration.
+            </p>
+            
+            <h3 class="docs-subsection-title">Registration</h3>
+            <div class="docs-step">
+                <div class="docs-step-number">1</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Create an Account</h4>
+                    <p class="docs-step-text">Visit the <a href="{{ url_for('auth.signup') }}">sign-up page</a> and fill out the registration form with your name, email, and password.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">2</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Verify Your Email</h4>
+                    <p class="docs-step-text">Check your inbox for a verification email and click the confirmation link to activate your account.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">3</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Complete Your Profile</h4>
+                    <p class="docs-step-text">After your first login, you'll be prompted to complete your profile with additional details about your role and business.</p>
+                </div>
+            </div>
+            
+            <h3 class="docs-subsection-title">Account Settings</h3>
+            <p class="docs-text">
+                Access your account settings by clicking on your profile picture in the top-right corner and selecting "Settings". Here you can:
+            </p>
+            <ul class="docs-list">
+                <li>Update your personal information</li>
+                <li>Change your password</li>
+                <li>Configure notification preferences</li>
+                <li>Manage subscription details</li>
+                <li>Set up two-factor authentication (recommended)</li>
+            </ul>
+            
+            <div class="docs-warning">
+                <h4 class="docs-warning-title">Important Security Note</h4>
+                <p class="docs-warning-text">We strongly recommend enabling two-factor authentication for added security. This provides an extra layer of protection for your account and business data.</p>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Highlight active navigation item based on scroll position
+        const sections = document.querySelectorAll('.docs-section');
+        const navLinks = document.querySelectorAll('.docs-nav-link');
+        
+        function setActiveNavItem() {
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                const sectionHeight = section.offsetHeight;
+                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', setActiveNavItem);
+        
+        // Smooth scrolling for anchor links
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+                
+                navLinks.forEach(link => link.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %} 
