@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+
+{% block title %}Setup Wizard - Sales Database{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <div class="wizard-header">
+        <h1>Setup Your Sales Database</h1>
+        <p>Complete all steps to set up your sales tracking system</p>
+    </div>
+    
+    <div class="wizard-progress">
+        <div class="progress-step {% if current_step >= 1 %}active{% endif %} {% if current_step > 1 %}completed{% endif %}">
+            <div class="step-number">1</div>
+            <div class="step-label">Company Details</div>
+        </div>
+        <div class="progress-step {% if current_step >= 2 %}active{% endif %} {% if current_step > 2 %}completed{% endif %}">
+            <div class="step-number">2</div>
+            <div class="step-label">Product Categories</div>
+        </div>
+        <div class="progress-step {% if current_step >= 3 %}active{% endif %} {% if current_step > 3 %}completed{% endif %}">
+            <div class="step-number">3</div>
+            <div class="step-label">Add Products</div>
+        </div>
+        <div class="progress-step {% if current_step >= 4 %}active{% endif %} {% if current_step > 4 %}completed{% endif %}">
+            <div class="step-number">4</div>
+            <div class="step-label">Store Locations</div>
+        </div>
+        <div class="progress-step {% if current_step >= 5 %}active{% endif %}">
+            <div class="step-number">5</div>
+            <div class="step-label">Ready!</div>
+        </div>
+    </div>
+    
+    <div class="wizard-card">
+        {% if current_step == 1 %}
+        <div class="wizard-step">
+            <h2>Step 1: Company Details</h2>
+            <p>Enter your company information to get started.</p>
+            
+            <div class="step-status">
+                {% if company and company.name %}
+                <div class="status-item completed">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Company information saved</span>
+                </div>
+                {% else %}
+                <div class="status-item pending">
+                    <i class="fas fa-clock"></i>
+                    <span>Company information needed</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <a href="{{ url_for('sales_setup.setup_company') }}" class="btn btn-primary">
+                {% if company and company.name %}Edit Company Details{% else %}Add Company Details{% endif %}
+            </a>
+        </div>
+        
+        {% elif current_step == 2 %}
+        <div class="wizard-step">
+            <h2>Step 2: Product Categories</h2>
+            <p>Define the categories for your products.</p>
+            
+            <div class="step-status">
+                {% if categories_count > 0 %}
+                <div class="status-item completed">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{{ categories_count }} categories defined</span>
+                </div>
+                {% else %}
+                <div class="status-item pending">
+                    <i class="fas fa-clock"></i>
+                    <span>No categories defined yet</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <a href="{{ url_for('sales_setup.setup_categories') }}" class="btn btn-primary">
+                {% if categories_count > 0 %}Edit Categories{% else %}Add Categories{% endif %}
+            </a>
+        </div>
+        
+        {% elif current_step == 3 %}
+        <div class="wizard-step">
+            <h2>Step 3: Add Products</h2>
+            <p>Add products to your categories.</p>
+            
+            <div class="step-status">
+                {% if products_count > 0 %}
+                <div class="status-item completed">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{{ products_count }} products added</span>
+                </div>
+                {% endif %}
+                
+                {% if categories_with_products < categories_count %}
+                <div class="status-item pending">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ categories_count - categories_with_products }} categories still need products</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if categories_without_products %}
+            <div class="categories-list">
+                <h4>Categories needing products:</h4>
+                <ul>
+                    {% for category in categories_without_products %}
+                    <li>
+                        <a href="{{ url_for('sales_setup.setup_category_products', category_id=category.id) }}">
+                            {{ category.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <a href="{{ url_for('sales_setup.setup_products') }}" class="btn btn-primary">
+                {% if products_count > 0 %}Manage Products{% else %}Add Products{% endif %}
+            </a>
+        </div>
+        
+        {% elif current_step == 4 %}
+        <div class="wizard-step">
+            <h2>Step 4: Store Locations</h2>
+            <p>Add your physical or online store locations.</p>
+            
+            <div class="step-status">
+                {% if stores_count > 0 %}
+                <div class="status-item completed">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{{ stores_count }} store locations added</span>
+                </div>
+                {% else %}
+                <div class="status-item pending">
+                    <i class="fas fa-clock"></i>
+                    <span>No store locations defined yet</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <a href="{{ url_for('sales_setup.setup_stores') }}" class="btn btn-primary">
+                {% if stores_count > 0 %}Edit Stores{% else %}Add Stores{% endif %}
+            </a>
+        </div>
+        
+        {% elif current_step == 5 %}
+        <div class="wizard-step">
+            <h2>Setup Complete!</h2>
+            <p>Congratulations! Your sales database is now set up.</p>
+            
+            <div class="step-status">
+                <div class="status-item completed">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Company details added</span>
+                </div>
+                <div class="status-item completed">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{{ categories_count }} categories defined</span>
+                </div>
+                <div class="status-item completed">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{{ products_count }} products added</span>
+                </div>
+                <div class="status-item completed">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{{ stores_count }} store locations added</span>
+                </div>
+            </div>
+            
+            <div class="wizard-actions">
+                <a href="{{ url_for('sales_setup.setup_complete') }}" class="btn btn-success">
+                    Complete Setup
+                </a>
+                <a href="{{ url_for('sales.index') }}" class="btn btn-secondary">
+                    Go to Dashboard
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .wizard-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .wizard-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .wizard-header h1 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .wizard-header p {
+        color: #999;
+    }
+    
+    .wizard-progress {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .wizard-progress::before {
+        content: '';
+        position: absolute;
+        top: 25px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: rgba(255, 255, 255, 0.1);
+        z-index: -1;
+    }
+    
+    .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        width: 100px;
+    }
+    
+    .step-number {
+        width: 50px;
+        height: 50px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+    
+    .step-label {
+        font-size: 0.85rem;
+        color: #999;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .progress-step.active .step-number {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+    
+    .progress-step.active .step-label {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    
+    .progress-step.completed .step-number {
+        background-color: #2ecc71;
+        color: #000;
+    }
+    
+    .progress-step.completed .step-label {
+        color: #2ecc71;
+    }
+    
+    .wizard-card {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        padding: 2rem;
+    }
+    
+    .wizard-step h2 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .wizard-step p {
+        color: #999;
+        margin-bottom: 2rem;
+    }
+    
+    .step-status {
+        margin-bottom: 2rem;
+    }
+    
+    .status-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .status-item i {
+        margin-right: 0.5rem;
+    }
+    
+    .status-item.completed i {
+        color: #2ecc71;
+    }
+    
+    .status-item.pending i {
+        color: #f1c40f;
+    }
+    
+    .categories-list {
+        margin-bottom: 1.5rem;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    
+    .categories-list h4 {
+        color: #fff;
+        margin-bottom: 0.5rem;
+    }
+    
+    .categories-list ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .categories-list li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .categories-list a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    .categories-list a:hover {
+        text-decoration: underline;
+    }
+    
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+    
+    .btn-secondary {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .btn-success {
+        background-color: #2ecc71;
+        color: #000;
+    }
+    
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .wizard-actions {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .wizard-progress {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .wizard-progress::before {
+            display: none;
+        }
+        
+        .progress-step {
+            width: auto;
+            margin: 0 0.5rem;
+        }
+        
+        .wizard-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %} 

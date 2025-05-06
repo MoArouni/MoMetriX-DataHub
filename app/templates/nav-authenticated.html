@@ -1,11 +1,27 @@
 {% if current_user.is_authenticated %}
 <!-- Common horizontal navigation links -->
 <ul class="nav-links">
-    <li><a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a></li>
-    <li><a href="#features">Features</a></li>
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle">Dashboard <i class="fas fa-chevron-down"></i></a>
+        <ul class="dropdown-menu">
+            <li><a href="{{ url_for('dashboard.dashboard') }}"><i class="fas fa-chart-bar"></i> Main Dashboard</a></li>
+            {% if current_user.company_id %}
+            <li><a href="{{ url_for('sales.index') }}"><i class="fas fa-chart-line"></i> Sales Analytics</a></li>
+            <li><a href="{{ url_for('products.index') }}"><i class="fas fa-box"></i> Products</a></li>
+            {% endif %}
+            {% if current_user.is_admin %}
+            <li><a href="{{ url_for('admin.users') }}"><i class="fas fa-users"></i> User Management</a></li>
+            {% endif %}
+            {% if not current_user.company_id and current_user.role_website in ['subscriber', 'admin'] %}
+            <li><a href="{{ url_for('dashboard.create_company') }}"><i class="fas fa-plus-circle"></i> Create Company</a></li>
+            {% endif %}
+        </ul>
+    </li>
+    <li><a href="{{ url_for('features.index') }}">Features</a></li>
     <li><a href="{{ url_for('contact.index') }}">Contact</a></li>
     <li><a href="{{ url_for('pricing.index') }}">Pricing</a></li>
     <li><a href="{{ url_for('blog.index') }}">Blog</a></li>
+    <li><a href="{{ url_for('support.index') }}">Support</a></li>
     <li><a href="{{ url_for('qa.index') }}">Q&A</a></li>
     <li>
         <a href="{{ url_for('auth.logout') }}" class="btn-login">
@@ -30,6 +46,8 @@
         <h4 class="sidebar-title">Menu</h4>
         
         <ul class="sidebar-links">
+            <li><a href="{{ url_for('dashboard.dashboard') }}"><i class="fas fa-chart-bar"></i> Dashboard</a></li>
+            
             {% if current_user.is_admin %}
                 <!-- Admin-specific links -->
                 <li><a href="{{ url_for('settings.index') }}"><i class="fas fa-cog"></i> Platform Settings</a></li>
@@ -42,8 +60,14 @@
                 <li><a href="{{ url_for('schema.index') }}"><i class="fas fa-database"></i> Schema</a></li>
                 <li><a href="{{ url_for('settings.index') }}"><i class="fas fa-user-cog"></i> User Settings</a></li>
                 <li><a href="{{ url_for('qa.ask_question') }}"><i class="fas fa-question-circle"></i> Ask Question</a></li>
+                <li><a href="{{ url_for('blog.index') }}"><i class="fas fa-blog"></i> Blog</a></li>
+                <li><a href="{{ url_for('features.index') }}"><i class="fas fa-star"></i> Features</a></li>
+                <li><a href="{{ url_for('support.index') }}"><i class="fas fa-headset"></i> Support</a></li>
+                <li><a href="{{ url_for('contact.index') }}"><i class="fas fa-envelope"></i> Contact Us</a></li>
+                <li><a href="{{ url_for('pricing.index') }}"><i class="fas fa-tag"></i> Pricing</a></li>
                 
                 {% if current_user.company_id %}
+                <li class="sidebar-divider"></li>
                 <li><a href="{{ url_for('products.index') }}"><i class="fas fa-box"></i> Products</a></li>
                 <li><a href="{{ url_for('sales.index') }}"><i class="fas fa-chart-line"></i> Sales</a></li>
                 <li><a href="{{ url_for('products.categories') }}"><i class="fas fa-tags"></i> Categories</a></li>
@@ -61,10 +85,11 @@
 </div>
 {% else %}
 <ul class="nav-links">
-    <li><a href="#features">Features</a></li>
+    <li><a href="{{ url_for('features.index') }}">Features</a></li>
     <li><a href="{{ url_for('contact.index') }}">Contact</a></li>
     <li><a href="{{ url_for('pricing.index') }}">Pricing</a></li>
     <li><a href="{{ url_for('blog.index') }}">Blog</a></li>
+    <li><a href="{{ url_for('support.index') }}">Support</a></li>
     <li><a href="{{ url_for('qa.index') }}">Q&A</a></li>
     <li>
         <a href="{{ url_for('auth.login') }}" class="btn-login">

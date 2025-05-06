@@ -14,8 +14,13 @@
             {{ form.hidden_tag() }}
             
             <div class="form-group">
-                {{ form.num_categories.label }}
-                {{ form.num_categories(class="form-control", min=1) }}
+                <div class="input-group">
+                    <label for="{{ form.num_categories.id }}">Number of Categories</label>
+                    <div class="input-with-button">
+                        {{ form.num_categories(class="form-control", min=1) }}
+                        <button type="submit" name="update_form" value="1" class="btn btn-secondary update-btn">Update Fields</button>
+                    </div>
+                </div>
                 {% if form.num_categories.errors %}
                     <div class="error-message">
                         {% for error in form.num_categories.errors %}
@@ -23,16 +28,21 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-                <button type="submit" class="btn btn-secondary update-btn">Update Form</button>
+                <div class="help-text">First, enter the number of categories and click "Update Fields" to generate the category name inputs.</div>
             </div>
             
             <hr>
             
             <div id="categories-container">
+                {% if form.categories %}
+                    <h3>Category Names</h3>
+                    <p class="help-text">Enter a name for each product category.</p>
+                {% endif %}
+                
                 {% for category_form in form.categories %}
                     <div class="form-group category-entry">
                         <label>Category {{ loop.index }} Name</label>
-                        {{ category_form.name(class="form-control", placeholder="Enter category name") }}
+                        <input class="form-control" id="{{ category_form.name.id }}" name="{{ category_form.name.name }}" placeholder="Enter category name" required type="text" value="{{ category_form.name.data or '' }}">
                         {% if category_form.name.errors %}
                             <div class="error-message">
                                 {% for error in category_form.name.errors %}
@@ -44,9 +54,12 @@
                 {% endfor %}
             </div>
             
-            <div class="form-group">
-                {{ form.submit(class="btn btn-primary") }}
-            </div>
+            {% if form.categories %}
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <div class="help-text save-help">When you've filled in all category names, click "Save Categories" to save your changes and proceed to adding products.</div>
+                </div>
+            {% endif %}
         </form>
     </div>
 </div>
@@ -141,8 +154,17 @@
     }
     
     .update-btn {
-        margin-top: 0.5rem;
-        display: block;
+        margin-left: 0.5rem;
+    }
+    
+    .input-with-button {
+        display: flex;
+        align-items: center;
+    }
+    
+    .input-with-button .form-control {
+        flex: 1;
+        margin-right: 0.5rem;
     }
     
     hr {
@@ -155,5 +177,49 @@
         margin-top: 0.25rem;
         font-size: 0.85rem;
     }
+    
+    .help-text {
+        color: #999;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+    
+    .save-help {
+        margin-top: 1rem;
+    }
+    
+    h3 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .input-with-button {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .input-with-button .form-control {
+            margin-right: 0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .update-btn {
+            margin-left: 0;
+        }
+    }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Focus on any empty category name field
+    const categoryInputs = document.querySelectorAll('#categories-container input');
+    for (const input of categoryInputs) {
+        if (!input.value) {
+            input.focus();
+            break;
+        }
+    }
+});
+</script>
 {% endblock %} 

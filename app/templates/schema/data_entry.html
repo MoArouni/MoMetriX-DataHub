@@ -25,70 +25,89 @@
                     <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i> Add New Product</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('schema.data_entry', category_id=category.id) }}">
+                    <form method="POST" action="{{ url_for('schema.data_entry', category_id=category.id) }}" novalidate>
                         {{ form.hidden_tag() }}
                         
                         <div class="form-group mb-3">
-                            <label for="{{ form.name.id }}">{{ form.name.label }}</label>
-                            {{ form.name(class="form-control") }}
+                            <label for="{{ form.name.id }}" class="form-label">{{ form.name.label }}</label>
                             {% if form.name.errors %}
-                            <div class="text-danger">
-                                {% for error in form.name.errors %}
-                                <small>{{ error }}</small>
-                                {% endfor %}
-                            </div>
+                                {{ form.name(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.name(class="form-control") }}
                             {% endif %}
                         </div>
                         
                         <div class="form-group mb-3">
-                            <label for="{{ form.base_price.id }}">{{ form.base_price.label }}</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                {{ form.base_price(class="form-control") }}
+                            <label for="{{ form.base_price.id }}" class="form-label">{{ form.base_price.label }}</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text">£</span>
+                                {% if form.base_price.errors %}
+                                    {{ form.base_price(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.base_price.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.base_price(class="form-control") }}
+                                {% endif %}
                             </div>
-                            {% if form.base_price.errors %}
-                            <div class="text-danger">
-                                {% for error in form.base_price.errors %}
-                                <small>{{ error }}</small>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
                         </div>
                         
                         <!-- Dynamically generated fields -->
                         {% for field_name, field in form._fields.items() %}
                             {% if field_name.startswith('field_') %}
                                 <div class="form-group mb-3">
-                                    <label for="{{ field.id }}">{{ field.label }}</label>
-                                    
-                                    {% if field.type == 'StringField' and form[field_name].render_kw and form[field_name].render_kw.get('data-type') == 'color' %}
-                                        {{ field(class="form-control form-control-color", type="color") }}
-                                    {% elif field.type == 'StringField' and form[field_name].render_kw and form[field_name].render_kw.get('data-type') == 'date' %}
-                                        {{ field(class="form-control", type="date") }}
-                                    {% elif field.type == 'TextAreaField' %}
-                                        {{ field(class="form-control", rows=3) }}
-                                    {% elif field.type == 'BooleanField' %}
-                                        <div class="form-check">
-                                            {{ field(class="form-check-input") }}
-                                        </div>
-                                    {% elif field.type == 'SelectField' %}
-                                        {{ field(class="form-select") }}
-                                    {% else %}
-                                        {{ field(class="form-control") }}
-                                    {% endif %}
+                                    <label for="{{ field.id }}" class="form-label">{{ field.label }}</label>
                                     
                                     {% if field.errors %}
-                                    <div class="text-danger">
-                                        {% for error in field.errors %}
-                                        <small>{{ error }}</small>
-                                        {% endfor %}
-                                    </div>
+                                        {% if field.type == 'StringField' and form[field_name].render_kw and form[field_name].render_kw.get('data-type') == 'color' %}
+                                            {{ field(class="form-control form-control-color is-invalid", type="color") }}
+                                        {% elif field.type == 'StringField' and form[field_name].render_kw and form[field_name].render_kw.get('data-type') == 'date' %}
+                                            {{ field(class="form-control is-invalid", type="date") }}
+                                        {% elif field.type == 'TextAreaField' %}
+                                            {{ field(class="form-control is-invalid", rows=3) }}
+                                        {% elif field.type == 'BooleanField' %}
+                                            <div class="form-check">
+                                                {{ field(class="form-check-input is-invalid") }}
+                                            </div>
+                                        {% elif field.type == 'SelectField' %}
+                                            {{ field(class="form-select is-invalid") }}
+                                        {% else %}
+                                            {{ field(class="form-control is-invalid") }}
+                                        {% endif %}
+                                        <div class="invalid-feedback">
+                                            {% for error in field.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {% if field.type == 'StringField' and form[field_name].render_kw and form[field_name].render_kw.get('data-type') == 'color' %}
+                                            {{ field(class="form-control form-control-color", type="color") }}
+                                        {% elif field.type == 'StringField' and form[field_name].render_kw and form[field_name].render_kw.get('data-type') == 'date' %}
+                                            {{ field(class="form-control", type="date") }}
+                                        {% elif field.type == 'TextAreaField' %}
+                                            {{ field(class="form-control", rows=3) }}
+                                        {% elif field.type == 'BooleanField' %}
+                                            <div class="form-check">
+                                                {{ field(class="form-check-input") }}
+                                            </div>
+                                        {% elif field.type == 'SelectField' %}
+                                            {{ field(class="form-select") }}
+                                        {% else %}
+                                            {{ field(class="form-control") }}
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             {% endif %}
                         {% endfor %}
                         
-                        <div class="d-grid gap-2">
+                        <div class="d-grid gap-2 mt-4">
                             {{ form.submit(class="btn btn-primary btn-lg") }}
                         </div>
                     </form>
@@ -104,7 +123,7 @@
                 <div class="card-body p-0">
                     {% if products %}
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <table class="table table-hover mb-0 product-table">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -116,9 +135,9 @@
                             <tbody>
                                 {% for product in products %}
                                 <tr>
-                                    <td>{{ product.name }}</td>
-                                    <td>${{ product.base_price }}</td>
-                                    <td>
+                                    <td class="align-middle">{{ product.name }}</td>
+                                    <td class="align-middle">£{{ product.base_price }}</td>
+                                    <td class="align-middle">
                                         {% if product.additional_fields %}
                                             <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#fieldsModal{{ product.id }}">
                                                 <i class="fas fa-eye"></i> View
@@ -171,7 +190,7 @@
                                             <span class="text-muted">None</span>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         <div class="btn-group" role="group">
                                             <a href="{{ url_for('products.edit_product', product_id=product.id) }}" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-edit"></i>
@@ -207,6 +226,58 @@
     margin-right: 5px;
     border: 1px solid #ccc;
     vertical-align: middle;
+}
+
+/* Form validation styling */
+.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+
+/* Table styling for better spacing */
+.product-table td, .product-table th {
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+}
+
+.product-table tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background-color 0.2s ease;
+}
+
+.product-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.product-table thead tr {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Make sure modals look good */
+.modal-content {
+    background-color: var(--card-bg, #2c3e50);
+    color: #fff;
+}
+
+.modal-header, .modal-footer {
+    border-color: rgba(255, 255, 255, 0.1);
 }
 </style>
 {% endblock %} 

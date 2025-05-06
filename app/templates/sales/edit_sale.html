@@ -1,20 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Record New Sale{% endblock %}
+{% block title %}Edit Sale{% endblock %}
 
 {% block content %}
 <div class="sale-container">
     <div class="sale-header">
-        <h2><i class="fas fa-cash-register"></i> Record New Sale</h2>
+        <h2><i class="fas fa-edit"></i> Edit Sale</h2>
         <div class="breadcrumb">
             <a href="{{ url_for('sales.index') }}"><i class="fas fa-chart-line"></i> Sales</a>
             <span class="separator">/</span>
-            <span class="current">New Sale</span>
+            <a href="{{ url_for('sales.view_sale', sale_id=sale.id) }}">Sale #{{ sale.id }}</a>
+            <span class="separator">/</span>
+            <span class="current">Edit</span>
         </div>
     </div>
     
     <div class="sale-form-container">
-        <form method="POST" action="{{ url_for('sales.new_sale') }}" id="saleForm">
+        <form method="POST" action="{{ url_for('sales.edit_sale', sale_id=sale.id) }}" id="saleForm">
             {{ form.hidden_tag() }}
             
             <div class="form-grid">
@@ -22,7 +24,7 @@
                 <div class="form-section">
                     <div class="section-header">
                         <h3><i class="fas fa-info-circle"></i> Sale Information</h3>
-                        <span class="section-hint">Enter the basic details of this sale</span>
+                        <span class="section-hint">Edit the details of this sale</span>
                     </div>
                     
                     <div class="form-row">
@@ -31,7 +33,7 @@
                             <select id="store_id" name="store_id" class="form-control" required>
                                 <option value="">-- Select Store --</option>
                                 {% for store in stores %}
-                                <option value="{{ store.id }}">{{ store.name }}</option>
+                                <option value="{{ store.id }}" {% if sale.store_id == store.id %}selected{% endif %}>{{ store.name }}</option>
                                 {% endfor %}
                             </select>
                             {% if form.store_id.errors %}
@@ -54,10 +56,10 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="category_id">Product Category <span class="required-star">*</span></label>
-                            <select id="category_id" class="form-control" required>
+                            <select id="category_id" class="form-control" required {% if category_id %}data-selected="{{ category_id }}"{% endif %}>
                                 <option value="">-- Select Category --</option>
-                                {% for category_id, data in product_choices.items() %}
-                                    <option value="{{ category_id }}">{{ data.name }}</option>
+                                {% for cat_id, data in product_choices.items() %}
+                                    <option value="{{ cat_id }}" {% if category_id and category_id|int == cat_id|int %}selected{% endif %}>{{ data.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -66,8 +68,9 @@
                     <div class="form-row">
                         <div class="form-group">
                             {{ form.product_id.label }} <span class="required-star">*</span>
-                            <select id="product_id" name="product_id" class="form-control" required disabled>
+                            <select id="product_id" name="product_id" class="form-control" required data-selected="{{ sale.product_id }}">
                                 <option value="">-- Select Product --</option>
+                                <!-- Products will be loaded dynamically -->
                             </select>
                             {% if form.product_id.errors %}
                                 <div class="invalid-feedback">
@@ -187,6 +190,15 @@
                     <div class="features-container">
                         <div id="features-container">
                             <!-- Dynamic features will be added here -->
+                            {% if features %}
+                                {% for feature in features %}
+                                <div class="feature-row">
+                                    <input type="text" name="feature_name[]" class="form-control feature-name" placeholder="Feature Name (e.g. Color)" required value="{{ feature.name }}">
+                                    <input type="text" name="feature_value[]" class="form-control feature-value" placeholder="Feature Value (e.g. Gold)" required value="{{ feature.value }}">
+                                    <button type="button" class="feature-remove"><i class="fas fa-times"></i></button>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         
                         <button type="button" id="add-feature" class="btn-feature-add">
@@ -197,10 +209,10 @@
             </div>
             
             <div class="form-actions">
-                <a href="{{ url_for('sales.index') }}" class="btn btn-secondary">
+                <a href="{{ url_for('sales.view_sale', sale_id=sale.id) }}" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cancel
                 </a>
-                {{ form.submit(class="btn btn-primary") }}
+                {{ form.submit(class="btn btn-primary", value="Update Sale") }}
             </div>
         </form>
     </div>
@@ -510,7 +522,6 @@
         -moz-appearance: none;
         appearance: none;
     }
-    
     .mt-4 {
         margin-top: 2rem;
     }
@@ -563,29 +574,42 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Product choices from Jinja
     const productChoices = JSON.parse('{{ product_choices|tojson }}');
+    const selectedProductId = productSelect.getAttribute('data-selected');
+    
+    // Load products for the selected category
+    function loadProductsForCategory(categoryId) {
+        if (!categoryId) return;
+        
+        productSelect.innerHTML = '<option value="">-- Select Product --</option>';
+        productSelect.disabled = false;
+        
+        if (productChoices[categoryId] && productChoices[categoryId].products) {
+            productChoices[categoryId].products.forEach(function(product) {
+                const option = document.createElement('option');
+                option.value = product[0];
+                option.textContent = product[1];
+                productSelect.appendChild(option);
+                
+                // Select the product that was previously selected
+                if (product[0] == selectedProductId) {
+                    option.selected = true;
+                }
+            });
+        }
+    }
+    
+    // Initialize products dropdown
+    if (categorySelect.value) {
+        loadProductsForCategory(categorySelect.value);
+    }
     
     // Update product dropdown when category changes
     categorySelect.addEventListener('change', function() {
         const categoryId = this.value;
-        productSelect.innerHTML = '<option value="">-- Select Product --</option>';
+        loadProductsForCategory(categoryId);
         
-        if (categoryId) {
-            productSelect.disabled = false;
-            
-            if (productChoices[categoryId] && productChoices[categoryId].products) {
-                productChoices[categoryId].products.forEach(function(product) {
-                    const option = document.createElement('option');
-                    option.value = product[0];
-                    option.textContent = product[1];
-                    productSelect.appendChild(option);
-                });
-            }
-            
-            // Focus on the product select after category is chosen
-            setTimeout(() => productSelect.focus(), 100);
-        } else {
-            productSelect.disabled = true;
-        }
+        // Focus on the product select after category is chosen
+        setTimeout(() => productSelect.focus(), 100);
     });
     
     // Calculate total payment and update display
@@ -693,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set focus to the new feature name field
         nameInput.focus();
         
-        // Set up autocomplete (simplified - you might want to use a library for better UX)
+        // Set up autocomplete
         setupFeatureAutocomplete(nameInput, valueInput);
     }
     
@@ -712,9 +736,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Add event listeners to existing feature remove buttons
+    document.querySelectorAll('.feature-remove').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const row = this.parentElement;
+            featuresContainer.removeChild(row);
+        });
+    });
+    
     // Initial update
     updatePaymentSummary();
 });
 </script>
 {% endblock %}
-{% endblock %}
+{% endblock %} 

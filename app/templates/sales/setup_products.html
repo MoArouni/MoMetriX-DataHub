@@ -33,7 +33,7 @@
                 {% for product_form in form.products %}
                     <div class="form-group product-entry">
                         <label>Product {{ loop.index }} Name</label>
-                        {{ product_form.name(class="form-control", placeholder="Enter product name") }}
+                        <input type="text" name="products-{{ loop.index0 }}-name" class="form-control" value="{{ product_form.data.name }}" placeholder="Enter product name">
                         {% if product_form.name.errors %}
                             <div class="error-message">
                                 {% for error in product_form.name.errors %}

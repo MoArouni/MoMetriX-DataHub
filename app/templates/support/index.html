@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}Data Analysis Hub - Support{% endblock %}
+
+{% block extra_css %}
+<style>
+    .support-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+    }
+    
+    .support-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    
+    .support-header h1 {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .support-header p {
+        color: #cccccc;
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+    
+    .support-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 3rem;
+        margin-bottom: 5rem;
+    }
+    
+    .support-card {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .support-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .support-card-header {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .support-card-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+    
+    .support-card-title {
+        font-size: 1.8rem;
+        color: #ffffff;
+        margin-bottom: 1rem;
+    }
+    
+    .support-card-description {
+        color: #cccccc;
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+    
+    .support-card-body {
+        padding: 2rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .support-card-content {
+        margin-bottom: 2rem;
+        flex-grow: 1;
+    }
+    
+    .support-card-content p {
+        color: #cccccc;
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+    }
+    
+    .support-card-action {
+        text-align: center;
+    }
+    
+    .support-card-btn {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        background-color: var(--primary-color);
+        color: #000;
+        font-weight: 600;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .support-card-btn:hover {
+        background-color: var(--primary-color-light);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(var(--primary-color-rgb), 0.3);
+    }
+    
+    .faq-section {
+        margin-top: 6rem;
+    }
+    
+    .faq-title {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .faq-list {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .faq-item {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    
+    .faq-question {
+        padding: 1.5rem;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: #ffffff;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .faq-question:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .faq-question i {
+        transition: transform 0.3s ease;
+    }
+    
+    .faq-answer {
+        padding: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .faq-answer-content {
+        padding: 1.5rem;
+        color: #cccccc;
+        line-height: 1.7;
+    }
+    
+    .faq-item.active .faq-question {
+        color: var(--primary-color);
+    }
+    
+    .faq-item.active .faq-question i {
+        transform: rotate(180deg);
+    }
+    
+    .faq-item.active .faq-answer {
+        max-height: 1000px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="support-container">
+    <div class="support-header">
+        <h1>Support Center</h1>
+        <p>We're here to help you get the most out of our platform. Choose from the options below or search for answers in our FAQ section.</p>
+    </div>
+    
+    <div class="support-grid">
+        <div class="support-card">
+            <div class="support-card-header">
+                <div class="support-card-icon">
+                    <i class="fas fa-life-ring"></i>
+                </div>
+                <h3 class="support-card-title">Technical Support</h3>
+                <p class="support-card-description">Get help with technical issues</p>
+            </div>
+            <div class="support-card-body">
+                <div class="support-card-content">
+                    <p>Experiencing technical difficulties with our platform? Our support team is ready to help you resolve any issues you encounter.</p>
+                    <p>Response time: 24-48 hours</p>
+                </div>
+                <div class="support-card-action">
+                    <a href="mailto:mmtxhelp@gmail.com" class="support-card-btn">Contact Technical Support</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="support-card">
+            <div class="support-card-header">
+                <div class="support-card-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3 class="support-card-title">Documentation</h3>
+                <p class="support-card-description">Learn how to use our platform</p>
+            </div>
+            <div class="support-card-body">
+                <div class="support-card-content">
+                    <p>Our comprehensive documentation provides step-by-step guides, tutorials, and explanations for all features of our platform.</p>
+                    <p>Available 24/7</p>
+                </div>
+                <div class="support-card-action">
+                    <a href="{{ url_for('documentation.index') }}" class="support-card-btn">Browse Documentation</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="support-card">
+            <div class="support-card-header">
+                <div class="support-card-icon">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+                <h3 class="support-card-title">Community Forum</h3>
+                <p class="support-card-description">Connect with other users</p>
+            </div>
+            <div class="support-card-body">
+                <div class="support-card-content">
+                    <p>Join our community forum to connect with other users, share tips, and learn from their experiences with our platform.</p>
+                    <p>Peer-to-peer support</p>
+                </div>
+                <div class="support-card-action">
+                    <a href="{{ url_for('qa.index') }}" class="support-card-btn">Visit Forum</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="faq-section">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question">
+                    How do I reset my password? <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        To reset your password, click on the "Forgot Password" link on the login page. Enter your email address, and we'll send you instructions to create a new password.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    How can I invite team members? <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        To invite team members, go to your account settings and select "Team Management." Click on "Invite User" and enter their email address along with their role. They'll receive an invitation email with instructions to join.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    What payment methods do you accept? <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        We accept all major credit cards (Visa, MasterCard, American Express) and PayPal. For annual enterprise plans, we also offer invoice payment options.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    How secure is my data? <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        We take data security seriously. All data is encrypted in transit and at rest. We use industry-standard security measures, regular security audits, and strict access controls to protect your information.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    Can I export my data? <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes, you can export your data in various formats including CSV, Excel, and PDF. Go to the dashboard, select the data you want to export, and click on the "Export" button.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // FAQ accordion functionality
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            
+            question.addEventListener('click', function() {
+                // Toggle current item
+                item.classList.toggle('active');
+                
+                // Close other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}405 Method Not Allowed - Data Analytics Hub{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <h1 class="display-1 text-muted">405</h1>
+        <h2 class="mb-4">Method Not Allowed</h2>
+        <p class="lead mb-5">{{ error_message|default('The method used to access this resource is not allowed.') }}</p>
+        <a href="javascript:history.back()" class="btn btn-secondary me-2">
+            <i class="fas fa-arrow-left me-2"></i> Go Back
+        </a>
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">
+            <i class="fas fa-home me-2"></i> Return to Home
+        </a>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}Form Validation Template{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section-header">
+        <h1>Form Validation Template</h1>
+        <p class="text-muted">Use this template as a reference for implementing consistent form validation across the app.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Standardized Form Validation</h2>
+        </div>
+        <div class="card-body">
+            <!-- Form Template -->
+            <form method="POST" action="#" novalidate>
+                <!-- Hidden CSRF token -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <!-- Text Input Example -->
+                <div class="form-group mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <!-- 
+                    The pattern:
+                    1. Check if the field has errors
+                    2. If yes, add is-invalid class and show feedback
+                    3. If no, render the normal field
+                    -->
+                    {% if form.username.errors %}
+                        <input type="text" id="username" name="username" class="form-control is-invalid" value="{{ form.username.data or '' }}">
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <input type="text" id="username" name="username" class="form-control" value="{{ form.username.data or '' }}">
+                    {% endif %}
+                </div>
+                
+                <!-- Select Dropdown Example -->
+                <div class="form-group mb-3">
+                    <label for="user_role" class="form-label">Role</label>
+                    {% if form.role.errors %}
+                        <select id="user_role" name="role" class="form-select is-invalid">
+                            <!-- Options here -->
+                        </select>
+                        <div class="invalid-feedback">
+                            {% for error in form.role.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <select id="user_role" name="role" class="form-select">
+                            <!-- Options here -->
+                        </select>
+                    {% endif %}
+                </div>
+                
+                <!-- Checkbox Example -->
+                <div class="form-group mb-3">
+                    <div class="form-check">
+                        {% if form.agree_terms.errors %}
+                            <input type="checkbox" id="agree_terms" name="agree_terms" class="form-check-input is-invalid">
+                            <label class="form-check-label" for="agree_terms">I agree to the terms</label>
+                            <div class="invalid-feedback">
+                                {% for error in form.agree_terms.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <input type="checkbox" id="agree_terms" name="agree_terms" class="form-check-input">
+                            <label class="form-check-label" for="agree_terms">I agree to the terms</label>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- With Input Group / Addon Example -->
+                <div class="form-group mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <div class="input-group has-validation">
+                        <span class="input-group-text">£</span>
+                        {% if form.price.errors %}
+                            <input type="number" id="price" name="price" class="form-control is-invalid" value="{{ form.price.data or '' }}">
+                            <div class="invalid-feedback">
+                                {% for error in form.price.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <input type="number" id="price" name="price" class="form-control" value="{{ form.price.data or '' }}">
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Implementation Notes</h2>
+        </div>
+        <div class="card-body">
+            <h3>1. Form Setup</h3>
+            <ul>
+                <li>Always add <code>novalidate</code> attribute to forms to disable browser validation</li>
+                <li>Handle validation through Flask-WTF and display errors with custom styling</li>
+            </ul>
+            
+            <h3>2. Validation Classes</h3>
+            <ul>
+                <li>Use <code>is-invalid</code> class on inputs with errors</li>
+                <li>Use <code>invalid-feedback</code> class to style error messages</li>
+                <li>For input groups, add <code>has-validation</code> class to the input-group container</li>
+            </ul>
+            
+            <h3>3. Code Pattern</h3>
+            <pre><code>{% raw %}
+{% if form.field_name.errors %}
+    {{ form.field_name(class="form-control is-invalid") }}
+    <div class="invalid-feedback">
+        {% for error in form.field_name.errors %}
+            {{ error }}
+        {% endfor %}
+    </div>
+{% else %}
+    {{ form.field_name(class="form-control") }}
+{% endif %}
+{% endraw %}</code></pre>
+            
+            <h3>4. CSS Styles</h3>
+            <p>Add these styles to your global CSS file:</p>
+            <pre><code>
+.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+            </code></pre>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.section-header {
+    margin-bottom: 2rem;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-control, .form-select {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.25);
+}
+
+.input-group-text {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #000;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+pre {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 1rem;
+    overflow-x: auto;
+}
+
+code {
+    font-family: monospace;
+    color: #e83e8c;
+}
+
+pre code {
+    color: #f8f9fa;
+}
+</style>
+{% endblock %} 

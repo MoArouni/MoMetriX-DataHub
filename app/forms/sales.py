@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired, NumberRange, Optional, Length
 from datetime import date
 from app.models.product import Product
 from app.models.store import Store
+import json
 
 class SaleItemForm(FlaskForm):
     """Form for a single sale item"""
@@ -22,7 +23,7 @@ class SaleItemForm(FlaskForm):
         if company_id:
             # Dynamically load products for this company
             self.product_id.choices = [
-                (prod.id, f"{prod.name} (${prod.base_price:.2f})") 
+                (prod.id, f"{prod.name} (£{prod.base_price:.2f})") 
                 for prod in Product.query.filter_by(company_id=company_id, active=True).order_by(Product.name).all()
             ]
 

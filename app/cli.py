@@ -3,6 +3,7 @@ from flask.cli import with_appcontext
 from app import db
 from app.utils.db_init import initialize_database
 
+
 def register_commands(app):
     """Register Flask CLI commands"""
     
@@ -68,4 +69,5 @@ def register_commands(app):
         db.session.add(admin)
         db.session.commit()
         
-        print(f"Admin user '{username}' created successfully!") 
+        print(f"Admin user '{username}' created successfully!")
+        

@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Company Setup - Sales Database{% endblock %}
+
+{% block content %}
+<div class="setup-container">
+    <div class="setup-header">
+        <h2>Company Details</h2>
+        <p>Step 1 of 5: Enter information about your business</p>
+        <div class="progress-bar">
+            <div class="progress" style="width: 20%"></div>
+        </div>
+        <p class="progress-text">Setup Progress: 1/5</p>
+    </div>
+    
+    <div class="setup-box">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('sales_setup.setup_company') }}">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.name.label }}
+                {{ form.name(class="form-control") }}
+                {% if form.name.errors %}
+                    <div class="error-message">
+                        {% for error in form.name.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.industry.label }}
+                {{ form.industry(class="form-control") }}
+                {% if form.industry.errors %}
+                    <div class="error-message">
+                        {% for error in form.industry.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="help-text">For example: Retail, Food Service, Manufacturing, etc.</div>
+            </div>
+            
+            <div class="form-group">
+                {{ form.description.label }}
+                {{ form.description(class="form-control", rows=3) }}
+                {% if form.description.errors %}
+                    <div class="error-message">
+                        {% for error in form.description.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="help-text">A brief description of your company's business.</div>
+            </div>
+            
+            <div class="form-group">
+                {{ form.address.label }}
+                {{ form.address(class="form-control", rows=2) }}
+                {% if form.address.errors %}
+                    <div class="error-message">
+                        {% for error in form.address.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group half">
+                    {{ form.phone.label }}
+                    {{ form.phone(class="form-control") }}
+                    {% if form.phone.errors %}
+                        <div class="error-message">
+                            {% for error in form.phone.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group half">
+                    {{ form.website.label }}
+                    {{ form.website(class="form-control") }}
+                    {% if form.website.errors %}
+                        <div class="error-message">
+                            {% for error in form.website.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .setup-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 2rem auto;
+    }
+    
+    .setup-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .setup-header h2 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .setup-header p {
+        color: #999;
+    }
+    
+    .progress-bar {
+        background-color: #ddd;
+        border-radius: 10px;
+        height: 20px;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .progress {
+        background-color: var(--primary-color);
+        border-radius: 10px;
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+        color: #999;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    
+    .setup-box {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        padding: 2rem;
+        width: 100%;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #ddd;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        color: #fff;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #000;
+        width: 100%;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .error-message {
+        color: #ff5555;
+        margin-top: 0.25rem;
+        font-size: 0.85rem;
+    }
+    
+    .help-text {
+        color: #999;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .form-group.half {
+        flex: 1;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            flex-direction: column;
+            gap: 0;
+        }
+    }
+    
+    .alert {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    
+    .alert-success {
+        background-color: rgba(46, 204, 113, 0.2);
+        border: 1px solid rgba(46, 204, 113, 0.4);
+        color: #2ecc71;
+    }
+    
+    .alert-warning {
+        background-color: rgba(241, 196, 15, 0.2);
+        border: 1px solid rgba(241, 196, 15, 0.4);
+        color: #f1c40f;
+    }
+    
+    .alert-error, .alert-danger {
+        background-color: rgba(231, 76, 60, 0.2);
+        border: 1px solid rgba(231, 76, 60, 0.4);
+        color: #e74c3c;
+    }
+</style>
+{% endblock %} 

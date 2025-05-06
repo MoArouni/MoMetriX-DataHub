@@ -7,69 +7,105 @@
     /* Hero section styles */
     .hero-section {
         position: relative;
-        height: 80vh;
-        min-height: 500px;
+        height: 85vh;
+        min-height: 550px;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
         margin-top: -70px; /* Adjust for navbar */
         background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(20,20,20,0.95) 100%);
+        z-index: 1;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(var(--primary-color-rgb), 0.3) 0%, transparent 70%);
+        top: 20%;
+        right: 10%;
+        z-index: -1;
+        animation: pulse 8s infinite alternate;
+    }
+    
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(var(--primary-color-rgb), 0.2) 0%, transparent 70%);
+        bottom: 15%;
+        left: 10%;
+        z-index: -1;
+        animation: pulse 6s infinite alternate-reverse;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.5; }
+        100% { transform: scale(1.5); opacity: 0.2; }
     }
     
     .hero-content {
         position: relative;
         z-index: 2;
         text-align: center;
-        max-width: 1200px;
+        max-width: 1000px;
         padding: 0 2rem;
     }
     
     .hero-title {
-        font-size: 3.5rem;
+        font-size: 4rem;
         margin-bottom: 1.5rem;
         background: linear-gradient(90deg, var(--primary-color) 0%, #9eff00 100%);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
         animation: fadeInUp 1s ease-out;
+        font-weight: 800;
+        letter-spacing: -1px;
     }
     
     .hero-subtitle {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         color: #cccccc;
         margin-bottom: 2rem;
         max-width: 800px;
-        margin: 0 auto 2.5rem;
+        margin: 0 auto 3rem;
         animation: fadeInUp 1.3s ease-out;
     }
     
     .hero-buttons {
         display: flex;
-        gap: 1rem;
+        gap: 2rem;
         justify-content: center;
         animation: fadeInUp 1.6s ease-out;
     }
     
     .hero-btn {
-        padding: 1rem 2rem;
-        font-size: 1rem;
+        padding: 1.2rem 2.5rem;
+        font-size: 1.1rem;
         border-radius: 50px;
         font-weight: 600;
         transition: all 0.3s ease;
         text-decoration: none;
+        letter-spacing: 1px;
     }
     
     .btn-primary {
         background-color: var(--primary-color);
         color: #000;
         border: none;
+        box-shadow: 0 10px 30px rgba(var(--primary-color-rgb), 0.3);
     }
     
     .btn-primary:hover {
         background-color: var(--primary-color-light);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(var(--primary-color-rgb), 0.4);
     }
     
     .btn-secondary {
@@ -80,15 +116,15 @@
     
     .btn-secondary:hover {
         background-color: rgba(var(--primary-color-rgb), 0.1);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(var(--primary-color-rgb), 0.2);
     }
     
     /* Animation */
     @keyframes fadeInUp {
         from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px);
         }
         to {
             opacity: 1;
@@ -98,11 +134,35 @@
     
     /* Stats counter section */
     .stats-section {
-        padding: 4rem 0;
+        padding: 5rem 0;
         background-color: rgba(18, 18, 18, 0.8);
         backdrop-filter: blur(10px);
         border-top: 1px solid rgba(var(--primary-color-rgb), 0.2);
         border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.2);
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stats-section::before,
+    .stats-section::after {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(var(--primary-color-rgb), 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+    
+    .stats-section::before {
+        top: -150px;
+        right: -100px;
+    }
+    
+    .stats-section::after {
+        bottom: -150px;
+        left: -100px;
     }
     
     .stats-container {
@@ -111,459 +171,330 @@
         max-width: 1200px;
         margin: 0 auto;
         flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
     }
     
     .stat-item {
         text-align: center;
-        padding: 1rem;
-        width: 250px;
+        padding: 2rem;
+        width: 220px;
+        margin: 1.5rem;
+        background-color: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     }
     
     .stat-number {
-        font-size: 3rem;
-        font-weight: 700;
+        font-size: 3.5rem;
+        font-weight: 800;
         color: var(--primary-color);
-        margin-bottom: 0.5rem;
+        margin-bottom: 1rem;
+        line-height: 1;
     }
     
     .stat-label {
         font-size: 1.2rem;
         color: #cccccc;
+        font-weight: 500;
     }
     
-    /* Original styles */
-    .hero-container2 {
-        padding: 2rem 0;
-    }
-
-    .project-image img {
-        width: auto;
-        height: 230px;
-        object-fit: cover;
-        padding: 1rem 0rem;
-        transition: transform 0.3s ease;
-    }
-    
-    .project-container:hover .project-image img {
-        transform: scale(1.05);
-    }
-
-    .project-description {
-        margin-top: 1rem;
-        height: 0;
-        overflow: hidden;
-        transition: height 0.3s ease;
-        opacity: 0;
-    }
-    
-    .project-description.active {
-        height: auto;
-        opacity: 1;
-    }
-
-    .read-more {
-        color: var(--primary-color);
-        cursor: pointer;
-        margin-top: 0.5rem;
-        transition: color 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-    }
-    
-    .read-more:hover {
-        color: var(--primary-color-light);
-    }
-    
-    .read-more::after {
-        content: '+';
-        margin-left: 0.3rem;
-        transition: transform 0.3s ease;
-    }
-    
-    .read-more.active::after {
-        content: '-';
-    }
-
-    #contact {
+    /* Vision & Mission Section */
+    .vision-mission {
+        padding: 8rem 0;
         background-color: var(--surface-color);
-        padding: 3rem 0;
+        text-align: center;
     }
-
-    .form {
-        max-width: 600px;
+    
+    .vision-mission .container {
+        max-width: 900px;
         margin: 0 auto;
-        padding: 1rem;
-    }
-
-    .feature-list {
-        list-style: none;
-        padding: 0;
-        margin: 1rem 0;
-    }
-
-    .feature-list li {
-        margin-bottom: 1.5rem;
-        padding-left: 1.5rem;
-        position: relative;
-    }
-
-    .feature-list li::before {
-        content: "•";
-        color: var(--primary-color);
-        font-size: 1.5rem;
-        position: absolute;
-        left: 0;
-        top: -0.25rem;
-    }
-
-    .features-section {
-        background-color: var(--surface-color);
-        padding: 4rem 0;
-        margin-top: 2rem;
-    }
-
-    .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
-    }
-
-    .feature-card {
-        background-color: var(--card-bg);
-        padding: 1.5rem;
-        border-radius: 8px;
-        border: 1px solid var(--primary-color);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     
-    .feature-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .feature-card h3 {
+    .vision-mission h2 {
+        font-size: 3rem;
         color: var(--primary-color);
+        margin-bottom: 2rem;
+    }
+    
+    .vision-mission p {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: #cccccc;
+        margin-bottom: 3rem;
+    }
+    
+    /* Testimonials Section */
+    .testimonials {
+        padding: 6rem 0;
+        background-color: rgba(20, 20, 20, 0.7);
+    }
+    
+    .testimonials .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .testimonials-title {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    
+    .testimonials-title h2 {
+        color: var(--primary-color);
+        font-size: 3rem;
         margin-bottom: 1rem;
     }
     
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .hero-title {
-            font-size: 2.5rem;
-        }
-        
-        .hero-subtitle {
-            font-size: 1.2rem;
-        }
-        
-        .hero-buttons {
-            flex-direction: column;
-        }
-        
-        .stats-container {
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .stat-item {
-            margin-bottom: 2rem;
-        }
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+    
+    .testimonial-card {
+        background-color: rgba(30, 30, 30, 0.7);
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+    
+    .testimonial-content {
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+        color: #cccccc;
+        font-style: italic;
+        line-height: 1.7;
+    }
+    
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+    }
+    
+    .testimonial-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 1rem;
+        border: 2px solid var(--primary-color);
+    }
+    
+    .testimonial-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .testimonial-info h4 {
+        color: #ffffff;
+        margin-bottom: 0.3rem;
+    }
+    
+    .testimonial-info p {
+        color: var(--primary-color);
+        font-size: 0.9rem;
+    }
+    
+    .testimonial-quote {
+        position: absolute;
+        top: 1.5rem;
+        right: 2rem;
+        font-size: 4rem;
+        color: rgba(var(--primary-color-rgb), 0.2);
+        font-family: serif;
+        line-height: 1;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.1) 0%, rgba(var(--primary-color-rgb), 0.2) 100%);
+        padding: 6rem 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('/static/images/pattern.svg');
+        opacity: 0.05;
+        z-index: 0;
+    }
+    
+    .cta-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .cta-content h2 {
+        font-size: 3.5rem;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+    }
+    
+    .cta-content p {
+        font-size: 1.2rem;
+        color: #cccccc;
+        margin-bottom: 3rem;
+        line-height: 1.7;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-    <!-- Modern Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">Transform Your Data Into Business Insights</h1>
-            <p class="hero-subtitle">A comprehensive platform for analyzing your data, predicting trends, and making smarter business decisions.</p>
-            <div class="hero-buttons">
-                <a href="{{ url_for('auth.register') }}" class="hero-btn btn-primary">Get Started</a>
-                <a href="{{ url_for('pricing.index') }}" class="hero-btn btn-secondary">View Pricing</a>
-            </div>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Transform Your Data into Insights</h1>
+        <p class="hero-subtitle">
+            Unlock the power of your data with our advanced analytics platform. 
+            Make better business decisions with clear, actionable insights.
+        </p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('auth.login') }}" class="hero-btn btn-primary">Get Started</a>
+            <a href="{{ url_for('features.index') }}" class="hero-btn btn-secondary">Learn More</a>
         </div>
-    </section>
-    
-    <!-- Stats Counter Section -->
-    <section class="stats-section">
-        <div class="stats-container">
-            <div class="stat-item">
-                <div class="stat-number" data-count="{{ stats.users }}">0</div>
-                <div class="stat-label">Active Users</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-count="{{ stats.companies }}">0</div>
-                <div class="stat-label">Companies</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-count="{{ stats.data_points }}">0</div>
-                <div class="stat-label">Data Points Processed</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-count="{{ stats.satisfaction }}">0</div>
-                <div class="stat-label">Client Satisfaction %</div>
-            </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="stats-container">
+        <div class="stat-item">
+            <div class="stat-number">99%</div>
+            <div class="stat-label">Customer Satisfaction</div>
         </div>
-    </section>
-
-    <section id="about" class="hero-container2">
-        <div class="grid">
-            <!-- Business Insights -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/data_hub_pic.jpg') }}" alt="Business Insights">
-                </div>
-    
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Tools for Business Insights</h3>
-                        <div class="read-more">Read More</div>
-                    </div>
-    
-                    <div class="project-info">
-                        <span>Advanced Analytics</span>
-                    </div>
-    
-                    <div class="project-description">
-                        <p><em>Gain a deeper understanding of your sales, customer behaviors, and market trends.</em></p>
-                        <p>Make data-driven decisions that enhance efficiency and drive growth for your business.</p>
-                    </div>
-                </div>
-            </div>
-    
-            <!-- Role-Based Access -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/RBAC.png') }}" alt="Role-Based Access">
-                </div>
-    
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Role-Based Access Control</h3>
-                        <div class="read-more">Read More</div>
-                    </div>
-    
-                    <div class="project-info">
-                        <span>Admin, Moderator, Subscriber</span>
-                    </div>
-    
-                    <div class="project-description">
-                        <p><em>Manage access with precision.</em></p>
-                        <p>Assign roles to control who can edit data, view analytics, or modify your system.</p>
-                    </div>
-                </div>
-            </div>
-    
-            <!-- Data Entry -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/data-entry-form.png') }}" alt="Integrated Data Entry">
-                </div>
-    
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Integrated Data Entry</h3>
-                        <div class="read-more">Read More</div>
-                    </div>
-    
-                    <div class="project-info">
-                        <span>Built-in Forms</span>
-                    </div>
-    
-                    <div class="project-description">
-                        <p><em>Streamline your workflow without third-party apps.</em></p>
-                        <p>Secure, efficient, and fully integrated data input right from the platform.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="stat-item">
+            <div class="stat-number">2M+</div>
+            <div class="stat-label">Data Points Analyzed</div>
         </div>
-    </section>
-    
-    <section id="services" class="hero-container2">
-        <div class="grid">
-            <!-- Analysis Service -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/analysis.png') }}" alt="Analysis">
-                </div>
-
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Analysis</h3>
-                        <div class="read-more">Read More +</div>
-                    </div>
-
-                    <div class="project-info">
-                        <span>Sales & Trends Insights</span>
-                    </div>
-
-                    <div class="project-description" style="display: none;">
-                        <p>We provide <strong>in-depth analysis</strong> of your sales, customer behaviors, and trends.</p>
-                        <p>Make smarter, data-driven decisions to optimize your business performance.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Predictions Service -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/predictions.webp') }}" alt="Predictions">
-                </div>
-
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Predictions</h3>
-                        <div class="read-more">Read More +</div>
-                    </div>
-
-                    <div class="project-info">
-                        <span>Forecasting with AI</span>
-                    </div>
-
-                    <div class="project-description" style="display: none;">
-                        <p>Using historical data, we provide <strong>predictive analytics</strong> for forecasting sales, customer behavior, and trends.</p>
-                        <p>Plan ahead with confidence using our AI-driven models.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Security Service -->
-            <div class="section-box project-container">
-                <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/security.jpg') }}" alt="Security">
-                </div>
-
-                <div class="project-text">
-                    <div class="project-title">
-                        <h3>Security</h3>
-                        <div class="read-more">Read More +</div>
-                    </div>
-
-                    <div class="project-info">
-                        <span>Data Protection</span>
-                    </div>
-
-                    <div class="project-description" style="display: none;">
-                        <p>Your data's safety is our top priority. We use <strong>encryption</strong> and strict access controls.</p>
-                        <p>Store your business data in a <strong>secure environment</strong> with peace of mind.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="stat-item">
+            <div class="stat-number">10k+</div>
+            <div class="stat-label">Active Users</div>
         </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-        <div class="container">
-            <h2>Platform Features</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <h3>Company Management</h3>
-                    <ul class="feature-list">
-                        <li>Create and manage your company profile</li>
-                        <li>Customize database structure</li>
-                        <li>Real-time data entry and updates</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <h3>Role-Based Access</h3>
-                    <ul class="feature-list">
-                        <li>Website-wide roles (Admin, Subscriber, Viewer)</li>
-                        <li>Company-specific roles (Admin, Moderator, Viewer)</li>
-                        <li>Granular permission control</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <h3>Data Analysis</h3>
-                    <ul class="feature-list">
-                        <li>Interactive data visualization</li>
-                        <li>Sales and trend analysis</li>
-                        <li>Predictive analytics</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <h3>Team Collaboration</h3>
-                    <ul class="feature-list">
-                        <li>Invite team members</li>
-                        <li>Assign roles and permissions</li>
-                        <li>Share insights and reports</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="stat-item">
+            <div class="stat-number">30+</div>
+            <div class="stat-label">Integration Options</div>
         </div>
-    </section>
-{% endblock %}
+    </div>
+</section>
 
-{% block extra_js %}
-<script>
-    // Read More Toggle
-    document.querySelectorAll('.read-more').forEach(button => {
-        button.addEventListener('click', function() {
-            const description = this.closest('.project-text').querySelector('.project-description');
-            description.classList.toggle('active');
-            this.classList.toggle('active');
-        });
-    });
-    
-    // Animate number counters
-    function animateStats() {
-        const statElements = document.querySelectorAll('.stat-number');
+<!-- Vision & Mission Section -->
+<section class="vision-mission">
+    <div class="container">
+        <h2>Our Vision</h2>
+        <p>
+            We envision a world where data-driven decision making is accessible to everyone, 
+            regardless of technical expertise. Our mission is to democratize data analytics 
+            by providing powerful yet intuitive tools that transform complex data into clear, 
+            actionable insights.
+        </p>
         
-        function countUp(el) {
-            const target = parseInt(el.getAttribute('data-count'));
-            const duration = 2000; // ms
-            let start = 0;
-            const increment = target / (duration / 16); // 60fps
+        <h2>Why Choose Us?</h2>
+        <p>
+            Our platform combines powerful analytics capabilities with an intuitive interface, 
+            making advanced data analysis accessible to everyone. Whether you're analyzing sales trends, 
+            optimizing business operations, or exploring market opportunities, our comprehensive suite 
+            of tools empowers you to make data-driven decisions with confidence.
+        </p>
+        
+        <a href="{{ url_for('features.index') }}" class="hero-btn btn-primary">Explore Our Features</a>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+    <div class="container">
+        <div class="testimonials-title">
+            <h2>What Our Users Say</h2>
+        </div>
+        
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"</div>
+                <p class="testimonial-content">
+                    This platform has completely transformed how we approach data analysis. What used to take days now takes minutes. The insights we've gained have directly contributed to a 35% increase in our quarterly revenue.
+                </p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">
+                        <img src="/static/images/testimonial1.jpg" alt="Sarah Johnson">
+                    </div>
+                    <div class="testimonial-info">
+                        <h4>Sarah Johnson</h4>
+                        <p>Data Analyst, TechCorp</p>
+                    </div>
+                </div>
+            </div>
             
-            function updateCounter() {
-                start += increment;
-                const current = Math.min(Math.round(start), target);
-                
-                // Format number with commas for thousands
-                el.textContent = current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                
-                if (current < target) {
-                    requestAnimationFrame(updateCounter);
-                }
-            }
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"</div>
+                <p class="testimonial-content">
+                    As someone without a technical background, I was amazed at how easy it was to get started. The visualization tools are incredible, and the customer support team is always ready to help when needed.
+                </p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">
+                        <img src="/static/images/testimonial2.jpg" alt="Michael Chen">
+                    </div>
+                    <div class="testimonial-info">
+                        <h4>Michael Chen</h4>
+                        <p>Marketing Director, GrowthBrand</p>
+                    </div>
+                </div>
+            </div>
             
-            updateCounter();
-        }
-        
-        // Check if element is in viewport
-        function isInViewport(el) {
-            const rect = el.getBoundingClientRect();
-            return (
-                rect.top >= 0 &&
-                rect.left >= 0 &&
-                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-            );
-        }
-        
-        // Start animation when stats section comes into view
-        function checkScroll() {
-            if (isInViewport(document.querySelector('.stats-section'))) {
-                statElements.forEach(countUp);
-                window.removeEventListener('scroll', checkScroll);
-            }
-        }
-        
-        // Add scroll listener
-        window.addEventListener('scroll', checkScroll);
-        
-        // Check initial state
-        checkScroll();
-    }
-    
-    // Run animations when page is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        animateStats();
-    });
-</script>
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"</div>
+                <p class="testimonial-content">
+                    The integration capabilities are second to none. We've connected all our data sources and now have a single source of truth. The real-time dashboards have become essential for our daily operations.
+                </p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">
+                        <img src="/static/images/testimonial3.jpg" alt="Emily Rodriguez">
+                    </div>
+                    <div class="testimonial-info">
+                        <h4>Emily Rodriguez</h4>
+                        <p>CTO, Innovate Solutions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="cta-content">
+        <h2>Ready to Transform Your Data?</h2>
+        <p>
+            Join thousands of businesses that are already leveraging our platform to gain valuable insights 
+            and drive growth. Get started today with our free trial - no credit card required.
+        </p>
+        <div class="cta-buttons">
+            <a href="{{ url_for('auth.login') }}" class="hero-btn btn-primary">Start Free Trial</a>
+            <a href="{{ url_for('contact.index') }}" class="hero-btn btn-secondary">Contact Sales</a>
+        </div>
+    </div>
+</section>
 {% endblock %} 

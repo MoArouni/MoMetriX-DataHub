@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Setup Complete - Sales Database{% endblock %}
+
+{% block content %}
+<div class="setup-container">
+    <div class="success-box">
+        <div class="checkmark-container">
+            <div class="checkmark">✓</div>
+        </div>
+        
+        <h2>Setup Complete!</h2>
+        <p>Your sales database has been successfully configured and is ready to use.</p>
+        
+        <div class="setup-summary">
+            <h3>Setup Summary</h3>
+            <ul>
+                <li>Company profile created</li>
+                <li>Product categories configured</li>
+                <li>Products added to categories</li>
+                <li>Store locations set up</li>
+            </ul>
+        </div>
+        
+        <div class="next-steps">
+            <h3>Next Steps</h3>
+            <p>You can now start recording sales and tracking your business performance.</p>
+            
+            <div class="action-buttons">
+                <a href="{{ url_for('sales.index') }}" class="btn btn-primary">Go to Dashboard</a>
+                <a href="{{ url_for('sales.new_sale') }}" class="btn btn-secondary">Record First Sale</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .setup-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        text-align: center;
+    }
+    
+    .success-box {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        padding: 3rem 2rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .checkmark-container {
+        background-color: rgba(46, 204, 113, 0.15);
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+    }
+    
+    .checkmark {
+        color: #2ecc71;
+        font-size: 3rem;
+        font-weight: bold;
+    }
+    
+    h2 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .setup-summary {
+        margin: 2rem 0;
+        text-align: left;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .setup-summary h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+    
+    .setup-summary ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    .setup-summary li {
+        padding: 0.5rem 0 0.5rem 1.5rem;
+        position: relative;
+    }
+    
+    .setup-summary li:before {
+        content: "✓";
+        color: #2ecc71;
+        position: absolute;
+        left: 0;
+    }
+    
+    .next-steps {
+        margin-top: 2rem;
+    }
+    
+    .next-steps h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        justify-content: center;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        min-width: 180px;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+    
+    .btn-secondary {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% endblock %} 

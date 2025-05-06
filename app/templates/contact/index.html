@@ -13,7 +13,7 @@
         <form action="https://formspree.io/f/mzzebdaq" method="POST">
             <!-- Hidden field for redirect URL after form submission -->
             <input type="hidden" name="_next" value="{{ url_for('contact.thank_you', _external=True) }}">
-            
+
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" class="form-control" id="name" name="name" value="{{ current_user.first_name ~ ' ' ~ current_user.last_name if current_user.is_authenticated else '' }}" required>
@@ -44,7 +44,7 @@
         <h3>Additional Ways to Reach Us</h3>
         <div class="contact-item">
             <i class="fas fa-envelope"></i>
-            <p>mohamadarouni5@gmail.com</p>
+            <p>mmtxhelp@gmail.com</p>
         </div>
         <div class="contact-item">
             <i class="fas fa-phone"></i>

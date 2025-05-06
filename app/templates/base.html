@@ -16,6 +16,7 @@
     <!-- Core CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form-validation.css') }}">
     
     <!-- Flash Messages -->
     <style>
@@ -130,6 +131,81 @@
 
         .nav-links li a:hover::after {
             width: 100%;
+        }
+        
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .dropdown-toggle i {
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown:hover .dropdown-toggle i {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 220px;
+            background: rgba(18, 18, 18, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .dropdown:hover .dropdown-menu,
+        .dropdown:focus-within .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-menu li {
+            display: block;
+            width: 100%;
+        }
+        
+        .dropdown-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.7rem 1rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.1rem;
+            text-transform: none;
+            transition: background-color 0.3s ease;
+        }
+        
+        .dropdown-menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .dropdown-menu li a i {
+            color: var(--primary-color);
+            width: 16px;
+            text-align: center;
+        }
+        
+        .dropdown-menu li a::after {
+            display: none;
         }
 
         .user-label {
@@ -322,6 +398,37 @@
 
             .nav-links li a {
                 font-size: 1.1rem;
+            }
+            
+            /* Mobile Dropdown Styles */
+            .dropdown {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .dropdown-toggle {
+                justify-content: center;
+                padding: 0.5rem 0;
+            }
+            
+            .dropdown-menu {
+                position: static;
+                width: 100%;
+                max-width: 300px;
+                margin: 0.5rem auto;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                display: none;
+            }
+            
+            .dropdown.active .dropdown-menu {
+                display: block;
+            }
+            
+            .dropdown-menu li a {
+                justify-content: center;
+                padding: 0.8rem 1rem;
             }
 
             .role-label-container {
@@ -597,6 +704,22 @@
                 hamburger.classList.remove('active');
             }
         });
+        
+        // Mobile dropdown menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            // For mobile: make dropdown toggles work with click
+            if (window.innerWidth <= 991) {
+                const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+                
+                dropdownToggles.forEach(toggle => {
+                    toggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const dropdown = this.closest('.dropdown');
+                        dropdown.classList.toggle('active');
+                    });
+                });
+            }
+        });
 
         // Close alerts after 5 seconds
         document.querySelectorAll('.alert').forEach(alert => {
@@ -624,6 +747,101 @@
             }
             
             lastScrollTop = scrollTop;
+        });
+        
+        // Form validation handler for all forms
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all forms that need validation
+            const forms = document.querySelectorAll('form:not(.no-validation)');
+            
+            forms.forEach(form => {
+                // Add novalidate attribute to disable browser's native validation
+                form.setAttribute('novalidate', '');
+                
+                // Add submit event handler
+                form.addEventListener('submit', function(event) {
+                    let isValid = true;
+                    
+                    // Validate all required fields
+                    form.querySelectorAll('[required]').forEach(field => {
+                        if (!field.value) {
+                            field.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                            field.classList.remove('is-invalid');
+                            field.classList.add('is-valid');
+                        }
+                    });
+                    
+                    // Validate email fields
+                    form.querySelectorAll('input[type="email"]').forEach(field => {
+                        if (field.value && !validateEmail(field.value)) {
+                            field.classList.add('is-invalid');
+                            isValid = false;
+                        }
+                    });
+                    
+                    // Check for WTForms-generated error messages
+                    form.querySelectorAll('.error-message').forEach(error => {
+                        // Find the associated input and mark it as invalid
+                        const inputName = error.getAttribute('data-for');
+                        if (inputName) {
+                            const input = form.querySelector(`[name="${inputName}"]`);
+                            if (input) {
+                                input.classList.add('is-invalid');
+                                isValid = false;
+                            }
+                        }
+                    });
+                    
+                    // Listen for input changes to remove invalid state
+                    form.querySelectorAll('.is-invalid').forEach(field => {
+                        field.addEventListener('input', function() {
+                            if (field.value) {
+                                field.classList.remove('is-invalid');
+                            }
+                        });
+                    });
+                    
+                    if (!isValid) {
+                        event.preventDefault();
+                        
+                        // Focus the first invalid field
+                        const firstInvalid = form.querySelector('.is-invalid');
+                        if (firstInvalid) {
+                            firstInvalid.focus();
+                        }
+                    }
+                });
+                
+                // Real-time validation as user types
+                form.querySelectorAll('input, select, textarea').forEach(field => {
+                    field.addEventListener('blur', function() {
+                        // Validate on blur
+                        if (field.hasAttribute('required') && !field.value) {
+                            field.classList.add('is-invalid');
+                        } else if (field.type === 'email' && field.value && !validateEmail(field.value)) {
+                            field.classList.add('is-invalid');
+                        } else if (field.value) {
+                            field.classList.remove('is-invalid');
+                            field.classList.add('is-valid');
+                        }
+                    });
+                    
+                    field.addEventListener('input', function() {
+                        // Remove invalid state as soon as user starts typing
+                        if (field.classList.contains('is-invalid')) {
+                            field.classList.remove('is-invalid');
+                        }
+                    });
+                });
+            });
+            
+            // Email validation helper function
+            function validateEmail(email) {
+                const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                return re.test(String(email).toLowerCase());
+            }
         });
         
         // Sidebar menu toggle
