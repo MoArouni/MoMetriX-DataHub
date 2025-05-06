@@ -1,12 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
-from app.forms.contact_form import ContactForm
-from app.utils.email import send_email
+from flask import Blueprint, render_template
 from flask_login import current_user
 
 # Create blueprint
 contact_bp = Blueprint('contact', __name__, url_prefix='/contact')
 
-@contact_bp.route('/', methods=['GET', 'POST'])
+@contact_bp.route('/', methods=['GET'])
 def index():
     """Contact page route"""
     form = ContactForm()
