@@ -1,359 +1,365 @@
 {% extends "base.html" %}
 
+{% block title %}Data Analysis Hub - Pricing{% endblock %}
+
+{% block extra_css %}
+<style>
+    .pricing-header {
+        text-align: center;
+        padding: 5rem 0 3rem;
+    }
+    
+    .pricing-header h1 {
+        font-size: 3.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+    
+    .pricing-header p {
+        font-size: 1.2rem;
+        color: #cccccc;
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+    
+    .pricing-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem 5rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2rem;
+    }
+    
+    .pricing-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        max-width: 350px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+    
+    .pricing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    }
+    
+    .pricing-card.recommended {
+        border: 2px solid var(--primary-color);
+        transform: scale(1.05);
+    }
+    
+    .pricing-card.recommended:hover {
+        transform: scale(1.05) translateY(-10px);
+    }
+    
+    .recommendation-badge {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background-color: var(--primary-color);
+        color: #000;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .pricing-header-card {
+        padding: 3rem 2rem 2rem;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .pricing-name {
+        font-size: 1.8rem;
+        color: #ffffff;
+        margin-bottom: 1rem;
+    }
+    
+    .pricing-price {
+        font-size: 4rem;
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        line-height: 1;
+    }
+    
+    .pricing-duration {
+        color: #999;
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .pricing-features {
+        padding: 2rem;
+        flex-grow: 1;
+    }
+    
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .feature-list li {
+        margin-bottom: 1rem;
+        padding-left: 1.8rem;
+        position: relative;
+        color: #cccccc;
+    }
+    
+    .feature-list li:before {
+        content: "✓";
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+    }
+    
+    .pricing-action {
+        padding: 0 2rem 2rem;
+        text-align: center;
+    }
+    
+    .pricing-btn {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background-color: var(--primary-color);
+        color: #000;
+        font-weight: 600;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    .pricing-btn:hover {
+        background-color: var(--primary-color-light);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(var(--primary-color-rgb), 0.3);
+    }
+    
+    .pricing-btn.secondary {
+        background-color: transparent;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .pricing-btn.secondary:hover {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+    }
+    
+    .faq-section {
+        padding: 5rem 0;
+        background-color: rgba(18, 18, 18, 0.7);
+    }
+    
+    .faq-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .faq-title {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .faq-item {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    
+    .faq-question {
+        padding: 1.5rem;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: #ffffff;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .faq-question:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .faq-question i {
+        transition: transform 0.3s ease;
+    }
+    
+    .faq-answer {
+        padding: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .faq-answer-content {
+        padding: 1.5rem;
+        color: #cccccc;
+        line-height: 1.7;
+    }
+    
+    .faq-item.active .faq-question {
+        color: var(--primary-color);
+    }
+    
+    .faq-item.active .faq-question i {
+        transform: rotate(180deg);
+    }
+    
+    .faq-item.active .faq-answer {
+        max-height: 1000px;
+    }
+    
+    @media (max-width: 768px) {
+        .pricing-card.recommended {
+            transform: scale(1);
+        }
+        
+        .pricing-card.recommended:hover {
+            transform: translateY(-10px);
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <div class="pricing-header">
-        <h1>Choose Your Plan</h1>
-        <p>Select the perfect plan for your data analysis needs</p>
-    </div>
+<div class="pricing-header">
+    <h1>Simple, Transparent Pricing</h1>
+    <p>Choose the plan that works best for your business. All plans include access to our core analytics platform.</p>
+</div>
 
-    <div class="pricing-info">
-        <p>Our pricing is designed to accommodate businesses of all sizes. Whether you're a small startup or an established enterprise, we have a plan that fits your needs and budget.</p>
-        <p>All plans include our core features, with higher tiers unlocking more advanced capabilities, faster processing, and priority support.</p>
-    </div>
-
-    <div class="pricing-grid">
-        {% for plan in plans %}
-        <div class="pricing-card {% if plan.recommended %}recommended{% endif %}">
-            {% if plan.recommended %}
-            <div class="recommended-badge">RECOMMENDED</div>
-            {% endif %}
-            <div class="plan-header">
-                <h2>{{ plan.name }}</h2>
-                <div class="price">
-                    <span class="currency">£</span>
-                    <span class="amount">{{ plan.price }}</span>
-                    <span class="period">/month</span>
-                </div>
-            </div>
-            <ul class="features">
+<div class="pricing-container">
+    {% for plan in plans %}
+    <div class="pricing-card {% if plan.recommended %}recommended{% endif %}">
+        {% if plan.recommended %}
+        <div class="recommendation-badge">Recommended</div>
+        {% endif %}
+        
+        <div class="pricing-header-card">
+            <h2 class="pricing-name">{{ plan.name }}</h2>
+            <div class="pricing-price">${{ plan.price }}</div>
+            <div class="pricing-duration">per month</div>
+        </div>
+        
+        <div class="pricing-features">
+            <ul class="feature-list">
                 {% for feature in plan.features %}
-                <li>
-                    <svg class="check-icon" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-                    </svg>
-                    {{ feature }}
-                </li>
+                <li>{{ feature }}</li>
                 {% endfor %}
             </ul>
-            {% if plan.name == 'Free' %}
-                <a href="{{ url_for('auth.register') }}" class="select-plan">Sign Up Free</a>
-            {% elif plan.name == 'Pro' %}
-                <a href="{{ url_for('auth.register') }}" class="select-plan">Get Started</a>
-            {% else %}
-                <a href="{{ url_for('qa.index') }}?topic=enterprise" class="select-plan">Contact Sales</a>
-            {% endif %}
         </div>
-        {% endfor %}
-    </div>
-
-    <div class="plan-comparison">
-        <h2>Plan Comparison</h2>
-        <div class="comparison-table-container">
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>Feature</th>
-                        <th>Free</th>
-                        <th>Pro</th>
-                        <th>Enterprise</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Data Storage</td>
-                        <td>1GB</td>
-                        <td>10GB</td>
-                        <td>Unlimited</td>
-                    </tr>
-                    <tr>
-                        <td>API Requests</td>
-                        <td>1,000/month</td>
-                        <td>10,000/month</td>
-                        <td>Unlimited</td>
-                    </tr>
-                    <tr>
-                        <td>Export Options</td>
-                        <td>CSV only</td>
-                        <td>CSV, Excel, PDF</td>
-                        <td>All formats</td>
-                    </tr>
-                    <tr>
-                        <td>Team Members</td>
-                        <td>1</td>
-                        <td>5</td>
-                        <td>Unlimited</td>
-                    </tr>
-                    <tr>
-                        <td>Custom Reports</td>
-                        <td><span class="no"><i class="fas fa-times"></i></span></td>
-                        <td><span class="yes"><i class="fas fa-check"></i></span></td>
-                        <td><span class="yes"><i class="fas fa-check"></i></span></td>
-                    </tr>
-                    <tr>
-                        <td>Priority Support</td>
-                        <td><span class="no"><i class="fas fa-times"></i></span></td>
-                        <td><span class="yes"><i class="fas fa-check"></i></span></td>
-                        <td><span class="yes"><i class="fas fa-check"></i></span></td>
-                    </tr>
-                    <tr>
-                        <td>Dedicated Account Manager</td>
-                        <td><span class="no"><i class="fas fa-times"></i></span></td>
-                        <td><span class="no"><i class="fas fa-times"></i></span></td>
-                        <td><span class="yes"><i class="fas fa-check"></i></span></td>
-                    </tr>
-                </tbody>
-            </table>
+        
+        <div class="pricing-action">
+            <a href="{{ url_for('auth.signup') }}" class="pricing-btn {% if not plan.recommended %}secondary{% endif %}">Get Started</a>
         </div>
     </div>
+    {% endfor %}
+</div>
 
-    <div class="faq-section">
-        <h2>Frequently Asked Questions</h2>
-        <div class="faq-container">
-            <div class="faq-item">
-                <h3>Can I change plans later?</h3>
-                <p>Yes, you can upgrade or downgrade your plan at any time. Changes to your subscription will be applied immediately.</p>
+<div class="faq-section">
+    <div class="faq-container">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                Can I change my plan later? <i class="fas fa-chevron-down"></i>
             </div>
-            <div class="faq-item">
-                <h3>Is there a contract or commitment?</h3>
-                <p>No, all our plans are month-to-month with no long-term contracts. You can cancel anytime.</p>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    Yes, you can upgrade or downgrade your plan at any time. When upgrading, you'll be charged the prorated difference for the remainder of your billing cycle. When downgrading, the new rate will apply at the start of your next billing cycle.
+                </div>
             </div>
-            <div class="faq-item">
-                <h3>Do you offer discounts for annual billing?</h3>
-                <p>Yes, you can save 20% by choosing annual billing for any paid plan.</p>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                Do you offer annual billing? <i class="fas fa-chevron-down"></i>
             </div>
-            <div class="faq-item">
-                <h3>What payment methods do you accept?</h3>
-                <p>We accept all major credit cards, PayPal, and bank transfers for Enterprise plans.</p>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    Yes, we offer a 20% discount for annual subscriptions. You can choose your billing preference (monthly or annual) during signup or change it from your account settings.
+                </div>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                Is there a free trial available? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    Yes, all paid plans come with a 14-day free trial. No credit card is required to start the trial. You can upgrade to a paid plan at any time during or after your trial.
+                </div>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                What payment methods do you accept? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    We accept all major credit cards (Visa, MasterCard, American Express) and PayPal. For Enterprise plans, we also offer invoice payment options.
+                </div>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                Can I cancel my subscription at any time? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    Yes, you can cancel your subscription at any time from your account settings. Your subscription will remain active until the end of your current billing cycle, and you won't be charged again.
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
-<style>
-    .pricing-header {
-        text-align: center;
-        margin: 4rem 0 2rem;
-    }
-
-    .pricing-header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .pricing-header p {
-        color: #999;
-        font-size: 1.2rem;
-    }
-
-    .pricing-info {
-        max-width: 800px;
-        margin: 0 auto 3rem;
-        text-align: center;
-        color: #999;
-        line-height: 1.6;
-    }
-
-    .pricing-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        padding: 2rem 0;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .pricing-card {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 2rem;
-        position: relative;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .pricing-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .recommended {
-        background: linear-gradient(145deg, rgba(var(--primary-color-rgb), 0.1), rgba(var(--primary-color-rgb), 0.2));
-        border: 1px solid rgba(var(--primary-color-rgb), 0.3);
-    }
-
-    .recommended-badge {
-        position: absolute;
-        top: -12px;
-        right: -12px;
-        background: var(--primary-color);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: bold;
-    }
-
-    .plan-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .plan-header h2 {
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
-    }
-
-    .price {
-        font-size: 3rem;
-        color: var(--primary-color);
-    }
-
-    .currency {
-        font-size: 1.5rem;
-        vertical-align: super;
-    }
-
-    .period {
-        font-size: 1rem;
-        color: #666;
-    }
-
-    .features {
-        list-style: none;
-        padding: 0;
-        margin: 2rem 0;
-    }
-
-    .features li {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-        color: #ccc;
-    }
-
-    .check-icon {
-        width: 20px;
-        height: 20px;
-        margin-right: 0.5rem;
-        color: var(--primary-color);
-    }
-
-    .select-plan {
-        display: block;
-        text-align: center;
-        background: var(--primary-color);
-        color: white;
-        padding: 1rem;
-        border-radius: 6px;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-    }
-
-    .select-plan:hover {
-        background: var(--primary-color-light);
-    }
-
-    /* Plan Comparison Section */
-    .plan-comparison {
-        margin: 4rem auto;
-        max-width: 1200px;
-    }
-
-    .plan-comparison h2 {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .comparison-table-container {
-        overflow-x: auto;
-    }
-
-    .comparison-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 0 auto;
-    }
-
-    .comparison-table th, 
-    .comparison-table td {
-        padding: 1rem;
-        text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .comparison-table th {
-        background-color: rgba(var(--primary-color-rgb), 0.1);
-        color: var(--primary-color);
-        font-weight: 600;
-    }
-
-    .comparison-table tr:hover {
-        background-color: rgba(255, 255, 255, 0.03);
-    }
-
-    .comparison-table td:first-child {
-        text-align: left;
-        font-weight: 500;
-    }
-
-    .yes {
-        color: var(--primary-color);
-    }
-
-    .no {
-        color: #666;
-    }
-
-    /* FAQ Section */
-    .faq-section {
-        margin: 4rem auto;
-        max-width: 800px;
-    }
-
-    .faq-section h2 {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .faq-container {
-        display: grid;
-        gap: 1.5rem;
-    }
-
-    .faq-item {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 8px;
-        padding: 1.5rem;
-        transition: transform 0.3s ease;
-    }
-
-    .faq-item:hover {
-        transform: translateY(-5px);
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    .faq-item h3 {
-        color: var(--primary-color);
-        margin-bottom: 0.5rem;
-        font-size: 1.2rem;
-    }
-
-    .faq-item p {
-        color: #999;
-        line-height: 1.6;
-    }
-
-    @media (max-width: 768px) {
-        .pricing-grid {
-            grid-template-columns: 1fr;
-            padding: 1rem;
-        }
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // FAQ accordion functionality
+        const faqItems = document.querySelectorAll('.faq-item');
         
-        .comparison-table th, 
-        .comparison-table td {
-            padding: 0.75rem 0.5rem;
-            font-size: 0.9rem;
-        }
-    }
-</style>
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            
+            question.addEventListener('click', function() {
+                // Toggle current item
+                item.classList.toggle('active');
+                
+                // Close other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+            });
+        });
+    });
+</script>
 {% endblock %} 
