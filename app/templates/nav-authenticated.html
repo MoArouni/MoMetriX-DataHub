@@ -17,10 +17,11 @@
             {% endif %}
         </ul>
     </li>
-    <li><a href="#features">Features</a></li>
+    <li><a href="{{ url_for('features.index') }}">Features</a></li>
     <li><a href="{{ url_for('contact.index') }}">Contact</a></li>
     <li><a href="{{ url_for('pricing.index') }}">Pricing</a></li>
     <li><a href="{{ url_for('blog.index') }}">Blog</a></li>
+    <li><a href="{{ url_for('support.index') }}">Support</a></li>
     <li><a href="{{ url_for('qa.index') }}">Q&A</a></li>
     <li>
         <a href="{{ url_for('auth.logout') }}" class="btn-login">
@@ -60,6 +61,8 @@
                 <li><a href="{{ url_for('settings.index') }}"><i class="fas fa-user-cog"></i> User Settings</a></li>
                 <li><a href="{{ url_for('qa.ask_question') }}"><i class="fas fa-question-circle"></i> Ask Question</a></li>
                 <li><a href="{{ url_for('blog.index') }}"><i class="fas fa-blog"></i> Blog</a></li>
+                <li><a href="{{ url_for('features.index') }}"><i class="fas fa-star"></i> Features</a></li>
+                <li><a href="{{ url_for('support.index') }}"><i class="fas fa-headset"></i> Support</a></li>
                 <li><a href="{{ url_for('contact.index') }}"><i class="fas fa-envelope"></i> Contact Us</a></li>
                 <li><a href="{{ url_for('pricing.index') }}"><i class="fas fa-tag"></i> Pricing</a></li>
                 
@@ -82,10 +85,11 @@
 </div>
 {% else %}
 <ul class="nav-links">
-    <li><a href="#features">Features</a></li>
+    <li><a href="{{ url_for('features.index') }}">Features</a></li>
     <li><a href="{{ url_for('contact.index') }}">Contact</a></li>
     <li><a href="{{ url_for('pricing.index') }}">Pricing</a></li>
     <li><a href="{{ url_for('blog.index') }}">Blog</a></li>
+    <li><a href="{{ url_for('support.index') }}">Support</a></li>
     <li><a href="{{ url_for('qa.index') }}">Q&A</a></li>
     <li>
         <a href="{{ url_for('auth.login') }}" class="btn-login">
