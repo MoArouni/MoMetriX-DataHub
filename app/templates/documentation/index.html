@@ -364,7 +364,7 @@
                 <div class="docs-step-number">1</div>
                 <div class="docs-step-content">
                     <h4 class="docs-step-title">Create an Account</h4>
-                    <p class="docs-step-text">Visit the <a href="{{ url_for('auth.signup') }}">sign-up page</a> and fill out the registration form with your name, email, and password.</p>
+                    <p class="docs-step-text">Visit the <a href="{{ url_for('auth.login') }}">sign-up page</a> and fill out the registration form with your name, email, and password.</p>
                 </div>
             </div>
             
@@ -399,6 +399,217 @@
             <div class="docs-warning">
                 <h4 class="docs-warning-title">Important Security Note</h4>
                 <p class="docs-warning-text">We strongly recommend enabling two-factor authentication for added security. This provides an extra layer of protection for your account and business data.</p>
+            </div>
+        </section>
+        
+        <!-- Dashboard Navigation Section -->
+        <section class="docs-section" id="dashboard">
+            <h2 class="docs-section-title">Dashboard Navigation</h2>
+            <p class="docs-text">
+                The dashboard is your central hub for accessing all platform features and viewing key metrics at a glance. Understanding the dashboard layout will help you navigate the platform efficiently.
+            </p>
+            
+            <h3 class="docs-subsection-title">Dashboard Layout</h3>
+            <p class="docs-text">
+                The main dashboard is divided into several sections:
+            </p>
+            <ul class="docs-list">
+                <li><strong>Top Navigation Bar:</strong> Access to your account settings, notifications, and quick links.</li>
+                <li><strong>Side Navigation:</strong> Access to all main features of the platform.</li>
+                <li><strong>Summary Cards:</strong> Quick overview of key metrics (sales totals, product counts, etc.).</li>
+                <li><strong>Recent Activity:</strong> Shows your recent actions and updates in the system.</li>
+                <li><strong>Quick Actions:</strong> Shortcuts to commonly used features.</li>
+                <li><strong>Analytics Overview:</strong> Visualizations of key performance indicators and trends.</li>
+            </ul>
+            
+            <h3 class="docs-subsection-title">Navigation Shortcuts</h3>
+            <p class="docs-text">
+                For faster navigation, you can use these keyboard shortcuts:
+            </p>
+            <div class="docs-code">
+                <pre>
+Alt + D: Go to Dashboard
+Alt + P: Go to Products
+Alt + S: Go to Sales
+Alt + R: Go to Reports
+Alt + U: Go to User Settings
+Esc: Close any modal dialogs
+                </pre>
+            </div>
+        </section>
+        
+        <!-- Creating a Company Section -->
+        <section class="docs-section" id="create-company">
+            <h2 class="docs-section-title">Creating a Company</h2>
+            <p class="docs-text">
+                Before you can start tracking sales and products, you need to create a company profile. This represents your business entity within the platform.
+            </p>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">1</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Access Company Creation</h4>
+                    <p class="docs-step-text">From your dashboard, click on "Create Company" in the sidebar or in the main dashboard area.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">2</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Enter Company Details</h4>
+                    <p class="docs-step-text">Fill out the company creation form with your business details:</p>
+                    <ul>
+                        <li>Company Name</li>
+                        <li>Industry Type</li>
+                        <li>Company Address</li>
+                        <li>Contact Information</li>
+                        <li>Tax/Registration Numbers (optional)</li>
+                        <li>Company Logo (optional)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">3</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Select Business Type</h4>
+                    <p class="docs-step-text">Choose the type of business that best represents your company. This helps us provide relevant templates and configurations.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">4</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Confirm Creation</h4>
+                    <p class="docs-step-text">Review your information and click "Create Company" to finalize the creation process.</p>
+                </div>
+            </div>
+            
+            <h3 class="docs-subsection-title">Multiple Companies</h3>
+            <p class="docs-text">
+                If you need to manage multiple business entities, you can create additional companies under the same account. To switch between companies, use the company selector in the top navigation bar.
+            </p>
+            
+            <div class="docs-tip">
+                <h4 class="docs-tip-title">Pro Tip</h4>
+                <p class="docs-tip-text">If you operate multiple locations of the same business, it's better to create one company with multiple locations rather than creating separate companies for each location.</p>
+            </div>
+        </section>
+        
+        <!-- Team Management Section -->
+        <section class="docs-section" id="team-management">
+            <h2 class="docs-section-title">Team Management</h2>
+            <p class="docs-text">
+                Collaborate with your team by inviting them to your company account. Each team member can be assigned specific roles and permissions.
+            </p>
+            
+            <h3 class="docs-subsection-title">Adding Team Members</h3>
+            <div class="docs-step">
+                <div class="docs-step-number">1</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Navigate to Team Settings</h4>
+                    <p class="docs-step-text">From your dashboard, go to "Settings" and then select the "Team" tab.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">2</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Invite New Member</h4>
+                    <p class="docs-step-text">Click on "Invite Team Member" and enter their email address.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">3</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Assign Role</h4>
+                    <p class="docs-step-text">Select an appropriate role for the team member:</p>
+                    <ul>
+                        <li><strong>Administrator:</strong> Full access to all company features and settings</li>
+                        <li><strong>Manager:</strong> Can manage most data but cannot change company settings</li>
+                        <li><strong>Data Entry:</strong> Can input and edit sales data but has limited access to analytics</li>
+                        <li><strong>Viewer:</strong> Read-only access to data and reports</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">4</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Customize Permissions (Optional)</h4>
+                    <p class="docs-step-text">For more granular control, you can customize specific permissions for each team member.</p>
+                </div>
+            </div>
+            
+            <h3 class="docs-subsection-title">Managing Team Members</h3>
+            <p class="docs-text">
+                From the Team Management page, you can also:
+            </p>
+            <ul class="docs-list">
+                <li>Edit roles and permissions for existing team members</li>
+                <li>Revoke access for team members who should no longer have access</li>
+                <li>Resend invitation emails if a team member hasn't accepted yet</li>
+                <li>View activity logs for each team member</li>
+            </ul>
+            
+            <div class="docs-warning">
+                <h4 class="docs-warning-title">Access Control Note</h4>
+                <p class="docs-warning-text">Be careful when assigning administrator roles, as administrators have full control over your company data and settings. Only assign this role to trusted individuals who need full access.</p>
+            </div>
+        </section>
+        
+        <!-- Categories Section -->
+        <section class="docs-section" id="categories">
+            <h2 class="docs-section-title">Setting Up Categories</h2>
+            <p class="docs-text">
+                Categories help you organize your products for better data management and reporting. Setting up a clear category structure is an important first step before adding your products.
+            </p>
+            
+            <h3 class="docs-subsection-title">Creating Categories</h3>
+            <div class="docs-step">
+                <div class="docs-step-number">1</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Access Categories</h4>
+                    <p class="docs-step-text">Navigate to "Products" > "Categories" in the main navigation.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">2</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Add New Category</h4>
+                    <p class="docs-step-text">Click on "Add Category" and enter the category name, description, and any relevant attributes.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">3</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Set Up Hierarchy (Optional)</h4>
+                    <p class="docs-step-text">You can create a hierarchical structure by setting parent-child relationships between categories. This is useful for organizing subcategories.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">4</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Add Category Attributes (Optional)</h4>
+                    <p class="docs-step-text">Define specific attributes that apply to products in this category, such as size, color, material, etc.</p>
+                </div>
+            </div>
+            
+            <h3 class="docs-subsection-title">Category Management Tips</h3>
+            <ul class="docs-list">
+                <li>Aim for a logical structure that reflects how your business organizes products</li>
+                <li>Avoid creating too many top-level categories; use subcategories instead</li>
+                <li>Consider your reporting needs when designing your category structure</li>
+                <li>Use consistent naming conventions for better organization</li>
+            </ul>
+            
+            <div class="docs-tip">
+                <h4 class="docs-tip-title">Pro Tip</h4>
+                <p class="docs-tip-text">Before setting up your full category structure, take some time to plan it out. A well-thought-out category hierarchy will make product management and reporting much easier in the long run.</p>
             </div>
         </section>
     </div>
@@ -451,4 +662,4 @@
         });
     });
 </script>
-{% endblock %} 
+{% endblock %}
