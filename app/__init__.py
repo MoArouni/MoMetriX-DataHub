@@ -46,6 +46,8 @@ def create_app(config_name='default'):
     from app.routes.subscription import subscription_bp
     from app.routes.contact import contact_bp
     from app.routes.user import user_bp
+    from app.routes.features import features_bp
+    from app.routes.support import support_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -63,6 +65,8 @@ def create_app(config_name='default'):
     app.register_blueprint(subscription_bp)
     app.register_blueprint(contact_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(features_bp)
+    app.register_blueprint(support_bp)
     
     # Register error handlers
     register_error_handlers(app)

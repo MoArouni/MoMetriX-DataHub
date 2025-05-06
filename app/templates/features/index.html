@@ -1,0 +1,492 @@
+{% extends "base.html" %}
+
+{% block title %}Data Analysis Hub - Features & Mission{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Quote Section */
+    .quote-section {
+        background-color: rgba(20, 20, 20, 0.9);
+        padding: 6rem 0;
+        text-align: center;
+        position: relative;
+    }
+    
+    .quote-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .quote-text {
+        font-size: 2.5rem;
+        font-style: italic;
+        color: #fff;
+        margin-bottom: 1.5rem;
+        line-height: 1.4;
+        position: relative;
+    }
+    
+    .quote-text::before,
+    .quote-text::after {
+        content: '"';
+        color: var(--primary-color);
+        font-size: 4rem;
+        position: absolute;
+        opacity: 0.7;
+    }
+    
+    .quote-text::before {
+        left: -2rem;
+        top: -1rem;
+    }
+    
+    .quote-text::after {
+        right: -2rem;
+        bottom: -2rem;
+    }
+    
+    .quote-author {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    
+    /* Mission Section */
+    .mission-section {
+        padding: 6rem 0;
+        background-color: var(--surface-color);
+    }
+    
+    .mission-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .section-title {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    
+    .section-title h2 {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .section-title p {
+        color: #cccccc;
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 1.2rem;
+        line-height: 1.7;
+    }
+    
+    .mission-values {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 3rem;
+        margin-bottom: 6rem;
+    }
+    
+    .value-card {
+        background-color: rgba(30, 30, 30, 0.7);
+        border-radius: 10px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .value-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .value-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 2rem;
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .value-icon i {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+    }
+    
+    .value-title {
+        font-size: 1.8rem;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+    }
+    
+    .value-desc {
+        color: #cccccc;
+        line-height: 1.7;
+    }
+    
+    /* Features Section */
+    .features-section {
+        padding: 6rem 0;
+        background-color: rgba(18, 18, 18, 0.9);
+    }
+    
+    .feature-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 3rem;
+    }
+    
+    .feature-item {
+        display: flex;
+        background-color: rgba(30, 30, 30, 0.7);
+        border-radius: 10px;
+        overflow: hidden;
+        padding: 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .feature-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .feature-icon-wrapper {
+        margin-right: 1.5rem;
+        color: var(--primary-color);
+        font-size: 2rem;
+        flex-shrink: 0;
+    }
+    
+    .feature-content h3 {
+        color: #ffffff;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-content p {
+        color: #cccccc;
+        line-height: 1.6;
+    }
+    
+    /* Process Section */
+    .process-section {
+        padding: 6rem 0;
+        background-color: var(--surface-color);
+    }
+    
+    .process-steps {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        max-width: 1000px;
+        margin: 0 auto;
+        flex-wrap: wrap;
+    }
+    
+    .process-steps::before {
+        content: '';
+        position: absolute;
+        top: 70px;
+        left: 60px;
+        right: 60px;
+        height: 4px;
+        background-color: rgba(var(--primary-color-rgb), 0.2);
+        z-index: 0;
+    }
+    
+    .process-step {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 0 1.5rem;
+        flex: 1;
+        min-width: 200px;
+        margin-bottom: 4rem;
+    }
+    
+    .step-number {
+        width: 100px;
+        height: 100px;
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        border: 4px solid var(--primary-color);
+        border-radius: 50%;
+        margin: 0 auto 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    
+    .step-title {
+        font-size: 1.5rem;
+        color: #ffffff;
+        margin-bottom: 1rem;
+    }
+    
+    .step-desc {
+        color: #cccccc;
+        line-height: 1.6;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+        padding: 6rem 0;
+        background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.1) 0%, rgba(var(--primary-color-rgb), 0.2) 100%);
+        text-align: center;
+    }
+    
+    .cta-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .cta-title {
+        font-size: 3rem;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+    }
+    
+    .cta-text {
+        color: #cccccc;
+        margin-bottom: 3rem;
+        font-size: 1.2rem;
+        line-height: 1.7;
+    }
+    
+    .cta-btn {
+        padding: 1.2rem 2.5rem;
+        font-size: 1.1rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        letter-spacing: 1px;
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: #000;
+        border: none;
+        box-shadow: 0 10px 30px rgba(var(--primary-color-rgb), 0.3);
+    }
+    
+    .cta-btn:hover {
+        background-color: var(--primary-color-light);
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(var(--primary-color-rgb), 0.4);
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .quote-text {
+            font-size: 1.8rem;
+        }
+        
+        .quote-text::before,
+        .quote-text::after {
+            font-size: 3rem;
+        }
+        
+        .process-steps::before {
+            display: none;
+        }
+        
+        .process-step {
+            width: 100%;
+            margin-bottom: 3rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Quote Section -->
+<section class="quote-section">
+    <div class="quote-container">
+        <p class="quote-text">Simplicity is the ultimate sophistication.</p>
+        <p class="quote-author">— Leonardo da Vinci</p>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="mission-section">
+    <div class="mission-container">
+        <div class="section-title">
+            <h2>Our Mission</h2>
+            <p>We believe in the power of data to transform businesses and drive innovation. Our mission is to make advanced data analytics accessible to everyone.</p>
+        </div>
+        
+        <div class="mission-values">
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <h3 class="value-title">Accessibility</h3>
+                <p class="value-desc">We're committed to democratizing data analysis by creating intuitive tools that require no specialized training to use effectively.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="value-title">Security</h3>
+                <p class="value-desc">Your data security is our top priority. We implement robust security measures to ensure your business information remains protected.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3 class="value-title">Innovation</h3>
+                <p class="value-desc">We continuously evolve our platform with cutting-edge technologies to provide you with the most powerful analytical capabilities.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="mission-container">
+        <div class="section-title">
+            <h2>Key Features</h2>
+            <p>Our comprehensive platform offers a range of powerful features designed to help you get the most out of your data.</p>
+        </div>
+        
+        <div class="feature-list">
+            <div class="feature-item">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Real-time Analytics</h3>
+                    <p>Monitor your business performance with live dashboards that update in real-time, giving you immediate insights into your operations.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Data Integration</h3>
+                    <p>Connect and consolidate data from multiple sources into a single, unified platform for comprehensive analysis.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-desktop"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Customizable Dashboards</h3>
+                    <p>Create personalized dashboards that focus on the metrics most important to your business needs.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Team Collaboration</h3>
+                    <p>Share insights and work collaboratively with team members through our secure, multi-user platform.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-file-export"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Export & Reporting</h3>
+                    <p>Generate comprehensive reports and export data in multiple formats for presentations and further analysis.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Advanced Security</h3>
+                    <p>Enterprise-grade security features including role-based access control, data encryption, and audit logs.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Customizable System</h3>
+                    <p>Tailor the platform to your specific business needs with customizable fields, forms, and workflows.</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Mobile Accessibility</h3>
+                    <p>Access your data and insights on the go with our fully responsive design that works on any device.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Process Section -->
+<section class="process-section">
+    <div class="mission-container">
+        <div class="section-title">
+            <h2>How It Works</h2>
+            <p>Get started with our platform in just a few simple steps</p>
+        </div>
+        
+        <div class="process-steps">
+            <div class="process-step">
+                <div class="step-number">1</div>
+                <h3 class="step-title">Sign Up</h3>
+                <p class="step-desc">Create your account and set up your organization profile with just a few clicks.</p>
+            </div>
+            
+            <div class="process-step">
+                <div class="step-number">2</div>
+                <h3 class="step-title">Import Data</h3>
+                <p class="step-desc">Connect your data sources or import your existing data into the platform.</p>
+            </div>
+            
+            <div class="process-step">
+                <div class="step-number">3</div>
+                <h3 class="step-title">Customize</h3>
+                <p class="step-desc">Tailor the system to your needs by setting up your products, categories, and locations.</p>
+            </div>
+            
+            <div class="process-step">
+                <div class="step-number">4</div>
+                <h3 class="step-title">Analyze</h3>
+                <p class="step-desc">Start analyzing your data with our powerful tools and gain valuable insights.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="cta-container">
+        <h2 class="cta-title">Ready to Unlock Your Data's Potential?</h2>
+        <p class="cta-text">Join thousands of businesses that are already using our platform to gain valuable insights and drive growth.</p>
+        <a href="{{ url_for('auth.signup') }}" class="cta-btn">Get Started Now</a>
+    </div>
+</section>
+{% endblock %} 
