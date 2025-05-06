@@ -16,8 +16,13 @@ class Config:
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', 'mohamadarouni5@gmail   .com')
     MAIL_SUBJECT_PREFIX = '[Data Analysis Hub] '
-    MAIL_SENDER = 'Data Analysis Hub <noreply@dataanalysishub.com>'
+    MAIL_SENDER = 'Data Analysis Hub <mohamadarouni5@gmail.com>'
+    MAIL_USE_SSL = False
+    
+    # Set to True when in development and you don't want to use email
+    MAIL_SUPPRESS_SEND = os.environ.get('MAIL_SUPPRESS_SEND', 'false').lower() in ['true', 'on', '1']
     
     @staticmethod
     def init_app(app):
