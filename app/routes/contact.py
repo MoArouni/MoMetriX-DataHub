@@ -32,3 +32,8 @@ def index():
         return redirect(url_for('contact.index'))
         
     return render_template('contact/index.html', form=form) 
+
+@contact_bp.route('/thank-you', methods=['GET'])
+def thank_you():
+    """Thank you page after successful form submission"""
+    return render_template('contact/thank_you.html') 
