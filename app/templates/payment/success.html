@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card">
+                <div class="card-body py-5">
+                    <div class="mb-4">
+                        <div class="bg-success text-white d-inline-block p-3 rounded-circle mb-3">
+                            <i class="fas fa-check fa-3x"></i>
+                        </div>
+                        <h2 class="mb-3">Payment Successful!</h2>
+                        <p class="lead mb-4">
+                            Thank you for subscribing to the {{ plan.name }} Plan.
+                        </p>
+                        <p class="text-muted mb-4">
+                            Your subscription is now active and you have full access to all features included in your plan.
+                        </p>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="text-start mb-4">
+                            <h5 class="mb-3">What's included in your plan:</h5>
+                            <ul class="list-group list-group-flush">
+                                {% if plan.max_sales > 0 %}
+                                <li class="list-group-item">Up to {{ plan.max_sales }} sales entries</li>
+                                {% else %}
+                                <li class="list-group-item">Unlimited sales entries</li>
+                                {% endif %}
+                                
+                                {% if plan.max_users > 0 %}
+                                <li class="list-group-item">Up to {{ plan.max_users }} team members</li>
+                                {% else %}
+                                <li class="list-group-item">Unlimited team members</li>
+                                {% endif %}
+                                
+                                {% if plan.feature_analytics %}
+                                <li class="list-group-item">Advanced analytics tools</li>
+                                {% endif %}
+                                
+                                {% if plan.feature_export %}
+                                <li class="list-group-item">Data export capabilities</li>
+                                {% endif %}
+                                
+                                {% if plan.feature_premium_tools %}
+                                <li class="list-group-item">Premium analysis tools</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center">
+                        <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary px-4 py-2">
+                            <i class="fas fa-home me-2"></i>Go to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

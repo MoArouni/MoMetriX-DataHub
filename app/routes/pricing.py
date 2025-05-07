@@ -124,10 +124,10 @@ def index():
     
     return render_template('pricing/index.html', plans=default_plans)
 
-@pricing.route('/pricing/upgrade/<int:plan_id>', methods=['GET', 'POST'])
+@pricing.route('/upgrade/<int:plan_id>', methods=['GET'])
 @login_required
 def upgrade(plan_id):
-    """Handle plan upgrade/subscription process"""
+    """Redirect to payment page for subscription upgrade"""
     # Verify plan exists
     plan = SubscriptionPlan.query.get_or_404(plan_id)
     
@@ -136,73 +136,13 @@ def upgrade(plan_id):
         flash('Please contact our sales team to set up an Enterprise plan.', 'info')
         return redirect(url_for('contact.index'))
     
-    # If free plan, just update company's subscription plan
-    if plan.name == 'Free':
-        if current_user.company:
-            # Update company's plan
-            current_user.company.subscription_plan_id = plan.id
-            
-            # Create or update CompanySubscription record
-            subscription = CompanySubscription.query.filter_by(company_id=current_user.company.id).first()
-            if not subscription:
-                subscription = CompanySubscription(
-                    company_id=current_user.company.id,
-                    plan_id=plan.id,
-                    status='active',
-                    current_period_start=datetime.utcnow(),
-                    current_period_end=None  # Free plan has no end
-                )
-                db.session.add(subscription)
-            else:
-                subscription.plan_id = plan.id
-                subscription.status = 'active'
-                subscription.current_period_start = datetime.utcnow()
-                subscription.current_period_end = None
-            
-            db.session.commit()
-            flash('Your company has been successfully subscribed to the Free plan!', 'success')
-            return redirect(url_for('dashboard.index'))
-    
-    # For paid plans, redirect to payment page (this will be implemented in next step)
-    # For now, just simulate a successful payment
-    if current_user.company:
-        # Update company's plan
-        current_user.company.subscription_plan_id = plan.id
-        
-        # Calculate end date based on billing cycle
-        end_date = None
-        if plan.billing_cycle == 'monthly':
-            end_date = datetime.utcnow() + relativedelta(months=1)
-        elif plan.billing_cycle == 'yearly':
-            end_date = datetime.utcnow() + relativedelta(years=1)
-        
-        # Create or update CompanySubscription record
-        subscription = CompanySubscription.query.filter_by(company_id=current_user.company.id).first()
-        if not subscription:
-            subscription = CompanySubscription(
-                company_id=current_user.company.id,
-                plan_id=plan.id,
-                status='active',
-                current_period_start=datetime.utcnow(),
-                current_period_end=end_date,
-                payment_method='credit_card',  # Placeholder
-                payment_provider_id='simulated_payment'  # Placeholder
-            )
-            db.session.add(subscription)
-        else:
-            subscription.plan_id = plan.id
-            subscription.status = 'active'
-            subscription.current_period_start = datetime.utcnow()
-            subscription.current_period_end = end_date
-            subscription.payment_method = 'credit_card'  # Placeholder
-            subscription.payment_provider_id = 'simulated_payment'  # Placeholder
-        
-        db.session.commit()
-        flash(f'Your company has been successfully subscribed to the {plan.name} plan!', 'success')
+    # If the user already has this plan, no need to upgrade
+    if current_user.company and current_user.company.subscription_plan_id == plan_id:
+        flash('You are already subscribed to this plan.', 'info')
         return redirect(url_for('dashboard.index'))
     
-    flash('You need to create a company before subscribing to a plan.', 'warning')
-    return redirect(url_for('dashboard.create_company'))
+    # Redirect to payment checkout for the selected plan
+    return redirect(url_for('payment.checkout', plan_id=plan_id))
 
 @pricing.route('/api/subscription/usage')
 @login_required

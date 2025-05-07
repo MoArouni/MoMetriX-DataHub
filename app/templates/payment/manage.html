@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Subscription{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <h1 class="mb-3">Manage Subscription</h1>
+            <p class="text-muted">
+                Review and manage your current subscription details.
+            </p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Current Subscription</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Plan</h6>
+                            <p class="fw-bold">{{ subscription.plan.name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Status</h6>
+                            <p>
+                                {% if subscription.status == 'active' %}
+                                <span class="badge bg-success">Active</span>
+                                {% elif subscription.status == 'canceled' %}
+                                <span class="badge bg-warning">Canceled</span>
+                                {% elif subscription.status == 'past_due' %}
+                                <span class="badge bg-danger">Past Due</span>
+                                {% else %}
+                                <span class="badge bg-secondary">{{ subscription.status|capitalize }}</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Price</h6>
+                            <p>${{ subscription.plan.price }} / {{ subscription.plan.billing_cycle }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Payment Method</h6>
+                            <p>
+                                {% if subscription.payment_method %}
+                                {{ subscription.payment_method|capitalize }}
+                                {% else %}
+                                Not applicable
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    {% if subscription.current_period_end %}
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Current Period Started</h6>
+                            <p>{{ subscription.current_period_start.strftime('%B %d, %Y') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Current Period Ends</h6>
+                            <p>{{ subscription.current_period_end.strftime('%B %d, %Y') }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Sales Usage</h6>
+                            {% if subscription.plan.max_sales > 0 %}
+                            <!-- Determine bar color -->
+                            {% set sales_bg = "#0d6efd" %}
+                            {% if subscription.sales_usage_percent > 95 %}
+                                {% set sales_bg = "#dc3545" %}
+                            {% elif subscription.sales_usage_percent > 80 %}
+                                {% set sales_bg = "#ffc107" %}
+                            {% endif %}
+                            <div class="progress mb-2" style="height: 10px;">
+                                <div role="progressbar" style="width: {{ subscription.sales_usage_percent }}%; background-color: {{ sales_bg }}; height: 10px;" aria-valuenow="{{ subscription.sales_usage_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="small text-muted">
+                                {{ subscription.sales_count }} / {{ subscription.plan.max_sales }} entries
+                                ({{ subscription.sales_usage_percent|round|int }}% used)
+                            </p>
+                            {% else %}
+                            <p>Unlimited</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-3">User Usage</h6>
+                            {% if subscription.plan.max_users > 0 %}
+                            <!-- Determine bar color -->
+                            {% set user_bg = "#0d6efd" %}
+                            {% if subscription.user_usage_percent > 95 %}
+                                {% set user_bg = "#dc3545" %}
+                            {% elif subscription.user_usage_percent > 80 %}
+                                {% set user_bg = "#ffc107" %}
+                            {% endif %}
+                            <div class="progress mb-2" style="height: 10px;">
+                                <div role="progressbar" style="width: {{ subscription.user_usage_percent }}%; background-color: {{ user_bg }}; height: 10px;" aria-valuenow="{{ subscription.user_usage_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="small text-muted">
+                                {{ subscription.user_count }} / {{ subscription.plan.max_users }} users
+                                ({{ subscription.user_usage_percent|round|int }}% used)
+                            </p>
+                            {% else %}
+                            <p>Unlimited</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between">
+                    <a href="{{ url_for('pricing.index') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-sync me-2"></i>Change Plan
+                    </a>
+                    
+                    {% if subscription.status == 'active' and subscription.plan.price > 0 %}
+                    <form action="{{ url_for('payment.cancel_subscription_route') }}" method="post" 
+                          onsubmit="return confirm('Are you sure you want to cancel your subscription? You will still have access until the end of your billing period.');">
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="fas fa-times me-2"></i>Cancel Subscription
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Need Help?</h5>
+                </div>
+                <div class="card-body">
+                    <p>If you have any questions about your subscription or need assistance, our support team is here to help.</p>
+                    <a href="{{ url_for('contact.index') }}" class="btn btn-primary w-100">
+                        <i class="fas fa-headset me-2"></i>Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

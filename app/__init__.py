@@ -49,6 +49,7 @@ def create_app(config_name='default'):
     from app.routes.features import features_bp
     from app.routes.support import support_bp
     from app.routes.documentation import documentation_bp
+    from app.routes.payment import payment_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -69,6 +70,7 @@ def create_app(config_name='default'):
     app.register_blueprint(features_bp)
     app.register_blueprint(support_bp)
     app.register_blueprint(documentation_bp)
+    app.register_blueprint(payment_bp)
     
     # Register error handlers
     register_error_handlers(app)

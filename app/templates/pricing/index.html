@@ -271,7 +271,15 @@
         </div>
         
         <div class="pricing-action">
-            <a href="{{ url_for('auth.login') }}" class="pricing-btn {% if not plan.recommended %}secondary{% endif %}">Get Started</a>
+            {% if plan.button_text == 'Current Plan' %}
+                <button class="pricing-btn current">{{ plan.button_text }}</button>
+            {% elif plan.button_text == 'Contact Sales' %}
+                <a href="{{ url_for('contact.index') }}" class="pricing-btn">{{ plan.button_text }}</a>
+            {% elif current_user.is_authenticated %}
+                <a href="{{ url_for('pricing.upgrade', plan_id=plan.plan_id) }}" class="pricing-btn">{{ plan.button_text }}</a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="pricing-btn">{{ plan.button_text }}</a>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
