@@ -8,6 +8,7 @@ from app.models.product_category import ProductCategory
 from app.models.sales import Sale, ProductFeature, FeatureRegistry
 from app.forms.sales_setup_forms import SaleEntryForm
 from app.utils.decorators import company_required, subscriber_required
+from app.models.subscription import CompanySubscription
 from datetime import datetime, date
 import json
 
@@ -27,6 +28,17 @@ def index():
     
     # Get all products for filter
     products = Product.query.filter_by(company_id=company_id).all()
+    
+    # Check subscription status and limits
+    subscription = CompanySubscription.query.filter_by(company_id=company_id).first()
+    near_limit = False
+    hit_limit = False
+    
+    if subscription:
+        if subscription.sales_usage_percent >= 80 and subscription.sales_usage_percent < 100:
+            near_limit = True
+        elif subscription.sales_usage_percent >= 100:
+            hit_limit = True
     
     # Check if session has a forced setup complete flag
     if session.get('setup_complete', False):
@@ -81,7 +93,10 @@ def index():
         store_count=len(stores),
         category_count=len(categories),
         stores=stores,
-        products=products
+        products=products,
+        near_limit=near_limit,
+        hit_limit=hit_limit,
+        subscription=subscription
     )
 
 @sales_bp.route('/new', methods=['GET', 'POST'])
@@ -90,6 +105,12 @@ def index():
 def new_sale():
     """Create a new sale entry"""
     company_id = current_user.company_id
+    
+    # Check subscription limits
+    subscription = CompanySubscription.query.filter_by(company_id=company_id).first()
+    if subscription and not subscription.can_add_sale:
+        flash('You have reached the maximum number of sales allowed under your current plan. Please upgrade to add more sales.', 'warning')
+        return redirect(url_for('pricing.index'))
     
     # Check if company has necessary setup
     stores = Store.query.filter_by(company_id=company_id).all()
@@ -173,6 +194,10 @@ def new_sale():
                         value=feature_values[i]
                     )
                     db.session.add(registry_entry)
+        
+        # Update subscription sales count
+        if subscription:
+            subscription.sales_count += 1
         
         db.session.commit()
         flash('Sale recorded successfully!', 'success')
