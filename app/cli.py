@@ -70,4 +70,16 @@ def register_commands(app):
         db.session.commit()
         
         print(f"Admin user '{username}' created successfully!")
-        
+    
+    @app.cli.command('create-subscription-plans')
+    @with_appcontext
+    def create_subscription_plans_command():
+        """Initialize subscription plans in the database."""
+        from app.scripts.create_subscription_plans import create_subscription_plans
+        create_subscription_plans()
+        click.echo('Subscription plans have been created.')
+
+    # Add all commands to the app
+    app.cli.add_command(create_admin)
+    app.cli.add_command(create_subscription_plans_command)
+    
