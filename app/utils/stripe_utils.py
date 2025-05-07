@@ -3,11 +3,26 @@ from flask import current_app, url_for
 from app.models.subscription import SubscriptionPlan
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+import logging
 
 def initialize_stripe():
     """Initialize Stripe with API key from config"""
-    stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
-    return stripe
+    try:
+        if 'STRIPE_SECRET_KEY' not in current_app.config:
+            current_app.logger.error("STRIPE_SECRET_KEY not found in app configuration")
+            return None
+            
+        if not current_app.config['STRIPE_SECRET_KEY'] or current_app.config['STRIPE_SECRET_KEY'] == 'sk_test_your_test_key':
+            current_app.logger.warning("Using default test Stripe key. Set STRIPE_SECRET_KEY environment variable for production.")
+            # Return None in production, but for development/testing, use test key
+            if current_app.config.get('ENV') != 'development' and not current_app.config.get('TESTING'):
+                return None
+            
+        stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+        return stripe
+    except Exception as e:
+        current_app.logger.error(f"Failed to initialize Stripe: {str(e)}")
+        return None
 
 def create_stripe_checkout_session(customer_email, plan_id, company_id):
     """
@@ -21,7 +36,10 @@ def create_stripe_checkout_session(customer_email, plan_id, company_id):
     Returns:
         The Stripe checkout session
     """
-    stripe = initialize_stripe()
+    stripe_instance = initialize_stripe()
+    if not stripe_instance:
+        current_app.logger.error("Cannot create checkout session: Stripe not initialized")
+        raise ValueError("Stripe payment service is not configured properly. Please contact support.")
     
     # Get the subscription plan details
     plan = SubscriptionPlan.query.get(plan_id)
@@ -32,43 +50,47 @@ def create_stripe_checkout_session(customer_email, plan_id, company_id):
     if plan.price <= 0:
         return None
     
-    # Create a success and cancel URL
-    success_url = url_for('payment.success', plan_id=plan_id, company_id=company_id, _external=True)
-    cancel_url = url_for('payment.cancel', _external=True)
-    
-    # Convert to cents for Stripe
-    price_in_cents = int(plan.price * 100)
-    
-    # Create the checkout session
-    session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
-        line_items=[{
-            'price_data': {
-                'currency': 'usd',
-                'product_data': {
-                    'name': f'{plan.name} Plan',
-                    'description': f'Subscription to {plan.name} plan with access to premium features',
+    try:
+        # Create a success and cancel URL
+        success_url = url_for('payment.success', plan_id=plan_id, company_id=company_id, _external=True)
+        cancel_url = url_for('payment.cancel', _external=True)
+        
+        # Convert to cents for Stripe
+        price_in_cents = int(plan.price * 100)
+        
+        # Create the checkout session
+        session = stripe_instance.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': f'{plan.name} Plan',
+                        'description': f'Subscription to {plan.name} plan with access to premium features',
+                    },
+                    'unit_amount': price_in_cents,
+                    'recurring': {
+                        'interval': 'month' if plan.billing_cycle == 'monthly' else 'year',
+                        'interval_count': 1,
+                    },
                 },
-                'unit_amount': price_in_cents,
-                'recurring': {
-                    'interval': 'month' if plan.billing_cycle == 'monthly' else 'year',
-                    'interval_count': 1,
-                },
-            },
-            'quantity': 1,
-        }],
-        mode='subscription',
-        success_url=success_url,
-        cancel_url=cancel_url,
-        customer_email=customer_email,
-        metadata={
-            'plan_id': plan_id,
-            'company_id': company_id,
-            'plan_name': plan.name
-        }
-    )
-    
-    return session
+                'quantity': 1,
+            }],
+            mode='subscription',
+            success_url=success_url,
+            cancel_url=cancel_url,
+            customer_email=customer_email,
+            metadata={
+                'plan_id': plan_id,
+                'company_id': company_id,
+                'plan_name': plan.name
+            }
+        )
+        
+        return session
+    except Exception as e:
+        current_app.logger.error(f"Error creating Stripe checkout session: {str(e)}")
+        raise ValueError(f"Failed to create checkout session: {str(e)}")
 
 def cancel_subscription(subscription_id):
     """

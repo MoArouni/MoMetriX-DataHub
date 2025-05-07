@@ -243,6 +243,10 @@
             transition: all 0.3s ease;
         }
 
+        .hamburger.bar:nth-child(2) {
+            width: 70%;
+        }
+
         /* Sidebar menu styles */
         .sidebar-toggle {
             display: flex;
@@ -368,6 +372,15 @@
         @media (max-width: 991px) {
             .hamburger {
                 display: flex;
+                position: absolute;
+                right: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            
+            .nav-container {
+                position: relative;
+                padding: 0.75rem 1rem;
             }
 
             .nav-links {
@@ -445,6 +458,22 @@
 
             .hamburger.active .bar:nth-child(3) {
                 transform: translateY(-8px) rotate(-45deg);
+            }
+            
+            /* Position sidebar toggle button */
+            .sidebar-toggle {
+                position: absolute;
+                right: 4rem;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            
+            /* Make sidebar take full width on very small screens */
+            @media (max-width: 480px) {
+                .sidebar-menu {
+                    width: 100%;
+                    right: -100%;
+                }
             }
         }
 
@@ -708,17 +737,40 @@
         // Mobile dropdown menu toggle
         document.addEventListener('DOMContentLoaded', function() {
             // For mobile: make dropdown toggles work with click
-            if (window.innerWidth <= 991) {
-                const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-                
-                dropdownToggles.forEach(toggle => {
-                    toggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const dropdown = this.closest('.dropdown');
-                        dropdown.classList.toggle('active');
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const dropdown = this.closest('.dropdown');
+                    
+                    // Close other open dropdowns before opening this one
+                    document.querySelectorAll('.dropdown.active').forEach(openDropdown => {
+                        if (openDropdown !== dropdown) {
+                            openDropdown.classList.remove('active');
+                        }
                     });
+                    
+                    dropdown.classList.toggle('active');
                 });
-            }
+            });
+            
+            // Make dropdown menu items work properly
+            const dropdownMenuItems = document.querySelectorAll('.dropdown-menu li a');
+            dropdownMenuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Don't stop propagation here to allow navigation
+                    // Just close the mobile menu if open
+                    const navLinks = document.querySelector('.nav-links');
+                    const hamburger = document.getElementById('hamburger');
+                    
+                    if (navLinks.classList.contains('active')) {
+                        navLinks.classList.remove('active');
+                        hamburger.classList.remove('active');
+                    }
+                });
+            });
         });
 
         // Close alerts after 5 seconds
@@ -856,28 +908,37 @@
             const sidebar = document.querySelector('.sidebar-menu');
             const closeSidebar = document.querySelector('.close-sidebar');
             
-            if (sidebarToggle) {
+            if (sidebarToggle && sidebar) {
+                // Open sidebar when clicking the toggle button
                 sidebarToggle.addEventListener('click', function() {
                     sidebar.classList.add('active');
                     overlay.classList.add('active');
                     document.body.style.overflow = 'hidden'; // Prevent scrolling
                 });
-            }
-            
-            if (closeSidebar) {
-                closeSidebar.addEventListener('click', function() {
+                
+                // Close sidebar when clicking the close button
+                if (closeSidebar) {
+                    closeSidebar.addEventListener('click', function() {
+                        sidebar.classList.remove('active');
+                        overlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                }
+                
+                // Close sidebar when clicking the overlay
+                overlay.addEventListener('click', function() {
                     sidebar.classList.remove('active');
                     overlay.classList.remove('active');
                     document.body.style.overflow = '';
                 });
+                
+                // Make sidebar links work
+                const sidebarLinks = document.querySelectorAll('.sidebar-links li a');
+                
+                // No need to add click handlers to the links
+                // The default anchor behavior should work correctly
+                // Just make sure the sidebar menu HTML has proper href attributes
             }
-            
-            // Close sidebar when clicking overlay
-            overlay.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            });
         });
     </script>
 

@@ -47,6 +47,31 @@ def users():
     users = User.query.order_by(User.created_at.desc()).paginate(page=page, per_page=20)
     return render_template('admin/users.html', users=users.items, pagination=users)
 
+@admin_bp.route('/delete-user/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_user(user_id):
+    """Delete a user"""
+    user = User.query.get_or_404(user_id)
+    
+    # Prevent deleting yourself
+    if user.id == current_user.id:
+        flash('You cannot delete your own account.', 'error')
+        return redirect(url_for('admin.users'))
+    
+    # Store username for confirmation message
+    username = user.username
+    
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        flash(f'User {username} has been deleted.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting user: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.users'))
+
 @admin_bp.route('/companies')
 @login_required
 @admin_required

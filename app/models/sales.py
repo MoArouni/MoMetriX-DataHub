@@ -1,6 +1,7 @@
 from app import db
 from datetime import date, datetime
 import json
+from app.models.product import sale_embellishments  # Import the association table
 
 class Sale(db.Model):
     """Sale model representing a transaction"""
@@ -24,6 +25,8 @@ class Sale(db.Model):
     user = db.relationship('User', backref=db.backref('sales', lazy='dynamic'))
     # store and product relationships are defined in their respective models
     product_features = db.relationship('ProductFeature', backref='sale', lazy='dynamic', cascade='all, delete-orphan')
+    embellishments = db.relationship('Embellishment', secondary=sale_embellishments,
+                                   backref=db.backref('sales', lazy='dynamic'))
     
     @property
     def total_amount(self):

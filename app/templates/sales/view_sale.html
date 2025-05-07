@@ -43,6 +43,22 @@
                 </div>
             </div>
             
+            {% if sale.embellishments %}
+            <div class="embellishments-details">
+                <h3>Embellishments</h3>
+                <div class="embellishments-list">
+                    {% for embellishment in sale.embellishments %}
+                    <div class="embellishment-item">
+                        <span class="embellishment-badge">{{ embellishment.name }}</span>
+                        {% if embellishment.description %}
+                        <span class="embellishment-description">{{ embellishment.description }}</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
             <div class="payment-details">
                 <h3>Payment Details</h3>
                 <div class="payment-info-grid">
@@ -273,6 +289,47 @@
     
     .btn i {
         margin-right: 0.5rem;
+    }
+    
+    .embellishments-details {
+        background-color: rgba(255, 255, 255, 0.03);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .embellishments-details h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .embellishments-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .embellishment-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .embellishment-badge {
+        display: inline-block;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background-color: rgba(3, 218, 198, 0.2);
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    
+    .embellishment-description {
+        font-size: 0.8rem;
+        color: #999;
+        padding: 0 0.5rem;
     }
 </style>
 {% endblock %} 

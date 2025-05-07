@@ -81,6 +81,18 @@
                     
                     <div class="form-row">
                         <div class="form-group">
+                            <label for="embellishment_ids">Embellishments</label>
+                            <select id="embellishment_ids" name="embellishment_ids" class="form-control" multiple disabled>
+                                <option value="">-- Select Embellishments --</option>
+                            </select>
+                            <small class="form-text text-muted">
+                                Select any embellishments applied to this product
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
                             {{ form.quantity.label }} <span class="required-star">*</span>
                             {{ form.quantity(class="form-control no-spinner", min=1) }}
                             {% if form.quantity.errors %}
@@ -551,6 +563,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.getElementById('category_id');
     const productSelect = document.getElementById('product_id');
+    const embellishmentSelect = document.getElementById('embellishment_ids');
     const totalPriceInput = document.getElementById('total_price');
     const cashAmountInput = document.getElementById('cash_amount');
     const cardAmountInput = document.getElementById('card_amount');
@@ -568,6 +581,8 @@ document.addEventListener('DOMContentLoaded', function() {
     categorySelect.addEventListener('change', function() {
         const categoryId = this.value;
         productSelect.innerHTML = '<option value="">-- Select Product --</option>';
+        embellishmentSelect.innerHTML = '<option value="">-- Select Embellishments --</option>';
+        embellishmentSelect.disabled = true;
         
         if (categoryId) {
             productSelect.disabled = false;
@@ -585,6 +600,51 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => productSelect.focus(), 100);
         } else {
             productSelect.disabled = true;
+        }
+    });
+    
+    // Load embellishments when product is selected
+    productSelect.addEventListener('change', function() {
+        const productId = this.value;
+        embellishmentSelect.innerHTML = '<option value="">-- Select Embellishments --</option>';
+        
+        if (productId) {
+            // Enable embellishment select
+            embellishmentSelect.disabled = false;
+            
+            // Fetch embellishments for this product
+            fetch(`/products/api/product-embellishments/${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.embellishments && data.embellishments.length > 0) {
+                        data.embellishments.forEach(function(emb) {
+                            const option = document.createElement('option');
+                            option.value = emb.id;
+                            option.textContent = emb.name;
+                            embellishmentSelect.appendChild(option);
+                        });
+                        
+                        // Initialize Select2 for better multi-select UX
+                        $(embellishmentSelect).select2({
+                            placeholder: 'Select embellishments',
+                            allowClear: true,
+                            theme: 'classic'
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.disabled = true;
+                        option.textContent = 'No embellishments available for this product';
+                        embellishmentSelect.appendChild(option);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching embellishments:', error);
+                });
+                
+            // Also update base price
+            // ... existing code for price handling
+        } else {
+            embellishmentSelect.disabled = true;
         }
     });
     

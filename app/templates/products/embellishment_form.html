@@ -6,8 +6,8 @@
 <div class="container">
     <div class="section-header">
         <h1>{{ title }}</h1>
-        <a href="{{ url_for('products.index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Products
+        <a href="{{ url_for('products.embellishments') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Embellishments
         </a>
     </div>
     
@@ -18,7 +18,7 @@
                 
                 <div class="form-group">
                     {{ form.name.label }}
-                    {{ form.name(class="form-control", placeholder="Enter product name") }}
+                    {{ form.name(class="form-control", placeholder="Enter embellishment name") }}
                     {% if form.name.errors %}
                         <div class="error-message">
                             {% for error in form.name.errors %}
@@ -29,11 +29,11 @@
                 </div>
                 
                 <div class="form-group">
-                    {{ form.category_id.label }}
-                    {{ form.category_id(class="form-control") }}
-                    {% if form.category_id.errors %}
+                    {{ form.description.label }}
+                    {{ form.description(class="form-control", placeholder="Enter description", rows=3) }}
+                    {% if form.description.errors %}
                         <div class="error-message">
-                            {% for error in form.category_id.errors %}
+                            {% for error in form.description.errors %}
                                 {{ error }}
                             {% endfor %}
                         </div>
@@ -41,24 +41,12 @@
                 </div>
                 
                 <div class="form-group">
-                    {{ form.base_price.label }}
-                    {{ form.base_price(class="form-control", placeholder="0.00") }}
-                    {% if form.base_price.errors %}
+                    {{ form.product_types.label }}
+                    {{ form.product_types(class="form-control select2", multiple="multiple") }}
+                    <small class="form-text text-muted">Select product types that can use this embellishment</small>
+                    {% if form.product_types.errors %}
                         <div class="error-message">
-                            {% for error in form.base_price.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    {{ form.embellishments.label }}
-                    {{ form.embellishments(class="form-control select2", multiple="multiple") }}
-                    <small class="form-text text-muted">Select multiple embellishments that can be applied to this product</small>
-                    {% if form.embellishments.errors %}
-                        <div class="error-message">
-                            {% for error in form.embellishments.errors %}
+                            {% for error in form.product_types.errors %}
                                 {{ error }}
                             {% endfor %}
                         </div>
@@ -67,7 +55,7 @@
                 
                 <div class="form-buttons">
                     {{ form.submit(class="btn btn-primary") }}
-                    <a href="{{ url_for('products.index') }}" class="btn btn-secondary">Cancel</a>
+                    <a href="{{ url_for('products.embellishments') }}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>
@@ -81,36 +69,8 @@
     $(document).ready(function() {
         $('.select2').select2({
             theme: 'classic',
-            placeholder: 'Select applicable embellishments',
+            placeholder: 'Select applicable product types',
             allowClear: true
-        });
-        
-        // Handle category change to filter embellishments
-        $('#category_id').change(function() {
-            var categoryId = $(this).val();
-            if (categoryId && categoryId != 0) {
-                // Fetch embellishments for this category
-                $.ajax({
-                    url: "{{ url_for('products.api_embellishments_for_category') }}",
-                    data: {category_id: categoryId},
-                    type: 'GET',
-                    success: function(response) {
-                        // Update embellishments dropdown
-                        var embSelect = $('#embellishments');
-                        embSelect.empty();
-                        
-                        if (response.embellishments && response.embellishments.length > 0) {
-                            $.each(response.embellishments, function(i, emb) {
-                                embSelect.append(new Option(emb.name, emb.id, false, false));
-                            });
-                        }
-                        embSelect.trigger('change');
-                    },
-                    error: function() {
-                        console.error('Failed to fetch embellishments for this category');
-                    }
-                });
-            }
         });
     });
 </script>
@@ -177,15 +137,6 @@
     .form-control option {
         background-color: var(--card-bg, #2c3e50);
         color: #fff;
-    }
-    
-    .checkbox-group {
-        display: flex;
-        align-items: center;
-    }
-    
-    .form-check-input {
-        margin-right: 0.5rem;
     }
     
     .form-buttons {

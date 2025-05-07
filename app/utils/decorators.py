@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import redirect, url_for, flash
+from flask import redirect, url_for, flash, abort, request
 from flask_login import current_user
 
 def company_required(f):
@@ -9,12 +9,13 @@ def company_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated:
-            return redirect(url_for('auth.login'))
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('auth.login', next=request.url))
         
-        if not current_user.company_id and not current_user.is_admin:
-            flash('You need to join or create a company first.', 'warning')
-            return redirect(url_for('dashboard.create_company'))
-            
+        if not current_user.company_id:
+            flash('You need to create or join a company to access this feature.', 'warning')
+            return redirect(url_for('dashboard.dashboard'))
+        
         return f(*args, **kwargs)
     return decorated_function
 
@@ -28,7 +29,7 @@ def role_required(role):
         def decorated_function(*args, **kwargs):
             if current_user.role_website != role:
                 flash(f'You need {role} privileges to access this page.', 'warning')
-                return redirect(url_for('dashboard.index'))
+                return redirect(url_for('dashboard.dashboard'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -43,59 +44,66 @@ def company_role_required(role):
         def decorated_function(*args, **kwargs):
             if not current_user.company_id:
                 flash('You need to be part of a company to access this feature.', 'warning')
-                return redirect(url_for('dashboard.index'))
+                return redirect(url_for('dashboard.dashboard'))
             
             if current_user.role_company != role:
                 flash(f'You need {role} privileges within your company to access this page.', 'warning')
-                return redirect(url_for('dashboard.index'))
+                return redirect(url_for('dashboard.dashboard'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator
 
 def admin_required(f):
     """
-    Decorator for routes that require admin privileges
+    Decorator to ensure only admin users can access a route
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or not current_user.is_admin:
-            flash('You do not have permission to access this page.', 'error')
-            return redirect(url_for('dashboard.index'))
+        if not current_user.is_authenticated:
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('auth.login', next=request.url))
+        
+        if not current_user.is_admin:
+            flash('You do not have permission to access this page.', 'danger')
+            return redirect(url_for('dashboard.dashboard'))
+        
         return f(*args, **kwargs)
     return decorated_function
 
 def subscriber_required(f):
     """
-    Decorator for routes that require subscriber role
+    Decorator to ensure users are at least subscribers
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated:
-            return redirect(url_for('auth.login'))
-            
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('auth.login', next=request.url))
+        
         if current_user.role_website not in ['subscriber', 'admin']:
-            flash('This feature requires a Subscriber account.', 'warning')
-            return redirect(url_for('auth.upgrade_role'))
-            
+            flash('You need to upgrade to a subscriber account to access this feature.', 'warning')
+            return redirect(url_for('dashboard.dashboard'))
+        
         return f(*args, **kwargs)
     return decorated_function
 
 def company_admin_required(f):
     """
-    Decorator for routes that require the user to be a company admin
+    Decorator to ensure user is a company admin
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated:
-            return redirect(url_for('auth.login'))
-            
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('auth.login', next=request.url))
+        
         if not current_user.company_id:
-            flash('You need to join or create a company first.', 'warning')
-            return redirect(url_for('dashboard.create_company'))
-            
+            flash('You need to create or join a company to access this feature.', 'warning')
+            return redirect(url_for('dashboard.dashboard'))
+        
         if current_user.role_company != 'admin' and not current_user.is_admin:
-            flash('You need company admin rights to access this page.', 'error')
-            return redirect(url_for('dashboard.index'))
-            
+            flash('You need to be a company admin to access this page.', 'warning')
+            return redirect(url_for('dashboard.dashboard'))
+        
         return f(*args, **kwargs)
     return decorated_function 

@@ -77,15 +77,12 @@
                         <div class="col-md-6">
                             <h6 class="mb-3">Sales Usage</h6>
                             {% if subscription.plan.max_sales > 0 %}
-                            <!-- Determine bar color -->
-                            {% set sales_bg = "#0d6efd" %}
-                            {% if subscription.sales_usage_percent > 95 %}
-                                {% set sales_bg = "#dc3545" %}
-                            {% elif subscription.sales_usage_percent > 80 %}
-                                {% set sales_bg = "#ffc107" %}
-                            {% endif %}
                             <div class="progress mb-2" style="height: 10px;">
-                                <div role="progressbar" style="width: {{ subscription.sales_usage_percent }}%; background-color: {{ sales_bg }}; height: 10px;" aria-valuenow="{{ subscription.sales_usage_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar 
+                                    {% if subscription.sales_usage_percent > 95 %}bg-danger
+                                    {% elif subscription.sales_usage_percent > 80 %}bg-warning
+                                    {% else %}{% endif %}">
+                                </div>
                             </div>
                             <p class="small text-muted">
                                 {{ subscription.sales_count }} / {{ subscription.plan.max_sales }} entries
@@ -98,15 +95,12 @@
                         <div class="col-md-6">
                             <h6 class="mb-3">User Usage</h6>
                             {% if subscription.plan.max_users > 0 %}
-                            <!-- Determine bar color -->
-                            {% set user_bg = "#0d6efd" %}
-                            {% if subscription.user_usage_percent > 95 %}
-                                {% set user_bg = "#dc3545" %}
-                            {% elif subscription.user_usage_percent > 80 %}
-                                {% set user_bg = "#ffc107" %}
-                            {% endif %}
                             <div class="progress mb-2" style="height: 10px;">
-                                <div role="progressbar" style="width: {{ subscription.user_usage_percent }}%; background-color: {{ user_bg }}; height: 10px;" aria-valuenow="{{ subscription.user_usage_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar 
+                                    {% if subscription.user_usage_percent > 95 %}bg-danger
+                                    {% elif subscription.user_usage_percent > 80 %}bg-warning
+                                    {% else %}{% endif %}">
+                                </div>
                             </div>
                             <p class="small text-muted">
                                 {{ subscription.user_count }} / {{ subscription.plan.max_users }} users

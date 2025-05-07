@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from app import db
-from app.models.product import Product
+from app.models.product import Product, Embellishment, product_embellishments
 from app.models.product_category import ProductCategory
-from app.forms.product import ProductForm, ProductCategoryForm
+from app.forms.product import ProductForm, ProductCategoryForm, EmbellishmentForm
 from app.forms.schema import DynamicProductForm
 from app.models.schema import CompanySchema
 from app.utils.decorators import company_required
@@ -24,33 +24,204 @@ def check_company():
 @company_required
 def index():
     """Show products list"""
-    products = Product.query.filter_by(company_id=current_user.company_id).order_by(Product.name).all()
-    categories = ProductCategory.query.filter_by(company_id=current_user.company_id).order_by(ProductCategory.name).all()
-    return render_template('products/index.html', products=products, categories=categories)
+    try:
+        products = Product.query.filter_by(company_id=current_user.company_id).order_by(Product.name).all()
+        categories = ProductCategory.query.filter_by(company_id=current_user.company_id).order_by(ProductCategory.name).all()
+        return render_template('products/index.html', products=products, categories=categories)
+    except Exception as e:
+        # Log the error
+        print(f"Error in products.index: {str(e)}")
+        flash('An error occurred while loading products. Please try again.', 'error')
+        return redirect(url_for('dashboard.dashboard'))
+
+# Embellishments routes
+@products_bp.route('/embellishments')
+@login_required
+@company_required
+def embellishments():
+    """Show embellishments list"""
+    try:
+        embellishments = Embellishment.query.filter_by(company_id=current_user.company_id).order_by(Embellishment.name).all()
+        
+        # Calculate product counts for each embellishment
+        embellishment_product_counts = {}
+        for embellishment in embellishments:
+            count = db.session.query(Product).join(
+                product_embellishments, 
+                Product.id == product_embellishments.c.product_id
+            ).filter(
+                product_embellishments.c.embellishment_id == embellishment.id
+            ).count()
+            embellishment_product_counts[embellishment.id] = count
+        
+        return render_template('products/embellishments.html', 
+                              embellishments=embellishments,
+                              product_counts=embellishment_product_counts)
+    except Exception as e:
+        # Log the error
+        print(f"Error in products.embellishments: {str(e)}")
+        flash('An error occurred while loading embellishments. Please try again.', 'error')
+        return redirect(url_for('dashboard.dashboard'))
+
+@products_bp.route('/embellishments/new', methods=['GET', 'POST'])
+@login_required
+@company_required
+def new_embellishment():
+    """Create a new embellishment"""
+    form = EmbellishmentForm(company_id=current_user.company_id)
+    
+    if form.validate_on_submit():
+        embellishment = Embellishment(
+            company_id=current_user.company_id,
+            name=form.name.data,
+            description=form.description.data
+        )
+        
+        # Add product types
+        for product_type_id in form.product_types.data:
+            product_type = ProductCategory.query.get(product_type_id)
+            if product_type and product_type.company_id == current_user.company_id:
+                embellishment.product_types.append(product_type)
+        
+        db.session.add(embellishment)
+        db.session.commit()
+        flash('Embellishment created successfully!', 'success')
+        return redirect(url_for('products.embellishments'))
+        
+    return render_template('products/embellishment_form.html', form=form, title='New Embellishment')
+
+@products_bp.route('/embellishments/edit/<int:embellishment_id>', methods=['GET', 'POST'])
+@login_required
+@company_required
+def edit_embellishment(embellishment_id):
+    """Edit an existing embellishment"""
+    embellishment = Embellishment.query.get_or_404(embellishment_id)
+    
+    # Ensure embellishment belongs to user's company
+    if embellishment.company_id != current_user.company_id:
+        flash('You do not have permission to edit this embellishment.', 'danger')
+        return redirect(url_for('products.embellishments'))
+    
+    form = EmbellishmentForm(company_id=current_user.company_id, obj=embellishment)
+    
+    if request.method == 'GET':
+        # Pre-select product types
+        form.product_types.data = [pt.id for pt in embellishment.product_types]
+    
+    if form.validate_on_submit():
+        embellishment.name = form.name.data
+        embellishment.description = form.description.data
+        
+        # Update product types
+        embellishment.product_types = []
+        for product_type_id in form.product_types.data:
+            product_type = ProductCategory.query.get(product_type_id)
+            if product_type and product_type.company_id == current_user.company_id:
+                embellishment.product_types.append(product_type)
+        
+        db.session.commit()
+        flash('Embellishment updated successfully!', 'success')
+        return redirect(url_for('products.embellishments'))
+        
+    return render_template('products/embellishment_form.html', form=form, title='Edit Embellishment')
+
+@products_bp.route('/embellishments/delete/<int:embellishment_id>', methods=['POST'])
+@login_required
+@company_required
+def delete_embellishment(embellishment_id):
+    """Delete an embellishment"""
+    embellishment = Embellishment.query.get_or_404(embellishment_id)
+    
+    # Ensure embellishment belongs to user's company
+    if embellishment.company_id != current_user.company_id:
+        flash('You do not have permission to delete this embellishment.', 'danger')
+        return redirect(url_for('products.embellishments'))
+    
+    # Check if this embellishment is used by any products
+    product_count = db.session.query(Product).join(
+        product_embellishments, 
+        Product.id == product_embellishments.c.product_id
+    ).filter(
+        product_embellishments.c.embellishment_id == embellishment_id
+    ).count()
+    
+    if product_count > 0:
+        flash(f'Cannot delete embellishment: It is used by {product_count} products.', 'warning')
+        return redirect(url_for('products.embellishments'))
+    
+    db.session.delete(embellishment)
+    db.session.commit()
+    flash('Embellishment deleted successfully!', 'success')
+    return redirect(url_for('products.embellishments'))
+
+@products_bp.route('/api/embellishments-for-category')
+@login_required
+@company_required
+def api_embellishments_for_category():
+    """Get embellishments for a specific category as JSON"""
+    category_id = request.args.get('category_id', type=int)
+    
+    if not category_id:
+        return jsonify({'error': 'Category ID is required'}), 400
+    
+    # Ensure category belongs to user's company
+    category = ProductCategory.query.get_or_404(category_id)
+    if category.company_id != current_user.company_id:
+        return jsonify({'error': 'Permission denied'}), 403
+    
+    # Get embellishments for this category
+    embellishments = Embellishment.query.filter_by(company_id=current_user.company_id)\
+                    .filter(Embellishment.product_types.any(id=category_id))\
+                    .order_by(Embellishment.name).all()
+    
+    result = {
+        'embellishments': [
+            {
+                'id': emb.id,
+                'name': emb.name,
+                'description': emb.description
+            }
+            for emb in embellishments
+        ]
+    }
+    
+    return jsonify(result)
 
 @products_bp.route('/categories')
 @login_required
 @company_required
 def categories():
     """Show categories list"""
-    categories = ProductCategory.query.filter_by(company_id=current_user.company_id).order_by(ProductCategory.name).all()
-    
-    # Count fields per category
-    for category in categories:
-        category.field_count = CompanySchema.query.filter_by(
-            company_id=current_user.company_id, 
-            category_id=category.id
-        ).count()
+    try:
+        categories = ProductCategory.query.filter_by(company_id=current_user.company_id).order_by(ProductCategory.name).all()
         
-        # Count global fields that apply to all categories
-        global_fields = CompanySchema.query.filter_by(
-            company_id=current_user.company_id, 
-            category_id=None
-        ).count()
-        
-        category.total_fields = category.field_count + global_fields
-        
-    return render_template('products/categories.html', categories=categories)
+        # Count fields per category
+        for category in categories:
+            try:
+                category.field_count = CompanySchema.query.filter_by(
+                    company_id=current_user.company_id, 
+                    category_id=category.id
+                ).count()
+                
+                # Count global fields that apply to all categories
+                global_fields = CompanySchema.query.filter_by(
+                    company_id=current_user.company_id, 
+                    category_id=None
+                ).count()
+                
+                category.total_fields = category.field_count + global_fields
+            except Exception as field_error:
+                # If there's an error counting fields, just set them to 0
+                print(f"Error counting fields: {str(field_error)}")
+                category.field_count = 0
+                category.total_fields = 0
+            
+        return render_template('products/categories.html', categories=categories)
+    except Exception as e:
+        # Log the error
+        print(f"Error in products.categories: {str(e)}")
+        flash('An error occurred while loading categories. Please try again.', 'error')
+        return redirect(url_for('dashboard.dashboard'))
 
 @products_bp.route('/new', methods=['GET', 'POST'])
 @login_required
@@ -79,9 +250,16 @@ def new_product():
                 company_id=current_user.company_id,
                 name=form.name.data,
                 category_id=form.category_id.data,
-                base_price=form.base_price.data,
-                active=form.active.data
+                base_price=form.base_price.data
             )
+            
+            # Add embellishments if selected
+            if form.embellishments.data:
+                for embellishment_id in form.embellishments.data:
+                    embellishment = Embellishment.query.get(embellishment_id)
+                    if embellishment and embellishment.company_id == current_user.company_id:
+                        product.embellishments.append(embellishment)
+            
             db.session.add(product)
             db.session.commit()
             flash('Product created successfully!', 'success')
@@ -112,8 +290,23 @@ def edit_product(product_id):
         # Use regular form
         form = ProductForm(company_id=current_user.company_id, obj=product)
         
+        if request.method == 'GET':
+            # Pre-select embellishments
+            form.embellishments.data = [emb.id for emb in product.embellishments]
+        
         if form.validate_on_submit():
-            form.populate_obj(product)
+            product.name = form.name.data
+            product.category_id = form.category_id.data
+            product.base_price = form.base_price.data
+            
+            # Update embellishments
+            product.embellishments = []
+            if form.embellishments.data:
+                for embellishment_id in form.embellishments.data:
+                    embellishment = Embellishment.query.get(embellishment_id)
+                    if embellishment and embellishment.company_id == current_user.company_id:
+                        product.embellishments.append(embellishment)
+            
             db.session.commit()
             flash('Product updated successfully!', 'success')
             return redirect(url_for('products.index'))
@@ -330,5 +523,27 @@ def view_product(product_id):
                         'type': field_defs[field_name]['type'],
                         'label': field_defs[field_name]['label']
                     }
+
+@products_bp.route('/api/product-embellishments/<int:product_id>')
+@login_required
+@company_required
+def api_product_embellishments(product_id):
+    """Get embellishments for a specific product as JSON"""
+    product = Product.query.get_or_404(product_id)
     
-    return render_template('products/view.html', product=product, custom_fields=custom_fields) 
+    # Ensure product belongs to user's company
+    if product.company_id != current_user.company_id:
+        return jsonify({'error': 'Permission denied'}), 403
+    
+    result = {
+        'embellishments': [
+            {
+                'id': emb.id,
+                'name': emb.name,
+                'description': emb.description
+            }
+            for emb in product.embellishments
+        ]
+    }
+    
+    return jsonify(result) 

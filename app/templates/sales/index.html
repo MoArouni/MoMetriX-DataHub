@@ -10,8 +10,8 @@
             <a href="{{ url_for('sales.new_sale') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Record New Sale
             </a>
-            <a href="{{ url_for('sales_setup.setup_wizard') }}" class="btn btn-secondary">
-                <i class="fas fa-cog"></i> Configure Sales
+            <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Back to Dashboard
             </a>
         </div>
     </div>
@@ -33,9 +33,25 @@
                 </ul>
                 {% endif %}
             </div>
-            <a href="{{ url_for('sales_setup.setup_stores') }}" class="btn btn-primary">
-                Complete Setup
-            </a>
+            <div class="setup-actions">
+                {% if 'stores' in missing_setup %}
+                <a href="{{ url_for('stores.manage') }}" class="btn btn-primary">
+                    Add Stores
+                </a>
+                {% elif 'categories' in missing_setup %}
+                <a href="{{ url_for('products.categories') }}" class="btn btn-primary">
+                    Add Categories
+                </a>
+                {% elif 'products' in missing_setup %}
+                <a href="{{ url_for('products.index') }}" class="btn btn-primary">
+                    Add Products
+                </a>
+                {% else %}
+                <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-primary">
+                    Complete Setup
+                </a>
+                {% endif %}
+            </div>
         </div>
     </div>
     {% endif %}
@@ -262,6 +278,11 @@
         margin-right: 0.5rem;
     }
     
+    .setup-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
     .stats-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -482,6 +503,10 @@
             width: 100%;
             flex-wrap: wrap;
         }
+    }
+    
+    .btn-secondary:hover {
+        background-color: #555;
     }
 </style>
 

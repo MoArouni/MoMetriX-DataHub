@@ -13,6 +13,9 @@
             <a href="{{ url_for('products.categories') }}" class="btn btn-secondary">
                 <i class="fas fa-tags"></i> Manage Categories
             </a>
+            <a href="{{ url_for('products.embellishments') }}" class="btn btn-secondary">
+                <i class="fas fa-gem"></i> Manage Embellishments
+            </a>
         </div>
     </div>
     
@@ -25,15 +28,6 @@
                 {% for category in categories %}
                 <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
-            </select>
-        </div>
-        
-        <div class="filter-item">
-            <label for="status-filter">Status:</label>
-            <select id="status-filter" class="form-control">
-                <option value="all">All</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
             </select>
         </div>
     </div>
@@ -54,27 +48,30 @@
                             <th>Name</th>
                             <th>Category</th>
                             <th>Base Price</th>
-                            <th>Status</th>
+                            <th>Embellishments</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for product in products %}
-                        <tr data-category="{{ product.category_id }}" data-status="{{ 'active' if product.active else 'inactive' }}">
+                        <tr data-category="{{ product.category_id }}">
                             <td>{{ product.name }}</td>
                             <td>{{ product.category.name }}</td>
                             <td>£{{ product.base_price }}</td>
                             <td>
-                                <span class="status-badge {{ 'active' if product.active else 'inactive' }}">
-                                    {{ "Active" if product.active else "Inactive" }}
-                                </span>
+                                <div class="embellishment-badges">
+                                    {% if product.embellishments %}
+                                        {% for embellishment in product.embellishments %}
+                                            <span class="embellishment-badge">{{ embellishment.name }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="no-embellishments">None</span>
+                                    {% endif %}
+                                </div>
                             </td>
                             <td class="actions">
                                 <a href="{{ url_for('products.edit_product', product_id=product.id) }}" class="action-btn edit-btn">
                                     <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="{{ url_for('products.view_product', product_id=product.id) }}" class="action-btn view-btn">
-                                    <i class="fas fa-eye"></i>
                                 </a>
                             </td>
                         </tr>
@@ -237,23 +234,26 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
     
-    .status-badge {
+    .embellishment-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+    
+    .embellishment-badge {
         display: inline-block;
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
         font-size: 0.75rem;
         font-weight: 600;
-        text-transform: uppercase;
+        background-color: rgba(3, 218, 198, 0.2);
+        color: var(--primary-color);
     }
     
-    .status-badge.active {
-        background-color: rgba(46, 213, 115, 0.2);
-        color: #2ed573;
-    }
-    
-    .status-badge.inactive {
-        background-color: rgba(255, 71, 87, 0.2);
-        color: #ff4757;
+    .no-embellishments {
+        color: #888;
+        font-size: 0.75rem;
+        font-style: italic;
     }
     
     .actions {
@@ -265,29 +265,39 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
-        border-radius: 4px;
-        background-color: rgba(255, 255, 255, 0.05);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
         color: #fff;
-        text-decoration: none;
         transition: all 0.3s ease;
     }
     
     .action-btn:hover {
         background-color: var(--primary-color);
         color: #000;
+        transform: translateY(-2px);
+    }
+    
+    .edit-btn:hover {
+        background-color: #2980b9;
+        color: #fff;
+    }
+    
+    .view-btn:hover {
+        background-color: #27ae60;
+        color: #fff;
     }
     
     .empty-state {
         text-align: center;
-        padding: 3rem 0;
+        padding: 3rem 1rem;
     }
     
     .empty-icon {
-        font-size: 4rem;
-        color: rgba(255, 255, 255, 0.1);
-        margin-bottom: 1.5rem;
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
     }
     
     .empty-state h3 {
@@ -298,44 +308,25 @@
         color: #999;
         margin-bottom: 1.5rem;
     }
-    
-    @media (max-width: 768px) {
-        .section-header, .button-group, .filters {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-        
-        .filter-item {
-            width: 100%;
-        }
-    }
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const categoryFilter = document.getElementById('category-filter');
-        const statusFilter = document.getElementById('status-filter');
-        const rows = document.querySelectorAll('.product-table tbody tr');
-        
-        function applyFilters() {
-            const categoryValue = categoryFilter.value;
-            const statusValue = statusFilter.value;
+    $(document).ready(function() {
+        // Filter by category
+        $('#category-filter').change(function() {
+            let category = $(this).val();
             
-            rows.forEach(row => {
-                const categoryMatch = categoryValue === 'all' || row.dataset.category === categoryValue;
-                const statusMatch = statusValue === 'all' || row.dataset.status === statusValue;
+            if (category === 'all') {
+                // Show all products
+                $('.product-table tbody tr').show();
+            } else {
+                // Hide all products first
+                $('.product-table tbody tr').hide();
                 
-                if (categoryMatch && statusMatch) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-        
-        if (categoryFilter) categoryFilter.addEventListener('change', applyFilters);
-        if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+                // Show only products with selected category
+                $(`.product-table tbody tr[data-category="${category}"]`).show();
+            }
+        });
     });
 </script>
 {% endblock %} 

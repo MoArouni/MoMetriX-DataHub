@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from sqlalchemy import func, desc, and_
 from app import db
 from app.models.store import Store
-from app.models.product import Product
+from app.models.product import Product, Embellishment
 from app.models.product_category import ProductCategory
 from app.models.sales import Sale, ProductFeature, FeatureRegistry
 from app.forms.sales_setup_forms import SaleEntryForm
@@ -114,12 +114,26 @@ def new_sale():
     
     # Check if company has necessary setup
     stores = Store.query.filter_by(company_id=company_id).all()
-    categories = ProductCategory.query.filter_by(company_id=company_id).all()
-    products = Product.query.filter_by(company_id=company_id).all()
+    if not stores:
+        flash('You need to create at least one store before recording sales.', 'warning')
+        return redirect(url_for('stores.manage'))
     
-    if not stores or not categories or not products:
-        flash('Please complete your sales database setup first.', 'warning')
-        return redirect(url_for('sales_setup.setup_stores'))
+    categories = ProductCategory.query.filter_by(company_id=company_id).all()
+    if not categories:
+        flash('You need to create at least one product category before recording sales.', 'warning')
+        return redirect(url_for('products.categories'))
+    
+    # Check if there are products in any category
+    has_products = False
+    for category in categories:
+        product_count = Product.query.filter_by(company_id=company_id, category_id=category.id).count()
+        if product_count > 0:
+            has_products = True
+            break
+    
+    if not has_products:
+        flash('You need to add products to at least one category before recording sales.', 'warning')
+        return redirect(url_for('products.new_product'))
     
     form = SaleEntryForm()
     
@@ -130,10 +144,16 @@ def new_sale():
     product_choices_by_category = {}
     for category in categories:
         category_products = Product.query.filter_by(company_id=company_id, category_id=category.id).all()
-        product_choices_by_category[category.id] = {
-            'name': category.name,
-            'products': [(product.id, product.name) for product in category_products]
-        }
+        if category_products:  # Only add categories that have products
+            product_choices_by_category[category.id] = {
+                'name': category.name,
+                'products': [(product.id, product.name) for product in category_products]
+            }
+    
+    # If we have no categories with products despite having products, redirect
+    if not product_choices_by_category:
+        flash('There are no active products available. Please add products before recording a sale.', 'warning')
+        return redirect(url_for('products.new_product'))
     
     if form.validate_on_submit():
         # Validate payment amounts
@@ -161,6 +181,18 @@ def new_sale():
         )
         db.session.add(new_sale)
         db.session.flush()  # Get the sale ID without committing
+        
+        # Process embellishments
+        embellishment_ids = request.form.getlist('embellishment_ids')
+        if embellishment_ids:
+            for emb_id in embellishment_ids:
+                try:
+                    embellishment = Embellishment.query.get(int(emb_id))
+                    if embellishment and embellishment.company_id == company_id:
+                        new_sale.embellishments.append(embellishment)
+                except (ValueError, TypeError):
+                    # Skip invalid IDs
+                    continue
         
         # Process dynamic product features
         feature_names = request.form.getlist('feature_name[]')
@@ -265,6 +297,12 @@ def edit_sale(sale_id):
     # Get existing features
     existing_features = ProductFeature.query.filter_by(sale_id=sale_id).all()
     
+    # Get available embellishments for this product
+    available_embellishments = []
+    selected_embellishments = [emb.id for emb in sale.embellishments]
+    if product:
+        available_embellishments = product.embellishments
+    
     if form.validate_on_submit():
         # Update the sale
         sale.store_id = form.store_id.data
@@ -273,6 +311,19 @@ def edit_sale(sale_id):
         sale.cash_amount = form.cash_amount.data
         sale.card_amount = form.card_amount.data
         sale.notes = form.notes.data if form.notes.data else None
+        
+        # Update embellishments
+        sale.embellishments = []
+        embellishment_ids = request.form.getlist('embellishment_ids')
+        if embellishment_ids:
+            for emb_id in embellishment_ids:
+                try:
+                    embellishment = Embellishment.query.get(int(emb_id))
+                    if embellishment and embellishment.company_id == company_id:
+                        sale.embellishments.append(embellishment)
+                except (ValueError, TypeError):
+                    # Skip invalid IDs
+                    continue
         
         # Delete existing features (they'll be recreated)
         ProductFeature.query.filter_by(sale_id=sale_id).delete()
@@ -321,7 +372,9 @@ def edit_sale(sale_id):
         stores=stores,
         product_choices=product_choices_by_category,
         category_id=category_id,
-        features=existing_features
+        features=existing_features,
+        available_embellishments=available_embellishments,
+        selected_embellishments=selected_embellishments
     )
 
 @sales_bp.route('/delete/<int:sale_id>', methods=['POST'])

@@ -367,6 +367,142 @@
             grid-template-columns: 1fr;
         }
     }
+    
+    .stats-cards-small {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .stat-card-small {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card-small:hover {
+        background: rgba(var(--primary-color-rgb), 0.1);
+        transform: translateY(-3px);
+    }
+    
+    .stat-icon-small {
+        width: 40px;
+        height: 40px;
+        background: rgba(var(--primary-color-rgb), 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    
+    .stat-info {
+        flex: 1;
+        margin: 0 1rem;
+    }
+    
+    .stat-value-small {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    .stat-label-small {
+        color: #999;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .stat-action {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .stat-card-small:hover .stat-action {
+        opacity: 1;
+    }
+    
+    .plan-info {
+        padding: 1rem 0;
+    }
+    
+    .plan-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+    
+    .plan-header h3 {
+        margin: 0;
+        color: var(--primary-color);
+    }
+    
+    .plan-badge {
+        background: rgba(var(--primary-color-rgb), 0.2);
+        color: var(--primary-color);
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .plan-features {
+        margin-bottom: 1.5rem;
+    }
+    
+    .plan-feature-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        color: #ddd;
+    }
+    
+    .plan-feature-item i {
+        width: 20px;
+        margin-right: 1rem;
+        color: var(--primary-color);
+    }
+    
+    .plan-upgrade {
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+    
+    .btn-upgrade {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--primary-color);
+        color: #000;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-upgrade:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    @media (max-width: 768px) {
+        .stats-cards-small {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -398,37 +534,6 @@
         </div>
         {% endif %}
         
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fas fa-question-circle"></i>
-            </div>
-            <div class="stat-value">{{ stats.questions }}</div>
-            <div class="stat-label">Questions</div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fas fa-newspaper"></i>
-            </div>
-            <div class="stat-value">{{ stats.blog_count }}</div>
-            <div class="stat-label">Blog Posts</div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="stat-value">{{ stats.users }}</div>
-            <div class="stat-label">Total Users</div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fas fa-building"></i>
-            </div>
-            <div class="stat-value">{{ stats.companies }}</div>
-            <div class="stat-label">Companies</div>
-        </div>
     </div>
     
     <!-- Main Dashboard Layout - 3 column grid -->
@@ -456,16 +561,44 @@
                 
                 {% if current_user.company_id %}
                 <li class="quick-action-item">
+                    <a href="{{ url_for('stores.index') }}" class="quick-action-link">
+                        <i class="fas fa-store quick-action-icon"></i>
+                        <span>Manage Stores</span>
+                    </a>
+                </li>
+                
+                <li class="quick-action-item">
+                    <a href="{{ url_for('products.categories') }}" class="quick-action-link">
+                        <i class="fas fa-tags quick-action-icon"></i>
+                        <span>Manage Categories</span>
+                    </a>
+                </li>
+                
+                <li class="quick-action-item">
+                    <a href="{{ url_for('products.index') }}" class="quick-action-link">
+                        <i class="fas fa-box quick-action-icon"></i>
+                        <span>Manage Products</span>
+                    </a>
+                </li>
+                
+                <li class="quick-action-item">
+                    <a href="{{ url_for('products.embellishments') }}" class="quick-action-link">
+                        <i class="fas fa-gem quick-action-icon"></i>
+                        <span>Manage Embellishments</span>
+                    </a>
+                </li>
+                
+                <li class="quick-action-item">
                     <a href="{{ url_for('sales.new_sale') }}" class="quick-action-link">
                         <i class="fas fa-cash-register quick-action-icon"></i>
                         <span>Record Sale</span>
                     </a>
                 </li>
-                
+                {% else %}
                 <li class="quick-action-item">
-                    <a href="{{ url_for('products.new_product') }}" class="quick-action-link">
-                        <i class="fas fa-plus-circle quick-action-icon"></i>
-                        <span>Add Product</span>
+                    <a href="{{ url_for('dashboard.create_company') }}" class="quick-action-link">
+                        <i class="fas fa-building quick-action-icon"></i>
+                        <span>Create Company</span>
                     </a>
                 </li>
                 {% endif %}
@@ -479,72 +612,110 @@
             </ul>
         </div>
         
-        <!-- Recent Questions - Single column -->
-        <div class="dashboard-card">
-            <h2><i class="fas fa-question"></i> Recent Questions</h2>
-            {% if recent_questions %}
-            <ul class="recent-activity">
-                {% for question in recent_questions %}
-                <li class="activity-item">
-                    <i class="fas fa-question-circle activity-icon"></i>
-                    <div class="activity-content">
-                        <div class="activity-message">
-                            <a href="{{ url_for('qa.view_question', question_id=question.id) }}">{{ question.title }}</a>
-                        </div>
-                        <div class="activity-time">{{ question.created_at.strftime('%b %d, %Y') }}</div>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            <p class="text-muted">No recent questions available.</p>
-            {% endif %}
-        </div>
-        
-        <!-- Recent Blog Posts - Single column -->
-        <div class="dashboard-card">
-            <h2><i class="fas fa-newspaper"></i> Recent Blog Posts</h2>
-            {% if recent_posts %}
-            <ul class="recent-activity">
-                {% for post in recent_posts %}
-                <li class="activity-item">
-                    <i class="fas fa-newspaper activity-icon"></i>
-                    <div class="activity-content">
-                        <div class="activity-message">
-                            <a href="{{ url_for('blog.view_post', post_id=post.id) }}">{{ post.title }}</a>
-                        </div>
-                        <div class="activity-time">{{ post.created_at.strftime('%b %d, %Y') }}</div>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            <p class="text-muted">No recent blog posts available.</p>
-            {% endif %}
-        </div>
-        
-        <!-- Company Tools Section - Spans 2 columns -->
-        {% if current_user.company_id and company_tools %}
+        <!-- Company Management Section -->
+        {% if current_user.company_id %}
         <div class="dashboard-card dashboard-wide">
-            <h2><i class="fas fa-toolbox"></i> Company Tools</h2>
-            <div class="tools-grid">
-                {% for tool in company_tools %}
-                <div class="tool-card">
-                    <div class="tool-header">
-                        <div class="tool-icon">
-                            <i class="fas fa-{{ tool.icon if tool.icon else 'tools' }}"></i>
-                        </div>
-                        <div class="tool-name">{{ tool.name }}</div>
+            <h2><i class="fas fa-building"></i> Company Management</h2>
+            
+            <div class="stats-cards-small">
+                <div class="stat-card-small">
+                    <div class="stat-icon-small">
+                        <i class="fas fa-store"></i>
                     </div>
-                    <div class="tool-description">{{ tool.description }}</div>
-                    <div class="tool-actions">
-                        <a href="{{ url_for('tools.view', tool_id=tool.id) }}" class="tool-button">Launch</a>
+                    <div class="stat-info">
+                        <div class="stat-value-small">{{ stats.stores|default(0) }}</div>
+                        <div class="stat-label-small">Stores</div>
+                    </div>
+                    <a href="{{ url_for('stores.index') }}" class="stat-action">Manage</a>
+                </div>
+                
+                <div class="stat-card-small">
+                    <div class="stat-icon-small">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value-small">{{ stats.categories|default(0) }}</div>
+                        <div class="stat-label-small">Categories</div>
+                    </div>
+                    <a href="{{ url_for('products.categories') }}" class="stat-action">Manage</a>
+                </div>
+                
+                <div class="stat-card-small">
+                    <div class="stat-icon-small">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value-small">{{ stats.products|default(0) }}</div>
+                        <div class="stat-label-small">Products</div>
+                    </div>
+                    <a href="{{ url_for('products.index') }}" class="stat-action">Manage</a>
+                </div>
+                
+                <div class="stat-card-small">
+                    <div class="stat-icon-small">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value-small">{{ stats.embellishments|default(0) }}</div>
+                        <div class="stat-label-small">Embellishments</div>
+                    </div>
+                    <a href="{{ url_for('products.embellishments') }}" class="stat-action">Manage</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Plan Information -->
+        <div class="dashboard-card">
+            <h2><i class="fas fa-crown"></i> Your Plan</h2>
+            
+            <div class="plan-info">
+                <div class="plan-header">
+                    <h3>Free Plan</h3>
+                    <span class="plan-badge">Active</span>
+                </div>
+                
+                <div class="plan-features">
+                    <div class="plan-feature-item">
+                        <i class="fas fa-store"></i>
+                        <span>Up to {{ subscription_features.max_stores }} stores</span>
+                    </div>
+                    <div class="plan-feature-item">
+                        <i class="fas fa-tags"></i>
+                        <span>Up to {{ subscription_features.max_categories }} categories</span>
+                    </div>
+                    <div class="plan-feature-item">
+                        <i class="fas fa-box"></i>
+                        <span>Up to {{ subscription_features.max_products }} products</span>
+                    </div>
+                    <div class="plan-feature-item">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Basic analytics</span>
                     </div>
                 </div>
-                {% endfor %}
+                
+                <div class="plan-upgrade">
+                    <a href="{{ url_for('dashboard.upgrade_plan') }}" class="btn-upgrade">
+                        Upgrade Your Plan <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
         </div>
         {% endif %}
+        
+        <!-- Recent Activity Section -->
+        <div class="dashboard-card">
+            <h2><i class="fas fa-history"></i> Recent Activity</h2>
+            <ul class="recent-activity">
+                <!-- Recent activities will be populated here -->
+                <li class="activity-item">
+                    <i class="fas fa-sign-in-alt activity-icon"></i>
+                    <div class="activity-content">
+                        <div class="activity-message">You logged in successfully</div>
+                        <div class="activity-time">Just now</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
     
     <!-- User Tools - Flexible grid layout -->

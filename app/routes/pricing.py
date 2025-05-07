@@ -13,114 +13,163 @@ def index():
     # Get all available subscription plans
     subscription_plans = SubscriptionPlan.query.all()
     
-    # If no plans in database, use default plans
+    # If no plans in database, create default plans
     if not subscription_plans:
-        default_plans = [
-            {
-                'name': 'Free',
-                'price': '0',
-                'features': [
-                    'Basic data analysis',
-                    'Limited API access',
-                    'Community support',
-                    'Basic visualization tools',
-                    'Up to 100 sales entries',
-                    'Up to 3 users per company'
-                ],
-                'recommended': False,
-                'button_text': 'Current Plan' if current_user.is_authenticated and current_user.company and current_user.company.is_free_plan else 'Get Started'
-            },
-            {
-                'name': 'Pro',
-                'price': '29',
-                'features': [
-                    'Advanced data analysis',
-                    'Full API access',
-                    'Priority support',
-                    'Advanced visualization tools',
-                    'Custom reports',
-                    'Team collaboration',
-                    'Up to 1,000 sales entries',
-                    'Up to 10 users per company'
-                ],
-                'recommended': True,
-                'button_text': 'Upgrade Now'
-            },
-            {
-                'name': 'Enterprise',
-                'price': '99',
-                'features': [
-                    'Everything in Pro',
-                    'Dedicated support',
-                    'Custom solutions',
-                    'SLA guarantee',
-                    'Advanced security',
-                    'Training sessions',
-                    'Unlimited sales entries',
-                    'Unlimited users'
-                ],
-                'recommended': False,
-                'button_text': 'Contact Sales'
-            }
-        ]
-    else:
-        # Convert database plans to template format
-        default_plans = []
-        for plan in subscription_plans:
-            # Determine if this is the current plan for the user
-            is_current = False
-            if current_user.is_authenticated and current_user.company:
-                if current_user.company.subscription_plan_id == plan.id:
-                    is_current = True
+        # Create default plans in the database
+        try:
+            free_plan = SubscriptionPlan(
+                name="Free",
+                price=0.00,
+                billing_cycle="monthly",
+                max_sales=100,
+                max_users=3,
+                feature_analytics=True,
+                feature_export=True,
+                feature_premium_tools=False
+            )
             
-            # Set appropriate button text
-            if is_current:
-                button_text = 'Current Plan'
-            elif plan.name == 'Enterprise':
-                button_text = 'Contact Sales'
-            else:
-                button_text = 'Upgrade Now'
+            pro_plan = SubscriptionPlan(
+                name="Pro",
+                price=29.00,
+                billing_cycle="monthly",
+                max_sales=1000,
+                max_users=10,
+                feature_analytics=True,
+                feature_export=True,
+                feature_premium_tools=True
+            )
             
-            # Build features list based on plan attributes
-            features = []
+            enterprise_plan = SubscriptionPlan(
+                name="Enterprise",
+                price=99.00,
+                billing_cycle="monthly",
+                max_sales=0,  # Unlimited
+                max_users=0,  # Unlimited
+                feature_analytics=True,
+                feature_export=True,
+                feature_premium_tools=True
+            )
             
-            if plan.max_sales == 0:
-                features.append('Unlimited sales entries')
-            else:
-                features.append(f'Up to {plan.max_sales:,} sales entries')
-                
-            if plan.max_users == 0:
-                features.append('Unlimited users')
-            else:
-                features.append(f'Up to {plan.max_users} users per company')
-                
-            if plan.feature_analytics:
-                features.append('Data analysis tools')
-                
-            if plan.feature_export:
-                features.append('Data export capabilities')
-                
-            if plan.feature_premium_tools:
-                features.append('Premium analysis tools')
-                
-            # Other features based on plan name
-            if plan.name == 'Pro' or plan.name == 'Enterprise':
-                features.append('Priority support')
-                features.append('Advanced visualization')
-                
-            if plan.name == 'Enterprise':
-                features.append('Dedicated support')
-                features.append('Custom solutions')
-                features.append('SLA guarantee')
+            # Add to database
+            db.session.add(free_plan)
+            db.session.add(pro_plan)
+            db.session.add(enterprise_plan)
+            db.session.commit()
             
-            default_plans.append({
-                'name': plan.name,
-                'price': str(int(plan.price)),
-                'features': features,
-                'recommended': plan.name == 'Pro',
-                'button_text': button_text,
-                'plan_id': plan.id
-            })
+            # Retrieve the newly created plans
+            subscription_plans = SubscriptionPlan.query.all()
+        except Exception as e:
+            # If there's an error creating plans, use hardcoded versions
+            default_plans = [
+                {
+                    'name': 'Free',
+                    'price': '0',
+                    'features': [
+                        'Basic data analysis',
+                        'Limited API access',
+                        'Community support',
+                        'Basic visualization tools',
+                        'Up to 100 sales entries',
+                        'Up to 3 users per company'
+                    ],
+                    'recommended': False,
+                    'button_text': 'Current Plan' if current_user.is_authenticated and current_user.company and current_user.company.is_free_plan else 'Get Started',
+                    'plan_id': 1  # Add plan_id for template
+                },
+                {
+                    'name': 'Pro',
+                    'price': '29',
+                    'features': [
+                        'Advanced data analysis',
+                        'Full API access',
+                        'Priority support',
+                        'Advanced visualization tools',
+                        'Custom reports',
+                        'Team collaboration',
+                        'Up to 1,000 sales entries',
+                        'Up to 10 users per company'
+                    ],
+                    'recommended': True,
+                    'button_text': 'Upgrade Now',
+                    'plan_id': 2  # Add plan_id for template
+                },
+                {
+                    'name': 'Enterprise',
+                    'price': '99',
+                    'features': [
+                        'Everything in Pro',
+                        'Dedicated support',
+                        'Custom solutions',
+                        'SLA guarantee',
+                        'Advanced security',
+                        'Training sessions',
+                        'Unlimited sales entries',
+                        'Unlimited users'
+                    ],
+                    'recommended': False,
+                    'button_text': 'Contact Sales',
+                    'plan_id': 3  # Add plan_id for template
+                }
+            ]
+            return render_template('pricing/index.html', plans=default_plans)
+    
+    # Convert database plans to template format
+    default_plans = []
+    for plan in subscription_plans:
+        # Determine if this is the current plan for the user
+        is_current = False
+        if current_user.is_authenticated and current_user.company:
+            if current_user.company.subscription_plan_id == plan.id:
+                is_current = True
+        
+        # Set appropriate button text
+        if is_current:
+            button_text = 'Current Plan'
+        elif plan.name == 'Enterprise':
+            button_text = 'Contact Sales'
+        else:
+            button_text = 'Upgrade Now'
+        
+        # Build features list based on plan attributes
+        features = []
+        
+        if plan.max_sales == 0:
+            features.append('Unlimited sales entries')
+        else:
+            features.append(f'Up to {plan.max_sales:,} sales entries')
+            
+        if plan.max_users == 0:
+            features.append('Unlimited users')
+        else:
+            features.append(f'Up to {plan.max_users} users per company')
+            
+        if plan.feature_analytics:
+            features.append('Data analysis tools')
+            
+        if plan.feature_export:
+            features.append('Data export capabilities')
+            
+        if plan.feature_premium_tools:
+            features.append('Premium analysis tools')
+            
+        # Other features based on plan name
+        if plan.name == 'Pro' or plan.name == 'Enterprise':
+            features.append('Priority support')
+            features.append('Advanced visualization')
+            
+        if plan.name == 'Enterprise':
+            features.append('Dedicated support')
+            features.append('Custom solutions')
+            features.append('SLA guarantee')
+        
+        default_plans.append({
+            'name': plan.name,
+            'price': str(int(plan.price)),
+            'features': features,
+            'recommended': plan.name == 'Pro',
+            'button_text': button_text,
+            'plan_id': plan.id
+        })
     
     return render_template('pricing/index.html', plans=default_plans)
 

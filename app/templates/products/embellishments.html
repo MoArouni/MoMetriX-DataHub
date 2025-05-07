@@ -1,0 +1,1089 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Embellishments{% endblock %}
+
+{% block content %}
+<div class="embellishments-container">
+    <div class="page-header">
+        <div class="page-title">
+            <h1><i class="fas fa-gem"></i> Manage Embellishments</h1>
+            <p class="subtitle">Create and manage custom add-ons for your products</p>
+        </div>
+        <div class="page-actions">
+            <a href="{{ url_for('products.new_embellishment') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> New Embellishment
+            </a>
+            <a href="{{ url_for('products.index') }}" class="btn btn-secondary">
+                <i class="fas fa-boxes"></i> Products
+            </a>
+        </div>
+    </div>
+    
+    {% if embellishments %}
+    <div class="embellishment-card">
+        <div class="card-header">
+            <div class="search-controls">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="embellishment-search" placeholder="Search..." class="search-input">
+                </div>
+                <div class="filter-controls">
+                    <select id="type-filter" class="filter-select">
+                        <option value="all">All Types</option>
+                        {% set unique_types = [] %}
+                        {% for emb in embellishments %}
+                            {% for pt in emb.product_types %}
+                                {% if pt.name not in unique_types %}
+                                    {{ unique_types.append(pt.name) or "" }}
+                                    <option value="{{ pt.name }}">{{ pt.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                    <button id="clear-filters" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="embellishment-table" id="embellishments-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="name">Name <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-sort="description">Description <i class="fas fa-sort"></i></th>
+                            <th>Product Types</th>
+                            <th class="sortable" data-sort="products">Products <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for embellishment in embellishments %}
+                            <tr data-types="{{ embellishment.product_types|map(attribute='name')|join(' ') }}">
+                                <td class="name-cell">{{ embellishment.name }}</td>
+                                <td class="description-cell">
+                                    {% if embellishment.description %}
+                                        <div class="description-content">
+                                            <span class="description-text">{{ embellishment.description|truncate(50) }}</span>
+                                            {% if embellishment.description|length > 50 %}
+                                                <div class="description-tooltip">{{ embellishment.description }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">No description</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="badge-container">
+                                        {% for product_type in embellishment.product_types %}
+                                            <span class="badge product-type-badge" data-type="{{ product_type.name }}">
+                                                {{ product_type.name }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                                <td data-value="{{ product_counts[embellishment.id] }}">
+                                    <span class="product-count">{{ product_counts[embellishment.id] }}</span>
+                                </td>
+                                <td class="actions">
+                                    <div class="action-buttons">
+                                        <a href="{{ url_for('products.edit_embellishment', embellishment_id=embellishment.id) }}" 
+                                           class="btn-action edit" title="Edit Embellishment">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        {% if product_counts[embellishment.id] > 0 %}
+                                            <span class="btn-action disabled" title="Cannot delete - used by {{ product_counts[embellishment.id] }} products">
+                                                <i class="fas fa-trash"></i>
+                                            </span>
+                                        {% else %}
+                                            <div class="delete-container">
+                                                <button type="button" class="btn-action delete delete-embellishment-btn"
+                                                        data-id="{{ embellishment.id }}"
+                                                        title="Delete Embellishment">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                                <div class="delete-confirm">
+                                                    <span class="delete-message">Delete "{{ embellishment.name }}"?</span>
+                                                    <div class="delete-actions">
+                                                        <form method="POST" action="{{ url_for('products.delete_embellishment', embellishment_id=embellishment.id) }}">
+                                                            <button type="submit" class="confirm-yes">Yes</button>
+                                                        </form>
+                                                        <button class="confirm-no">No</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="no-results" class="empty-state" style="display: none;">
+                <div class="empty-state-content">
+                    <i class="fas fa-search empty-state-icon"></i>
+                    <h3>No matching embellishments</h3>
+                    <p>Try adjusting your search or filter criteria</p>
+                    <button id="reset-search" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Reset Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+        <div class="embellishment-card">
+            <div class="card-body empty-state">
+                <div class="empty-state-content">
+                    <i class="fas fa-gem empty-state-icon"></i>
+                    <h2>No Embellishments Yet</h2>
+                    <p>Create embellishments to enhance your products such as engraving, birthstones, or custom designs.</p>
+                    <div class="empty-state-actions">
+                        <a href="{{ url_for('products.new_embellishment') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create First Embellishment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Main container */
+    .embellishments-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    /* Page header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .page-title h1 {
+        color: var(--primary-color);
+        font-size: 2.2rem;
+        margin: 0 0 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .page-title .subtitle {
+        color: #aaa;
+        margin: 0;
+        font-size: 1.1rem;
+    }
+    
+    .page-actions {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    /* Card styling */
+    .embellishment-card {
+        background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        margin-bottom: 2rem;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Card header */
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+    
+    /* Search and filters */
+    .search-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .search-box {
+        position: relative;
+        max-width: 250px;
+        width: 100%;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+    }
+    
+    .filter-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .filter-select {
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        min-width: 150px;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+    
+    .filter-select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    
+    .btn-outline {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #fff;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+    
+    .btn-outline:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    /* Table styles */
+    .card-body {
+        padding: 0;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .embellishment-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .embellishment-table th {
+        text-align: left;
+        padding: 1.2rem 1.5rem;
+        background-color: rgba(0, 0, 0, 0.2);
+        color: #ddd;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .embellishment-table th:first-child {
+        border-top-left-radius: 8px;
+    }
+    
+    .embellishment-table th:last-child {
+        border-top-right-radius: 8px;
+    }
+    
+    .embellishment-table td {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        vertical-align: middle;
+    }
+    
+    .embellishment-table tbody tr {
+        transition: all 0.3s ease;
+    }
+    
+    .embellishment-table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .embellishment-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Cell styling */
+    .name-cell {
+        font-weight: 600;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+    }
+    
+    .description-cell {
+        max-width: 300px;
+        color: #ddd;
+    }
+    
+    .description-content {
+        position: relative;
+    }
+    
+    .description-text {
+        display: inline-block;
+    }
+    
+    .description-tooltip {
+        display: none;
+        position: absolute;
+        top: -10px;
+        left: 0;
+        transform: translateY(-100%);
+        background-color: rgba(30, 30, 30, 0.95);
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        z-index: 100;
+        min-width: 250px;
+        max-width: 350px;
+        line-height: 1.5;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .description-content:hover .description-tooltip {
+        display: block;
+        animation: fadeIn 0.2s ease;
+    }
+    
+    .description-tooltip::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 20px;
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid rgba(30, 30, 30, 0.95);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-90%) }
+        to { opacity: 1; transform: translateY(-100%) }
+    }
+    
+    /* Badges styling */
+    .badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .badge {
+        padding: 0.4rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .product-type-badge {
+        background-color: rgba(var(--primary-color-rgb), 0.15);
+        color: var(--primary-color);
+    }
+    
+    .product-type-badge:hover {
+        background-color: var(--primary-color);
+        color: #000;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(var(--primary-color-rgb), 0.3);
+    }
+    
+    /* Product count */
+    .product-count {
+        background-color: rgba(0, 0, 0, 0.2);
+        padding: 0.4rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Action buttons */
+    .actions {
+        width: 120px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 0.8rem;
+    }
+    
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-action.edit {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+    }
+    
+    .btn-action.edit:hover {
+        background: linear-gradient(135deg, #2980b9, #3498db);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+    }
+    
+    .btn-action.delete {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+    
+    .btn-action.delete:hover {
+        background: linear-gradient(135deg, #c0392b, #e74c3c);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
+    }
+    
+    .btn-action.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: rgba(0, 0, 0, 0.3);
+        box-shadow: none;
+    }
+    
+    .btn-action i {
+        font-size: 1rem;
+    }
+    
+    /* Delete confirmation styling */
+    .delete-container {
+        position: relative;
+    }
+    
+    .delete-confirm {
+        position: absolute;
+        top: 0;
+        right: 100%;
+        margin-right: 10px;
+        background: rgba(40, 40, 40, 0.95);
+        border-radius: 8px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        padding: 0.75rem;
+        width: 180px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(10px);
+        transition: all 0.3s ease;
+        z-index: 100;
+        border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+    
+    .delete-confirm::after {
+        content: '';
+        position: absolute;
+        right: -6px;
+        top: 15px;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-left: 6px solid rgba(40, 40, 40, 0.95);
+    }
+    
+    .delete-container.active .delete-confirm {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+    }
+    
+    .delete-message {
+        display: block;
+        color: #fff;
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+        text-align: center;
+    }
+    
+    .delete-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+    
+    .confirm-yes, .confirm-no {
+        border: none;
+        padding: 0.5rem 0;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        flex: 1;
+        transition: all 0.2s ease;
+    }
+    
+    .confirm-yes {
+        background-color: #e74c3c;
+        color: #fff;
+    }
+    
+    .confirm-yes:hover {
+        background-color: #c0392b;
+    }
+    
+    .confirm-no {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+    
+    .confirm-no:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Empty state */
+    .empty-state {
+        padding: 5rem 2rem;
+        text-align: center;
+    }
+    
+    .empty-state-content {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        color: var(--primary-color);
+        margin-bottom: 2rem;
+        display: inline-block;
+        opacity: 0.9;
+    }
+    
+    .empty-state h2 {
+        margin-bottom: 1rem;
+        font-weight: 600;
+        font-size: 2rem;
+    }
+    
+    .empty-state h3 {
+        margin-bottom: 1rem;
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+    
+    .empty-state p {
+        color: #aaa;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    
+    .empty-state-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    /* Sortable headers */
+    .sortable {
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s ease;
+    }
+    
+    .sortable i {
+        margin-left: 0.5rem;
+        opacity: 0.3;
+        transition: all 0.3s ease;
+    }
+    
+    .sortable:hover {
+        color: var(--primary-color);
+    }
+    
+    .sortable:hover i {
+        opacity: 1;
+    }
+    
+    .sortable.sort-asc i {
+        opacity: 1;
+        transform: rotate(180deg);
+        color: var(--primary-color);
+    }
+    
+    .sortable.sort-desc i {
+        opacity: 1;
+        color: var(--primary-color);
+    }
+    
+    /* Button styling */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.9rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        gap: 0.5rem;
+        font-size: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), rgba(var(--primary-color-rgb), 0.8));
+        color: #000;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(var(--primary-color-rgb), 0.4);
+    }
+    
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: #fff;
+    }
+    
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #c0392b, #e74c3c);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+        
+        .page-actions {
+            width: 100%;
+        }
+        
+        .page-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .search-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .filter-controls {
+            width: 100%;
+        }
+        
+        .filter-select {
+            flex: 1;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .embellishment-table th, 
+        .embellishment-table td {
+            padding: 1.2rem 1rem;
+        }
+        
+        .description-cell {
+            max-width: 150px;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.2rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .embellishment-table .description-cell {
+            display: none;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .btn-action {
+            width: 38px;
+            height: 38px;
+        }
+    }
+</style>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Delete buttons handling - inline confirmation
+        const deleteButtons = document.querySelectorAll('.delete-embellishment-btn');
+        
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Close any other open delete confirmations
+                document.querySelectorAll('.delete-container.active').forEach(container => {
+                    if (container !== this.closest('.delete-container')) {
+                        container.classList.remove('active');
+                    }
+                });
+                
+                // Toggle this delete confirmation
+                this.closest('.delete-container').classList.toggle('active');
+            });
+        });
+        
+        // Handle cancel button in delete confirmation
+        const cancelButtons = document.querySelectorAll('.confirm-no');
+        cancelButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.closest('.delete-container').classList.remove('active');
+            });
+        });
+        
+        // Close delete confirmation when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.delete-container')) {
+                document.querySelectorAll('.delete-container.active').forEach(container => {
+                    container.classList.remove('active');
+                });
+            }
+        });
+        
+        // Search and filtering functionality
+        const searchInput = document.getElementById('embellishment-search');
+        const table = document.getElementById('embellishments-table');
+        const tableRows = table ? table.querySelectorAll('tbody tr') : [];
+        const noResults = document.getElementById('no-results');
+        const typeFilter = document.getElementById('type-filter');
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        const resetSearchBtn = document.getElementById('reset-search');
+        
+        // Animation function for rows
+        function animateRows() {
+            const visibleRows = Array.from(tableRows).filter(row => row.style.display !== 'none');
+            visibleRows.forEach((row, index) => {
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+        }
+        
+        // Initialize row animations
+        if (tableRows.length > 0) {
+            tableRows.forEach(row => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(10px)';
+                row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            });
+            setTimeout(animateRows, 100);
+        }
+        
+        // Filtering function that combines search and type filter
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedType = typeFilter.value;
+            let visibleCount = 0;
+            
+            // Reset all rows
+            tableRows.forEach(row => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(10px)';
+            });
+            
+            // Apply filters
+            tableRows.forEach(row => {
+                const name = row.querySelector('.name-cell').textContent.toLowerCase();
+                const description = row.querySelector('.description-cell').textContent.toLowerCase();
+                const types = row.getAttribute('data-types').toLowerCase();
+                
+                // Check if row passes both search and type filter
+                const matchesSearch = !searchTerm || name.includes(searchTerm) || description.includes(searchTerm);
+                const matchesType = selectedType === 'all' || types.includes(selectedType.toLowerCase());
+                
+                // Show/hide row based on filters
+                if (matchesSearch && matchesType) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Show/hide no results message
+            if (visibleCount === 0 && tableRows.length > 0) {
+                noResults.style.display = 'block';
+                if (table) table.style.display = 'none';
+            } else {
+                noResults.style.display = 'none';
+                if (table) table.style.display = '';
+                animateRows();
+            }
+        }
+        
+        // Debounce function to limit how often search is performed
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            };
+        }
+        
+        // Event listeners for filtering
+        if (searchInput) {
+            const debouncedFilter = debounce(filterTable, 300);
+            searchInput.addEventListener('input', debouncedFilter);
+            
+            // Add clear button within search input
+            const searchBox = document.querySelector('.search-box');
+            const clearButton = document.createElement('button');
+            clearButton.className = 'search-clear-btn';
+            clearButton.innerHTML = '<i class="fas fa-times"></i>';
+            clearButton.style.display = 'none';
+            searchBox.appendChild(clearButton);
+            
+            // Show/hide clear button based on input
+            searchInput.addEventListener('input', function() {
+                clearButton.style.display = this.value ? 'block' : 'none';
+            });
+            
+            // Clear search on button click
+            clearButton.addEventListener('click', function() {
+                searchInput.value = '';
+                this.style.display = 'none';
+                filterTable();
+                searchInput.focus();
+            });
+        }
+        
+        if (typeFilter) {
+            typeFilter.addEventListener('change', filterTable);
+        }
+        
+        // Product type badge filtering
+        const typeBadges = document.querySelectorAll('.product-type-badge');
+        typeBadges.forEach(badge => {
+            badge.addEventListener('click', function() {
+                const badgeType = this.getAttribute('data-type');
+                typeFilter.value = badgeType;
+                
+                // Visual feedback
+                this.classList.add('badge-selected');
+                setTimeout(() => {
+                    this.classList.remove('badge-selected');
+                }, 800);
+                
+                filterTable();
+            });
+        });
+        
+        // Clear filters button
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                typeFilter.value = 'all';
+                
+                // Visual feedback
+                this.classList.add('btn-clicked');
+                setTimeout(() => {
+                    this.classList.remove('btn-clicked');
+                }, 300);
+                
+                document.querySelector('.search-clear-btn').style.display = 'none';
+                filterTable();
+            });
+        }
+        
+        // Reset search button in no results state
+        if (resetSearchBtn) {
+            resetSearchBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                typeFilter.value = 'all';
+                document.querySelector('.search-clear-btn').style.display = 'none';
+                filterTable();
+            });
+        }
+        
+        // Table sorting
+        const sortableHeaders = document.querySelectorAll('th.sortable');
+        let currentSort = { column: null, direction: 'asc' };
+        
+        sortableHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const column = this.getAttribute('data-sort');
+                
+                // Toggle sort direction if clicking the same column
+                if (currentSort.column === column) {
+                    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.column = column;
+                    currentSort.direction = 'asc';
+                }
+                
+                // Update sort indicators in UI
+                sortableHeaders.forEach(h => {
+                    h.classList.remove('sort-asc', 'sort-desc');
+                });
+                
+                this.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+                
+                // Sort the table
+                sortTable(column, currentSort.direction);
+            });
+        });
+        
+        function sortTable(column, direction) {
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            // Reset animation styles
+            rows.forEach(row => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(10px)';
+            });
+            
+            // Sort the rows
+            rows.sort((a, b) => {
+                let valueA, valueB;
+                
+                if (column === 'name') {
+                    valueA = a.querySelector('.name-cell').textContent.toLowerCase();
+                    valueB = b.querySelector('.name-cell').textContent.toLowerCase();
+                } else if (column === 'description') {
+                    valueA = a.querySelector('.description-cell').textContent.toLowerCase();
+                    valueB = b.querySelector('.description-cell').textContent.toLowerCase();
+                } else if (column === 'products') {
+                    valueA = parseInt(a.querySelector('.product-count').textContent, 10);
+                    valueB = parseInt(b.querySelector('.product-count').textContent, 10);
+                }
+                
+                // Compare values
+                if (valueA < valueB) return direction === 'asc' ? -1 : 1;
+                if (valueA > valueB) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+            
+            // Reorder the rows in the DOM
+            rows.forEach(row => tbody.appendChild(row));
+            
+            // Animate the sorted rows
+            setTimeout(animateRows, 50);
+        }
+    });
+</script>
+<style>
+    /* Additional dynamic styles */
+    .search-clear-btn {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #aaa;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 50%;
+        display: none;
+        transition: all 0.2s ease;
+    }
+    
+    .search-clear-btn:hover {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .badge-selected {
+        animation: badgePulse 0.8s ease;
+    }
+    
+    @keyframes badgePulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); background-color: var(--primary-color); color: #000; }
+        100% { transform: scale(1); }
+    }
+    
+    .btn-clicked {
+        animation: btnPulse 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border: 1px solid rgb(234, 234, 234); 
+        border-radius: 10px;
+        letter-spacing: 1px;
+    }
+    
+    @keyframes btnPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(0.95); }
+        100% { transform: scale(1); }
+    }
+</style>
+{% endblock %}
+{% endblock %} 

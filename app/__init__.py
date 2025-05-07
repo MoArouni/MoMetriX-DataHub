@@ -18,8 +18,13 @@ def create_app(config_name='default'):
     app = Flask(__name__)
     
     # Load configuration
-    from app.config import config
+    from app.config import config, STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET
     app.config.from_object(config[config_name])
+    
+    # Add Stripe configuration to the app config
+    app.config['STRIPE_SECRET_KEY'] = STRIPE_SECRET_KEY
+    app.config['STRIPE_PUBLISHABLE_KEY'] = STRIPE_PUBLISHABLE_KEY
+    app.config['STRIPE_WEBHOOK_SECRET'] = STRIPE_WEBHOOK_SECRET
     
     # Initialize extensions with app
     db.init_app(app)
@@ -50,6 +55,7 @@ def create_app(config_name='default'):
     from app.routes.support import support_bp
     from app.routes.documentation import documentation_bp
     from app.routes.payment import payment_bp
+    from app.routes.stores import stores_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -71,6 +77,7 @@ def create_app(config_name='default'):
     app.register_blueprint(support_bp)
     app.register_blueprint(documentation_bp)
     app.register_blueprint(payment_bp)
+    app.register_blueprint(stores_bp)
     
     # Register error handlers
     register_error_handlers(app)
