@@ -2,6 +2,8 @@ import click
 from flask.cli import with_appcontext
 from app import db
 from app.utils.db_init import initialize_database
+import sqlalchemy as sa
+from sqlalchemy.exc import OperationalError, ProgrammingError
 
 
 def register_commands(app):
@@ -13,9 +15,19 @@ def register_commands(app):
         """Initialize the database with schema and default data."""
         click.echo('Initializing the database...')
         
-        # Drop all tables first if they exist
-        db.drop_all()
-        click.echo('Dropped existing tables.')
+        # Create a connection to check if tables exist
+        engine = sa.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        inspector = sa.inspect(engine)
+        existing_tables = inspector.get_table_names()
+        
+        if existing_tables:
+            if click.confirm('Database tables already exist. Do you want to drop all tables and recreate?'):
+                # Drop all tables if they exist
+                db.drop_all()
+                click.echo('Dropped existing tables.')
+            else:
+                click.echo('Aborted. Database remains unchanged.')
+                return
         
         # Create tables
         db.create_all()
@@ -24,6 +36,40 @@ def register_commands(app):
         # Initialize with default data
         initialize_database()
         click.echo('Database initialization complete.')
+    
+    @app.cli.command('create-db')
+    @with_appcontext
+    def create_db():
+        """Create the PostgreSQL database if it doesn't exist"""
+        # Use the URI and database name from the current config
+        db_uri = app.config['SQLALCHEMY_DATABASE_URI']
+        db_name = app.config['DB_NAME']
+        
+        click.echo(f'Attempting to create database {db_name} if it does not exist...')
+        
+        # Connect to the default postgres database (postgres)
+        db_uri_parts = db_uri.split('/')
+        db_uri_without_db = '/'.join(db_uri_parts[:-1]) + '/postgres'
+        engine = sa.create_engine(db_uri_without_db)
+        conn = engine.connect()
+        conn.execute(sa.text("COMMIT"))  # Close any open transactions
+        
+        # Check if database exists
+        result = conn.execute(sa.text(f"SELECT 1 FROM pg_database WHERE datname = :db_name"), {"db_name": db_name})
+        exists = result.scalar() == 1
+        
+        if not exists:
+            try:
+                # Create database if it doesn't exist
+                conn.execute(sa.text(f'CREATE DATABASE "{db_name}"'))
+                click.echo(f'Database {db_name} created successfully.')
+            except Exception as e:
+                click.echo(f'Error creating database: {str(e)}')
+        else:
+            click.echo(f'Database {db_name} already exists.')
+        
+        conn.close()
+        engine.dispose()
     
     @app.cli.command('reset-roles')
     @with_appcontext
@@ -87,16 +133,8 @@ def register_commands(app):
         from app import db
         from sqlalchemy.sql import text
         from datetime import datetime
-        import sqlite3
-        import time
-        import os
-        from app.config import basedir
         
         click.echo('Starting migration of products to use embellishments...')
-        
-        # Get the database path from the app configuration
-        db_path = os.path.join(basedir, '..', 'dev.sqlite')
-        click.echo(f'Database path: {db_path}')
         
         # First, close all SQLAlchemy connections to avoid locks
         db.session.close()
@@ -117,113 +155,79 @@ def register_commands(app):
             return
         
         try:
-            # Open a direct connection to SQLite
-            click.echo('Opening direct connection to SQLite...')
-            conn = sqlite3.connect(db_path)
-            cursor = conn.cursor()
-            
-            # Check if 'active' column exists in products table
-            cursor.execute("PRAGMA table_info(products)")
-            columns = [column[1] for column in cursor.fetchall()]
-            
-            if 'active' not in columns:
-                click.echo('No active column found in products table. Migration may have already been applied.')
-                conn.close()
-                return
-            
-            # For each company, create a default embellishment
-            click.echo('Creating default embellishments for each company...')
-            companies = {}
-            company_categories = {}
-            
-            # Get all companies
-            cursor.execute("SELECT id FROM companies")
-            for row in cursor.fetchall():
-                company_id = row[0]
-                companies[company_id] = True
+            # Connect using SQLAlchemy's engine
+            with db.engine.connect() as conn:
+                # Check if 'active' column exists in products table
+                result = conn.execute(sa.text(
+                    "SELECT column_name FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'active'"
+                ))
                 
-                # Get categories for this company
-                cursor.execute("SELECT id FROM product_categories WHERE company_id = ?", (company_id,))
-                company_categories[company_id] = [row[0] for row in cursor.fetchall()]
+                if not result.fetchone():
+                    click.echo('No active column found in products table. Migration may have already been applied.')
+                    return
                 
-                # Create default embellishment for this company
-                cursor.execute("""
-                    INSERT INTO embellishments (name, description, company_id, created_at, updated_at) 
-                    VALUES (?, ?, ?, ?, ?)
-                """, ("Standard", "Default embellishment for standard products", company_id, 
-                     datetime.utcnow().isoformat(), datetime.utcnow().isoformat()))
+                # For each company, create a default embellishment
+                click.echo('Creating default embellishments for each company...')
                 
-                # Get the embellishment ID
-                embellishment_id = cursor.lastrowid
+                # Get all companies
+                result = conn.execute(sa.text("SELECT id FROM companies"))
+                company_ids = [row[0] for row in result.fetchall()]
                 
-                # Associate embellishments with product types
-                if company_categories[company_id]:
-                    for category_id in company_categories[company_id]:
-                        cursor.execute("""
-                            INSERT INTO embellishment_product_types (embellishment_id, product_type_id) 
-                            VALUES (?, ?)
-                        """, (embellishment_id, category_id))
+                for company_id in company_ids:
+                    # Get categories for this company
+                    result = conn.execute(sa.text(
+                        "SELECT id FROM product_categories WHERE company_id = :company_id"
+                    ), {"company_id": company_id})
+                    category_ids = [row[0] for row in result.fetchall()]
+                    
+                    # Create default embellishment for this company
+                    result = conn.execute(sa.text("""
+                        INSERT INTO embellishments (name, description, company_id, created_at, updated_at)
+                        VALUES (:name, :description, :company_id, :created_at, :updated_at)
+                        RETURNING id
+                    """), {
+                        "name": "Standard",
+                        "description": "Default embellishment for standard products",
+                        "company_id": company_id,
+                        "created_at": datetime.utcnow(),
+                        "updated_at": datetime.utcnow()
+                    })
+                    
+                    embellishment_id = result.fetchone()[0]
+                    
+                    # Associate embellishments with product types
+                    for category_id in category_ids:
+                        conn.execute(sa.text("""
+                            INSERT INTO embellishment_product_types (embellishment_id, product_type_id)
+                            VALUES (:embellishment_id, :product_type_id)
+                        """), {
+                            "embellishment_id": embellishment_id,
+                            "product_type_id": category_id
+                        })
+                    
+                    # Get active products for this company
+                    result = conn.execute(sa.text(
+                        "SELECT id FROM products WHERE company_id = :company_id AND active = true"
+                    ), {"company_id": company_id})
+                    active_product_ids = [row[0] for row in result.fetchall()]
+                    
+                    # Associate active products with the Standard embellishment
+                    for product_id in active_product_ids:
+                        conn.execute(sa.text("""
+                            INSERT INTO product_embellishments (product_id, embellishment_id)
+                            VALUES (:product_id, :embellishment_id)
+                        """), {
+                            "product_id": product_id,
+                            "embellishment_id": embellishment_id
+                        })
                 
-                # Get active products for this company
-                cursor.execute("SELECT id FROM products WHERE company_id = ? AND active = 1", (company_id,))
-                active_product_ids = [row[0] for row in cursor.fetchall()]
+                # In PostgreSQL, we can directly drop columns using ALTER TABLE
+                conn.execute(sa.text("ALTER TABLE products DROP COLUMN active"))
                 
-                # Associate active products with the Standard embellishment
-                for product_id in active_product_ids:
-                    cursor.execute("""
-                        INSERT INTO product_embellishments (product_id, embellishment_id) 
-                        VALUES (?, ?)
-                    """, (product_id, embellishment_id))
-            
-            # Commit the changes
-            conn.commit()
-            
-            # Try to drop the active column - SQLite requires creating a new table for this
-            click.echo('Dropping active column from products table...')
-            # Get product table schema without the active column
-            cursor.execute("PRAGMA table_info(products)")
-            columns_info = [column for column in cursor.fetchall() if column[1] != 'active']
-            
-            # Create column definitions for the new table
-            column_defs = []
-            for col in columns_info:
-                name = col[1]
-                type_info = col[2]
-                nullable = "NOT NULL" if col[3] == 1 else ""
-                default = f"DEFAULT {col[4]}" if col[4] is not None else ""
-                pk = "PRIMARY KEY" if col[5] == 1 else ""
-                column_defs.append(f"{name} {type_info} {nullable} {default} {pk}".strip())
-            
-            # Create a temporary table with all columns except active
-            cursor.execute(f"""
-                CREATE TABLE products_new (
-                    {', '.join(column_defs)}
-                )
-            """)
-            
-            # Copy data from products to products_new
-            columns_to_copy = [col[1] for col in columns_info]
-            cursor.execute(f"""
-                INSERT INTO products_new SELECT {', '.join(columns_to_copy)} FROM products
-            """)
-            
-            # Drop the old table and rename the new one
-            cursor.execute("DROP TABLE products")
-            cursor.execute("ALTER TABLE products_new RENAME TO products")
-            
-            # Recreate indexes and foreign keys (if any)
-            # This would need to be customized based on your schema
-            
-            # Commit and close
-            conn.commit()
-            conn.close()
-            
-            click.echo('Migration completed successfully.')
-            
+                click.echo('Migration completed successfully.')
+                
         except Exception as e:
             click.echo(f'Error during migration: {str(e)}')
-            if 'conn' in locals():
-                conn.close()
             return
 
     # Add all commands to the app

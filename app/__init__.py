@@ -5,6 +5,9 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_mail import Mail
 from werkzeug.exceptions import HTTPException
+import os
+import sqlalchemy as sa
+from sqlalchemy.exc import OperationalError, ProgrammingError
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -12,6 +15,21 @@ migrate = Migrate()
 login_manager = LoginManager()
 csrf = CSRFProtect()
 mail = Mail()
+
+def check_db_exists(app):
+    """Check if the database exists"""
+    engine = sa.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    try:
+        # Try to connect to the database
+        with engine.connect() as conn:
+            # Check if the 'role_website' table exists (a key table in our app)
+            conn.execute(sa.text("SELECT 1 FROM information_schema.tables WHERE table_name = 'role_website'"))
+            return True
+    except (OperationalError, ProgrammingError):
+        # Database or table doesn't exist
+        return False
+    finally:
+        engine.dispose()
 
 def create_app(config_name='default'):
     """Application factory function"""
@@ -82,10 +100,42 @@ def create_app(config_name='default'):
     # Register error handlers
     register_error_handlers(app)
     
-    # Initialize database with default values
+    # Initialize database with default values only if it's not already initialized
     with app.app_context():
-        from app.utils.db_init import init_roles
-        init_roles()
+        if not check_db_exists(app):
+            app.logger.info("Database not initialized. Initializing with default values...")
+            try:
+                # Create all tables
+                db.create_all()
+                
+                # Set up initial data
+                from app.utils.db_init import init_roles
+                init_roles()
+                
+                # Create admin user if admin credentials are provided
+                from app.models.user import User
+                if not User.query.filter_by(is_admin=True).first():
+                    app.logger.info("Creating admin user...")
+                    try:
+                        admin = User(
+                            email=app.config['ADMIN_EMAIL'],
+                            username=app.config['ADMIN_USERNAME'],
+                            is_admin=True,
+                            role_website='admin'
+                        )
+                        admin.password = app.config['ADMIN_PASSWORD']
+                        db.session.add(admin)
+                        db.session.commit()
+                        app.logger.info(f"Admin user '{app.config['ADMIN_USERNAME']}' created successfully!")
+                    except Exception as e:
+                        app.logger.error(f"Error creating admin user: {str(e)}")
+                        db.session.rollback()
+                
+                app.logger.info("Database initialization complete.")
+            except Exception as e:
+                app.logger.error(f"Error initializing database: {str(e)}")
+        else:
+            app.logger.info("Database already exists. Skipping initialization.")
     
     # Register CLI commands
     from app.cli import register_commands
