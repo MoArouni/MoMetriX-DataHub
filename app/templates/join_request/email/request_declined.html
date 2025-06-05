@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Request Update</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #dc3545;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .content {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        .info-box {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .alternative-box {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Join Request Update</h1>
+        <p>MoMetriX DataHub</p>
+    </div>
+    
+    <div class="content">
+        <h2>Join Request Status Update</h2>
+        
+        <p>Hello,</p>
+        
+        <p>Thank you for your interest in joining <strong>{{ join_request.company.company_name }}</strong> as a moderator.</p>
+        
+        <div class="info-box">
+            <h4>Request Status: Declined</h4>
+            <p>After careful consideration, your join request has been declined by the company administrator.</p>
+        </div>
+        
+        <p>While this particular request was not approved, we encourage you to:</p>
+        
+        <div class="alternative-box">
+            <h4>Alternative Options:</h4>
+            <ul>
+                <li><strong>Contact the company directly</strong> - You may reach out to the company administrator for more information about their requirements</li>
+                <li><strong>Apply to other companies</strong> - There may be other companies on our platform that are looking for moderators</li>
+                <li><strong>Create your own company</strong> - Consider starting your own company on our platform</li>
+                <li><strong>Reapply in the future</strong> - Company needs may change over time</li>
+            </ul>
+        </div>
+        
+        <p>We appreciate your interest in the MoMetriX DataHub platform and hope you'll continue to explore opportunities with us.</p>
+        
+        <p>If you have any questions about this decision or need assistance with other options, please don't hesitate to contact our support team.</p>
+        
+        <p>Best regards,<br>
+        The MoMetriX DataHub Team</p>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated email. Please do not reply to this message.</p>
+        <p>&copy; 2024 MoMetriX DataHub. All rights reserved.</p>
+    </div>
+</body>
+</html> 

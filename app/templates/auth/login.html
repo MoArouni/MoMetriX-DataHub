@@ -94,6 +94,30 @@
         font-size: 0.9rem;
         margin-top: 0.5rem;
     }
+
+    .verification-help {
+        background-color: rgba(255, 193, 7, 0.1);
+        border: 1px solid #ffc107;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .verification-help p {
+        margin-bottom: 0.5rem;
+        color: #856404;
+    }
+
+    .resend-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .resend-link:hover {
+        text-decoration: underline;
+    }
 </style>
 {% endblock %}
 
@@ -103,6 +127,24 @@
         <h2>Welcome Back</h2>
         <p>Log in to your account</p>
     </div>
+
+    <!-- Check for verification-related flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if 'verify' in message.lower() or 'verification' in message.lower() %}
+                    <div class="verification-help">
+                        <p><i class="fas fa-exclamation-triangle"></i> {{ message }}</p>
+                        <p>
+                            <a href="{{ url_for('auth.resend_verification') }}" class="resend-link">
+                                <i class="fas fa-redo"></i> Resend Verification Email
+                            </a>
+                        </p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     <form method="POST" action="{{ url_for('auth.login') }}">
         {{ form.hidden_tag() }}

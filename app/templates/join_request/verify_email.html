@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Email{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-envelope-open"></i> Verify Your Email</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        We've sent a 6-digit verification code to <strong>{{ email }}</strong>. 
+                        Please enter the code below to continue.
+                    </p>
+                    
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100">
+                            Step 2 of 3
+                        </div>
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.verification_code.label(class="form-label") }}
+                            {{ form.verification_code(class="form-control text-center" + (" is-invalid" if form.verification_code.errors else ""), 
+                                                    placeholder="000000", 
+                                                    maxlength="6",
+                                                    style="font-size: 1.5rem; letter-spacing: 0.5rem;") }}
+                            {% if form.verification_code.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.verification_code.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Enter the 6-digit code sent to your email. Code expires in 10 minutes.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Verify Code
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <p class="text-muted mb-2">Didn't receive the code?</p>
+                        <form method="POST" action="{{ url_for('join_request.resend_code') }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-redo"></i> Resend Code
+                            </button>
+                        </form>
+                        <div class="mt-2">
+                            <a href="{{ url_for('join_request.start') }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Back to Start
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-format verification code input
+document.addEventListener('DOMContentLoaded', function() {
+    const codeInput = document.getElementById('verification_code');
+    if (codeInput) {
+        codeInput.addEventListener('input', function(e) {
+            // Remove any non-digit characters
+            this.value = this.value.replace(/\D/g, '');
+            
+            // Limit to 6 digits
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+        });
+        
+        // Focus on the input when page loads
+        codeInput.focus();
+    }
+});
+</script>
+{% endblock %} 

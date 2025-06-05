@@ -20,9 +20,13 @@ class CompanySetupForm(FlaskForm):
 
 class StoreForm(FlaskForm):
     """Form for a single store"""
-    name = StringField('Store Name', validators=[
+    store_name = StringField('Store Name', validators=[
         DataRequired(),
         Length(min=1, max=100, message="Store name must be between 1 and 100 characters")
+    ])
+    location = StringField('Location', validators=[
+        Optional(),
+        Length(max=255, message="Location must be less than 255 characters")
     ])
     
     # Disable CSRF for subforms
@@ -95,7 +99,6 @@ class SaleEntryForm(FlaskForm):
     card_amount = DecimalField('Card Amount (£)', places=2, default=0)
     notes = StringField('Notes', validators=[Length(max=500)])
     
-    # Dynamic feature fields will be added programmatically
     submit = SubmitField('Record Sale')
     
     def validate_card_amount(self, field):

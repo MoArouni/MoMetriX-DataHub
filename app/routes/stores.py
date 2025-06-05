@@ -29,37 +29,100 @@ def index():
 def manage():
     """Manage company stores"""
     try:
+        print("DEBUG: Starting stores.manage function")
         company_id = current_user.company_id
+        print(f"DEBUG: Company ID: {company_id}")
         
         # Check subscription limits
         subscription = CompanySubscription.query.filter_by(company_id=company_id).first()
         max_stores = 3  # Default free plan limit
+        print(f"DEBUG: Max stores: {max_stores}")
         
         # Check if stores already exist
         existing_stores = Store.query.filter_by(company_id=company_id).all()
+        print(f"DEBUG: Found {len(existing_stores)} existing stores")
         
+        print("DEBUG: Creating StoresSetupForm")
         form = StoresSetupForm()
+        print("DEBUG: Form created successfully")
+        
+        # Test form field access
+        print("DEBUG: Testing form field access")
+        try:
+            print(f"DEBUG: form.stores type: {type(form.stores)}")
+            print(f"DEBUG: form.stores.entries type: {type(form.stores.entries)}")
+            print(f"DEBUG: form.stores.entries length: {len(form.stores.entries)}")
+        except Exception as e:
+            print(f"DEBUG: Error accessing form.stores: {e}")
+            import traceback
+            traceback.print_exc()
         
         if request.method == 'GET':
+            print("DEBUG: Processing GET request")
             if existing_stores:
+                print("DEBUG: Prepopulating form with existing stores")
                 form.num_stores.data = len(existing_stores)
                 # Prepopulate the form with existing stores
                 form.stores.entries = []  # Clear existing entries first
-                for store in existing_stores:
-                    store_form = {'name': store.name, 'location': store.location or ''}
-                    form.stores.append_entry(store_form)
+                for i, store in enumerate(existing_stores):
+                    print(f"DEBUG: Processing store {i}: {store.name}")
+                    try:
+                        print(f"DEBUG: About to call append_entry()")
+                        form.stores.append_entry()
+                        print(f"DEBUG: Entry appended successfully")
+                        print(f"DEBUG: form.stores.entries length now: {len(form.stores.entries)}")
+                        print(f"DEBUG: Last entry type: {type(form.stores[-1])}")
+                        print(f"DEBUG: Last entry has store_name: {hasattr(form.stores[-1], 'store_name')}")
+                        print(f"DEBUG: Last entry has location: {hasattr(form.stores[-1], 'location')}")
+                        
+                        # Set the data after creating the entry
+                        print(f"DEBUG: Setting name data: {store.name}")
+                        form.stores[-1].store_name.data = store.name
+                        print(f"DEBUG: Setting location data: {store.location or ''}")
+                        form.stores[-1].location.data = store.location or ''
+                        print(f"DEBUG: Data set for store {i}")
+                    except Exception as e:
+                        print(f"DEBUG: Error processing store {i}: {e}")
+                        import traceback
+                        traceback.print_exc()
+                        raise
             else:
+                print("DEBUG: No existing stores, creating default entry")
                 # Default to one store
                 form.num_stores.data = 1
-                form.stores.append_entry({})
+                try:
+                    print("DEBUG: About to call append_entry() for default")
+                    form.stores.append_entry()
+                    print("DEBUG: Default entry created successfully")
+                    print(f"DEBUG: form.stores.entries length: {len(form.stores.entries)}")
+                    
+                    # Debug the created entry
+                    if len(form.stores.entries) > 0:
+                        entry = form.stores.entries[0]
+                        print(f"DEBUG: Entry type: {type(entry)}")
+                        print(f"DEBUG: Entry dir: {dir(entry)}")
+                        if hasattr(entry, 'store_name'):
+                            print(f"DEBUG: Entry.store_name type: {type(entry.store_name)}")
+                            print(f"DEBUG: Entry.store_name value: {entry.store_name}")
+                        if hasattr(entry, 'location'):
+                            print(f"DEBUG: Entry.location type: {type(entry.location)}")
+                            print(f"DEBUG: Entry.location value: {entry.location}")
+                except Exception as e:
+                    print(f"DEBUG: Error creating default entry: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    raise
         
         # Handle form submission
         if request.method == 'POST':
+            print("DEBUG: Processing POST request")
             # Check if the "Update Fields" button was pressed (before form validation)
             if 'update_form' in request.form:
+                print("DEBUG: Update form button pressed")
                 # Basic validation for num_stores
                 try:
                     num_stores = int(request.form.get('num_stores', 0))
+                    print(f"DEBUG: Requested num_stores: {num_stores}")
                     
                     # Check if number of stores exceeds the limit
                     if num_stores > max_stores:
@@ -75,21 +138,26 @@ def manage():
                     # Clear existing entries and add new ones
                     form.stores.entries = []
                     for i in range(num_stores):
-                        form.stores.append_entry({})
+                        print(f"DEBUG: Adding entry {i}")
+                        form.stores.append_entry()
                         
                     return render_template('stores/manage.html', form=form, max_stores=max_stores)
                 except (ValueError, TypeError) as e:
+                    print(f"DEBUG: Error in update_form: {e}")
                     flash('Please enter a valid number of stores.', 'error')
                     # Reset form to default state
                     form.num_stores.data = len(existing_stores) if existing_stores else 1
                     form.stores.entries = []
                     for store in existing_stores:
-                        store_form = {'name': store.name, 'location': store.location or ''}
-                        form.stores.append_entry(store_form)
+                        form.stores.append_entry()
+                        # Set the data after creating the entry
+                        form.stores[-1].store_name.data = store.name
+                        form.stores[-1].location.data = store.location or ''
                     return render_template('stores/manage.html', form=form, max_stores=max_stores)
             
             # Check if the "Save Stores" button was pressed
             elif 'submit' in request.form:
+                print("DEBUG: Submit button pressed")
                 try:
                     # Check if number of stores exceeds the limit
                     if form.num_stores.data > max_stores:
@@ -99,7 +167,7 @@ def manage():
                     # Validate that all store names are provided
                     all_valid = True
                     for i, store_form in enumerate(form.stores):
-                        if not store_form.name.data or not store_form.name.data.strip():
+                        if not store_form.store_name.data or not store_form.store_name.data.strip():
                             flash(f'Store {i+1} name cannot be empty', 'error')
                             all_valid = False
                     
@@ -113,9 +181,9 @@ def manage():
                         
                     # Create new stores
                     for store_form in form.stores:
-                        if store_form.name.data and store_form.name.data.strip():
+                        if store_form.store_name.data and store_form.store_name.data.strip():
                             new_store = Store(
-                                name=store_form.name.data.strip(),
+                                name=store_form.store_name.data.strip(),
                                 location=store_form.location.data.strip() if store_form.location.data else '',
                                 company_id=company_id
                             )
@@ -125,13 +193,17 @@ def manage():
                     flash('Stores have been successfully saved.', 'success')
                     return redirect(url_for('stores.index'))
                 except Exception as e:
+                    print(f"DEBUG: Error in submit: {e}")
                     db.session.rollback()
                     flash(f'Error saving stores: {str(e)}', 'error')
                     return render_template('stores/manage.html', form=form, max_stores=max_stores)
         
+        print("DEBUG: Rendering template")
         return render_template('stores/manage.html', form=form, max_stores=max_stores)
     except Exception as e:
         # Log the error
         print(f"Error in stores.manage: {str(e)}")
+        import traceback
+        traceback.print_exc()
         flash('An error occurred while managing stores. Please try again.', 'error')
         return redirect(url_for('dashboard.dashboard')) 

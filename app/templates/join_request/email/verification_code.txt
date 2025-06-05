@@ -1,0 +1,18 @@
+Email Verification - MoMetriX DataHub
+
+Hello,
+
+You've requested to join an existing company as a moderator. To continue with your request, please verify your email address using the code below:
+
+Verification Code: {{ code }}
+
+IMPORTANT: This verification code will expire in 10 minutes for security reasons.
+
+If you didn't request this verification, you can safely ignore this email.
+
+Best regards,
+The MoMetriX DataHub Team
+
+---
+This is an automated email. Please do not reply to this message.
+© 2024 MoMetriX DataHub. All rights reserved. 

@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Review Join Request{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-check"></i> Review Join Request</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Request Details -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Applicant Information</h6>
+                            <p><strong>Email:</strong> {{ join_request.email }}</p>
+                            <p><strong>Submitted:</strong> {{ join_request.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Company Information</h6>
+                            <p><strong>Company:</strong> {{ join_request.company.company_name }}</p>
+                            <p><strong>Admin:</strong> {{ join_request.company.admin.username }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Message -->
+                    {% if join_request.message %}
+                    <div class="mb-4">
+                        <h6 class="text-muted">Applicant Message</h6>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <p class="mb-0">{{ join_request.message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Current Status -->
+                    <div class="mb-4">
+                        <h6 class="text-muted">Current Status</h6>
+                        {% if join_request.status == 'pending' %}
+                            <span class="badge bg-warning fs-6">Pending Review</span>
+                        {% elif join_request.status == 'approved' %}
+                            <span class="badge bg-success fs-6">Approved</span>
+                            {% if join_request.reviewed_at %}
+                                <p class="mt-2 mb-0">
+                                    <small class="text-muted">
+                                        Approved on {{ join_request.reviewed_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                                        {% if join_request.reviewer %}
+                                            by {{ join_request.reviewer.username }}
+                                        {% endif %}
+                                    </small>
+                                </p>
+                            {% endif %}
+                        {% elif join_request.status == 'declined' %}
+                            <span class="badge bg-danger fs-6">Declined</span>
+                            {% if join_request.reviewed_at %}
+                                <p class="mt-2 mb-0">
+                                    <small class="text-muted">
+                                        Declined on {{ join_request.reviewed_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                                        {% if join_request.reviewer %}
+                                            by {{ join_request.reviewer.username }}
+                                        {% endif %}
+                                    </small>
+                                </p>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    {% if join_request.is_pending %}
+                        <!-- Action Form -->
+                        <form method="POST">
+                            {{ form.hidden_tag() }}
+                            
+                            <div class="mb-4">
+                                <h6 class="text-muted">Role Permissions</h6>
+                                {{ form.role_permissions(class="form-select" + (" is-invalid" if form.role_permissions.errors else "")) }}
+                                {% if form.role_permissions.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.role_permissions.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    Select the permissions level for this moderator if approved.
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-info-circle"></i> Permission Levels Explained:</h6>
+                                <ul class="mb-0">
+                                    <li><strong>Data Entry Only:</strong> Can add and edit basic data entries</li>
+                                    <li><strong>Data Entry + Daily Sales View:</strong> Can manage data and view daily sales reports</li>
+                                    <li><strong>Full Access:</strong> Complete access to all company data and reports</li>
+                                </ul>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <button type="submit" name="action" value="approve" class="btn btn-success btn-lg w-100">
+                                        <i class="fas fa-check"></i> Approve & Send Invite
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="submit" name="action" value="decline" class="btn btn-danger btn-lg w-100">
+                                        <i class="fas fa-times"></i> Decline Request
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    {% else %}
+                        <!-- Already Reviewed -->
+                        <div class="alert alert-secondary">
+                            <i class="fas fa-info-circle"></i>
+                            This join request has already been reviewed and cannot be modified.
+                        </div>
+                    {% endif %}
+
+                    <hr>
+                    
+                    <div class="text-center">
+                        <a href="{{ url_for('admin.join_requests') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Join Requests
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Confirmation for decline action
+document.addEventListener('DOMContentLoaded', function() {
+    const declineBtn = document.querySelector('button[value="decline"]');
+    if (declineBtn) {
+        declineBtn.addEventListener('click', function(e) {
+            if (!confirm('Are you sure you want to decline this join request? The applicant will be notified via email.')) {
+                e.preventDefault();
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

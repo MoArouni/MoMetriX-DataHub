@@ -47,7 +47,7 @@ class PasswordResetForm(FlaskForm):
     password = PasswordField('New Password', validators=[
         DataRequired(), Length(min=8)
     ])
-    password2 = PasswordField('Confirm New Password', validators=[
+    confirm_password = PasswordField('Confirm New Password', validators=[
         DataRequired(), EqualTo('password', message='Passwords must match.')
     ])
     submit = SubmitField('Reset Password')
@@ -89,3 +89,18 @@ class ChangePasswordForm(FlaskForm):
         DataRequired(), EqualTo('new_password', message='Passwords must match.')
     ])
     submit = SubmitField('Change Password')
+
+class ResendVerificationForm(FlaskForm):
+    """Form for resending email verification"""
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(1, 64)])
+    submit = SubmitField('Resend Verification Email')
+    
+    def validate_email(self, field):
+        """Validate that the email exists and needs verification"""
+        user = User.query.filter_by(email=field.data.lower()).first()
+        if not user:
+            raise ValidationError('No account found with this email address.')
+        if user.email_verified:
+            raise ValidationError('This email address is already verified.')
+        if user.is_admin:
+            raise ValidationError('Admin accounts do not require email verification.')

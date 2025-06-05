@@ -1,0 +1,35 @@
+🎉 You're Invited! - MoMetriX DataHub
+
+Moderator Invitation Approved
+
+Congratulations! Your request to join {{ invite.company.company_name }} as a moderator has been approved.
+
+Your Role Details:
+- Company: {{ invite.company.company_name }}
+- Role: Moderator
+- Permissions: {% if invite.role_permissions == 'data_entry' %}Data Entry Only{% elif invite.role_permissions == 'daily_sales' %}Data Entry + Daily Sales View{% elif invite.role_permissions == 'full_view' %}Full Access (All Data){% endif %}
+
+To complete your registration, please follow these steps:
+
+1. Click the invitation link below
+2. Enter the 6-digit passcode
+3. Complete your profile
+
+Invitation Link: {{ invite_url }}
+
+Your 6-digit passcode: {{ invite.passcode }}
+
+⏰ IMPORTANT - TIME SENSITIVE:
+- This invitation link expires in 15 minutes
+- The passcode expires in 5 minutes  
+- You can only use this invitation once
+
+If you have any questions or need assistance, please contact the company administrator.
+
+Welcome to the team!
+The MoMetriX DataHub Team
+
+---
+This is an automated email. Please do not reply to this message.
+If you didn't expect this invitation, you can safely ignore this email.
+© 2024 MoMetriX DataHub. All rights reserved. 

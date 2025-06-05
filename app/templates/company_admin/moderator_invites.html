@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Moderator Invites - {{ company.company_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Moderator Invites for {{ company.company_name }}</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('company_admin.join_requests') }}">Join Requests</a></li>
+                        <li class="breadcrumb-item active">Moderator Invites</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <!-- Moderator Invites Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Sent Invites</h5>
+                </div>
+                <div class="card-body">
+                    {% if invites %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Role Permissions</th>
+                                        <th>Status</th>
+                                        <th>Sent</th>
+                                        <th>Expires</th>
+                                        <th>Used At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for invite in invites %}
+                                    <tr>
+                                        <td>{{ invite.email }}</td>
+                                        <td>
+                                            {% if invite.role_permissions == 'data_entry' %}
+                                                <span class="badge bg-info">Data Entry Only</span>
+                                            {% elif invite.role_permissions == 'data_entry_sales' %}
+                                                <span class="badge bg-warning">Data Entry + Daily Sales</span>
+                                            {% elif invite.role_permissions == 'full_access' %}
+                                                <span class="badge bg-success">Full Access</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if invite.is_used %}
+                                                <span class="badge bg-success">Used</span>
+                                            {% elif invite.is_expired %}
+                                                <span class="badge bg-danger">Expired</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ invite.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td>
+                                            {% if invite.is_expired %}
+                                                <span class="text-danger">{{ invite.expires_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                                            {% else %}
+                                                {{ invite.expires_at.strftime('%Y-%m-%d %H:%M') }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if invite.used_at %}
+                                                {{ invite.used_at.strftime('%Y-%m-%d %H:%M') }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if not invite.is_used and not invite.is_expired %}
+                                                <button class="btn btn-sm btn-outline-primary copy-invite-btn" 
+                                                        data-invite-url="{{ url_for('join_request.accept_invite', token=invite.invite_token, _external=True) }}">
+                                                    Copy Link
+                                                </button>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        {% if pagination.pages > 1 %}
+                        <nav aria-label="Moderator invites pagination">
+                            <ul class="pagination justify-content-center">
+                                {% if pagination.has_prev %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('company_admin.moderator_invites', page=pagination.prev_num) }}">Previous</a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for page_num in pagination.iter_pages() %}
+                                    {% if page_num %}
+                                        {% if page_num != pagination.page %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ url_for('company_admin.moderator_invites', page=page_num) }}">{{ page_num }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ page_num }}</span>
+                                            </li>
+                                        {% endif %}
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if pagination.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('company_admin.moderator_invites', page=pagination.next_num) }}">Next</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-envelope fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No invites sent yet</h5>
+                            <p class="text-muted">
+                                Moderator invites will appear here when you approve join requests.
+                            </p>
+                            <a href="{{ url_for('company_admin.join_requests') }}" class="btn btn-primary">
+                                <i class="fas fa-arrow-left"></i> Back to Join Requests
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners to copy buttons
+    document.querySelectorAll('.copy-invite-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const url = this.getAttribute('data-invite-url');
+            copyInviteLink(url);
+        });
+    });
+});
+
+function copyInviteLink(url) {
+    navigator.clipboard.writeText(url).then(function() {
+        // Show success message
+        const toast = document.createElement('div');
+        toast.className = 'toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3';
+        toast.style.zIndex = '9999';
+        toast.innerHTML = '<div class="d-flex">' +
+            '<div class="toast-body">Invite link copied to clipboard!</div>' +
+            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+            '</div>';
+        document.body.appendChild(toast);
+        
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+        
+        // Remove toast after it's hidden
+        toast.addEventListener('hidden.bs.toast', function() {
+            document.body.removeChild(toast);
+        });
+    }).catch(function(err) {
+        alert('Failed to copy link: ' + err);
+    });
+}
+</script>
+{% endblock %} 

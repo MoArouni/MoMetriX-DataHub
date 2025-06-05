@@ -1,0 +1,528 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Permissions - {{ moderator.first_name }} {{ moderator.last_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-user-edit"></i> Edit Permissions</h1>
+        <nav class="breadcrumb">
+            <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('company_admin.settings') }}">Settings</a>
+            <a href="{{ url_for('company_admin.manage_moderators') }}">Moderators</a>
+            <span>{{ moderator.first_name }} {{ moderator.last_name }}</span>
+        </nav>
+    </div>
+
+    <div class="permissions-container">
+        <!-- Moderator Info Card -->
+        <div class="moderator-info-card">
+            <div class="moderator-header">
+                <div class="moderator-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="moderator-details">
+                    <h2>{{ moderator.first_name }} {{ moderator.last_name }}</h2>
+                    <p>{{ moderator.email }}</p>
+                    <span class="role-badge">Moderator</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permissions Form -->
+        <div class="permissions-form-card">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <!-- Store Access Section -->
+                <div class="permission-section">
+                    <h3><i class="fas fa-store"></i> Store Access Permissions</h3>
+                    <p class="section-description">
+                        Control which stores this moderator can access and add sales to. Leave none selected to grant access to all stores.
+                    </p>
+                    
+                    <div class="store-permissions">
+                        <label class="form-label">Allowed Stores:</label>
+                        <div class="stores-grid">
+                            {% if stores %}
+                                {% for store in stores %}
+                                <label class="store-checkbox">
+                                    <input type="checkbox" 
+                                           name="allowed_stores" 
+                                           value="{{ store.id }}"
+                                           {% if store.id in form.allowed_stores.data %}checked{% endif %}>
+                                    <span class="checkmark"></span>
+                                    <div class="store-info">
+                                        <span class="store-name">{{ store.name }}</span>
+                                        {% if store.location %}
+                                        <span class="store-location">{{ store.location }}</span>
+                                        {% endif %}
+                                    </div>
+                                </label>
+                                {% endfor %}
+                            {% else %}
+                                <p class="no-stores">No stores configured yet. <a href="{{ url_for('stores.manage') }}">Set up stores</a></p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="permission-note">
+                            <i class="fas fa-info-circle"></i>
+                            <span>If no stores are selected, the moderator will have access to all stores (current and future).</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Range Access Section -->
+                <div class="permission-section">
+                    <h3><i class="fas fa-calendar-alt"></i> Sales Data Range Access</h3>
+                    <p class="section-description">
+                        Determine how far back in time this moderator can view sales data.
+                    </p>
+                    
+                    <div class="data-range-selection">
+                        {{ form.data_range_access.label(class="form-label") }}
+                        {{ form.data_range_access(class="form-select") }}
+                        
+                        <div class="range-descriptions">
+                            <div class="range-option">
+                                <strong>Current Day Only:</strong> Can only see today's sales
+                            </div>
+                            <div class="range-option">
+                                <strong>Past Week:</strong> Can view sales from the last 7 days
+                            </div>
+                            <div class="range-option">
+                                <strong>Past Month:</strong> Can access sales from the last 30 days
+                            </div>
+                            <div class="range-option">
+                                <strong>All Historical Data:</strong> Full access to all sales history
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales Permissions Section -->
+                <div class="permission-section">
+                    <h3><i class="fas fa-cash-register"></i> Sales Management Permissions</h3>
+                    <p class="section-description">
+                        Configure what actions this moderator can perform with sales data.
+                    </p>
+                    
+                    <div class="permissions-grid">
+                        <div class="permission-item">
+                            {{ form.can_view_sales(class="permission-checkbox") }}
+                            {{ form.can_view_sales.label(class="permission-label") }}
+                            <p class="permission-description">View sales reports and data</p>
+                        </div>
+                        
+                        <div class="permission-item">
+                            {{ form.can_add_sales(class="permission-checkbox") }}
+                            {{ form.can_add_sales.label(class="permission-label") }}
+                            <p class="permission-description">Record new sales transactions</p>
+                        </div>
+                        
+                        <div class="permission-item">
+                            {{ form.can_edit_sales(class="permission-checkbox") }}
+                            {{ form.can_edit_sales.label(class="permission-label") }}
+                            <p class="permission-description">Modify existing sales records</p>
+                        </div>
+                        
+                        <div class="permission-item">
+                            {{ form.can_delete_sales(class="permission-checkbox") }}
+                            {{ form.can_delete_sales.label(class="permission-label") }}
+                            <p class="permission-description">Remove sales transactions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Permissions Section -->
+                <div class="permission-section">
+                    <h3><i class="fas fa-chart-line"></i> Advanced Permissions</h3>
+                    <p class="section-description">
+                        Additional capabilities for data analysis and management.
+                    </p>
+                    
+                    <div class="permissions-grid">
+                        <div class="permission-item">
+                            {{ form.can_view_analytics(class="permission-checkbox") }}
+                            {{ form.can_view_analytics.label(class="permission-label") }}
+                            <p class="permission-description">Access analytics and detailed reports</p>
+                        </div>
+                        
+                        <div class="permission-item">
+                            {{ form.can_export_data(class="permission-checkbox") }}
+                            {{ form.can_export_data.label(class="permission-label") }}
+                            <p class="permission-description">Export data to CSV/Excel files</p>
+                        </div>
+                        
+                        <div class="permission-item">
+                            {{ form.can_manage_products(class="permission-checkbox") }}
+                            {{ form.can_manage_products.label(class="permission-label") }}
+                            <p class="permission-description">Add, edit, and organize products</p>
+                        </div>
+                        
+                        <div class="permission-item">
+                            {{ form.can_manage_stores(class="permission-checkbox") }}
+                            {{ form.can_manage_stores.label(class="permission-label") }}
+                            <p class="permission-description">Manage store locations and settings</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Permissions
+                    </button>
+                    <a href="{{ url_for('company_admin.manage_moderators') }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.breadcrumb {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: #999;
+}
+
+.breadcrumb a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.breadcrumb span:not(:last-child)::after {
+    content: '>';
+    margin-left: 0.5rem;
+    color: #666;
+}
+
+.permissions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.moderator-info-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+}
+
+.moderator-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.moderator-avatar {
+    font-size: 3rem;
+    color: var(--primary-color);
+}
+
+.moderator-details h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.moderator-details p {
+    margin: 0.5rem 0;
+    color: #ccc;
+}
+
+.role-badge {
+    background: var(--primary-color);
+    color: #000;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.permissions-form-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+}
+
+.permission-section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.permission-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 2rem;
+}
+
+.permission-section h3 {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-description {
+    color: #ccc;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.form-label {
+    display: block;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.stores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.store-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.store-checkbox:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--primary-color);
+}
+
+.store-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.store-checkbox input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.store-checkbox input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.store-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.store-name {
+    color: #fff;
+    font-weight: 600;
+}
+
+.store-location {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.no-stores {
+    color: #ccc;
+    font-style: italic;
+    text-align: center;
+    padding: 2rem;
+}
+
+.no-stores a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.permission-note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ccc;
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1rem;
+    border-radius: 6px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.form-select {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.range-descriptions {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.range-option {
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    color: #ccc;
+}
+
+.range-option strong {
+    color: var(--primary-color);
+}
+
+.permissions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.permission-item {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.permission-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--primary-color);
+}
+
+.permission-checkbox {
+    transform: scale(1.2);
+    margin-right: 0.75rem;
+}
+
+.permission-label {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline;
+}
+
+.permission-description {
+    color: #ccc;
+    font-size: 0.9rem;
+    margin: 0.5rem 0 0 0;
+    line-height: 1.4;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #000;
+}
+
+.btn-primary:hover {
+    background: var(--primary-color-light);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .stores-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .permissions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .moderator-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+</style>
+{% endblock %} 

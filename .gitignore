@@ -17,3 +17,15 @@ create_admin.py
 dev.sqlite
 create_tables.py
 reset_database.py
+
+.csv
+
+convert_csv.py
+
+.example
+
+.env.example
+
+
+migrations/
+

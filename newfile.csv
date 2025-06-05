@@ -1,0 +1,651 @@
+sale_date,store_name,product_category,product_name,quantity,total,card_amount,cash_amount,notes
+2025-05-07,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,368.20,145.20,223.00,Details: Mohave Stone | Mohave: Mohave ruby
+2025-05-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,30.00,30.00,0.00,Details: Keffiyeh necklace
+2025-05-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,20.00,0.00,20.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: beads
+2024-12-13,St Georges Kiosk,Gold Plated collections,bracelets,1,45.00,43.00,2.00,Details: Mohave Stone | Mohave: Mohave emerald
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,50.00,50.00,0.00,Details: Zirconia | Zirconia: emerald
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Raw Stone
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,36.00,0.00,36.00,Details: Raw Stone | Birth Stone: Turquoise (december)
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: Raw Stone
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: Raw Stone
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: Raw Stone
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,0.00,10.00,Details: Raw Stone
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,5.00,5.00,Details: Raw Stone
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,60.00,60.00,0.00,"Details: Raw Stone | Birth Stone: 3 colours, hydro Zirconia"
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,40.00,40.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver anklets,1,35.00,35.00,0.00,
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,12.00,12.00,0.00,
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,
+2024-12-13,St Georges Kiosk,Gold Plated collections,stud earings,1,22.00,22.00,0.00,
+2024-12-13,St Georges Kiosk,Gold Plated collections,necklaces,1,47.00,47.00,0.00,Details: Raw Stone | Birth Stone: Diamond white topaz (april)
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,20.00,20.00,0.00,Details: brown lava
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,48.00,0.00,48.00,Details: Allah
+2024-12-13,St Georges Kiosk,Gold Plated collections,stud earings,1,28.00,28.00,0.00,Details: Mohave Stone | Mohave: NA
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Flower
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,36.00,36.00,0.00,
+2024-12-13,St Georges Kiosk,Gold Plated collections,dangling earings,1,30.00,0.00,30.00,Details: Mohave Stone | Mohave: NA
+2024-12-13,St Georges Kiosk,Gold Plated collections,dangling earings,1,30.00,30.00,0.00,Details: Mohave Stone | Mohave: NA
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,40.00,40.00,0.00,Details: Butterfly
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,49.00,49.00,0.00,
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Raw Stone | Birth Stone: Citrine
+2024-12-13,St Georges Kiosk,Gold Plated collections,dangling earings,1,30.00,30.00,0.00,Details: Mohave Stone | Mohave: Mohave sapphire
+2024-12-13,St Georges Kiosk,Gold Plated collections,dangling earings,1,25.00,25.00,0.00,Details: Mohave Stone | Mohave: Mohave emerald
+2024-12-13,St Georges Kiosk,Gold Plated collections,necklaces,1,50.00,50.00,0.00,Details: Mohave Stone | Mohave: Mohave emerald
+2024-12-13,St Georges Kiosk,Gold Plated collections,dangling earings,1,24.00,24.00,0.00,Details: Mohave Stone | Mohave: Mohave amethyst
+2024-12-13,St Georges Kiosk,Gold Plated collections,bracelets,1,40.00,40.00,0.00,Details: Mohave Stone | Mohave: Mohave amethyst
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,Unnamed Product,1,22.00,22.00,0.00,Details: Raw Stone | Birth Stone: Jasper
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,
+2024-12-13,St Georges Kiosk,Gold Plated collections,necklaces,1,36.00,0.00,36.00,Details: Raw Stone | Birth Stone: Peridot (august)
+2024-12-13,St Georges Kiosk,Gold Plated collections,dangling earings,1,30.00,0.00,30.00,Details: Mohave Stone | Mohave: Mohave white turquoise
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,20.00,20.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Raw Stone | Birth Stone: Rose & Hamsa Hand
+2024-12-13,St Georges Kiosk,Gold Plated collections,bracelets,1,35.00,35.00,0.00,Details: Hamsa Hand
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,50.00,50.00,0.00,Details: silver
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: silver
+2024-12-13,St Georges Kiosk,Gold Plated collections,dangling earings,1,34.00,34.00,0.00,Details: Raw Stone | Birth Stone: Emerald agate (may)
+2024-12-13,St Georges Kiosk,Gold Plated collections,rings,1,45.00,45.00,0.00,Details: Raw Stone | Birth Stone: Emerald & Pearl
+2024-12-13,St Georges Kiosk,Gold Plated collections,necklaces,1,45.00,45.00,0.00,Details: Raw Stone | Birth Stone: Amethyst (february)
+2024-12-13,St Georges Kiosk,Gold Plated collections,stud earings,1,36.00,36.00,0.00,Details: Raw Stone | Birth Stone: Amethyst (february)
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Zirconia | Zirconia: multi-colour
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,
+2024-12-13,St Georges Kiosk,Gold Plated collections,dangling earings,1,27.00,27.00,0.00,Details: Mohave Stone | Mohave: NA
+2024-12-13,St Georges Kiosk,Gold Plated collections,dangling earings,1,29.00,29.00,0.00,Details: Mohave Stone | Mohave: NA
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Evil eye
+2024-12-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,0.00,10.00,Details: pink lava 4mm
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,45.00,45.00,0.00,Details: Zirconia | Zirconia: multi colour
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,50.00,50.00,0.00,
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,40.00,0.00,
+2024-12-14,St Georges Kiosk,Gold Plated collections,bracelets,1,45.00,45.00,0.00,Details: Raw Stone | Birth Stone: Opal tourmaline (october)
+2024-12-14,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: children
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Zirconia | Zirconia: Aquamarine
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,36.00,36.00,0.00,Details: Daisy
+2024-12-14,St Georges Kiosk,Gold Plated collections,dangling earings,1,30.00,30.00,0.00,Details: Mohave Stone | Mohave: Mohave ruby
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: multi colour
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Daisy
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,50.00,50.00,0.00,Details: AlHamdulillah
+2024-12-14,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,Details: Butterfly
+2024-12-14,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: multi colour
+2024-12-14,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,16.00,16.00,0.00,Details: Love
+2024-12-14,St Georges Kiosk,Gold Plated collections,necklaces,1,39.00,39.00,0.00,Details: Raw Stone | Birth Stone: Sapphire (september)
+2024-12-15,St Georges Kiosk,Gold Plated collections,dangling earings,1,26.00,26.00,0.00,Details: Mohave Stone | Mohave: N/A
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,Details: Evil eye
+2024-12-14,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Raw Stone | Birth Stone: Pearl moonstone (june)
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,41.00,41.00,0.00,Details: Tree of life
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Evil eye
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Evil eye
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,40.00,0.00,Details: Evil eye
+2024-12-14,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Raw Stone | Birth Stone: 1 Peridot and 1 moonstone
+2024-12-14,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Raw Stone | Birth Stone: 1 Peridot and 1 moonstone
+2024-12-17,St Georges Kiosk,Gold Plated collections,dangling earings,1,34.00,34.00,0.00,Details: Raw Stone | Birth Stone: 1 Peridot and 2 Ruby
+2024-12-17,St Georges Kiosk,Gold Plated collections,dangling earings,1,34.00,34.00,0.00,Details: Raw Stone | Birth Stone: 1 Peridot and 2 Ruby
+2024-12-17,St Georges Kiosk,Gold Plated collections,dangling earings,1,34.00,34.00,0.00,Details: Raw Stone | Birth Stone: 1 Peridot and 2 Ruby
+2024-12-17,St Georges Kiosk,Gold Plated collections,necklaces,1,38.00,38.00,0.00,Details: Pearl
+2024-12-17,St Georges Kiosk,Sterling Silver collections,SET,1,71.00,71.00,0.00,Details: Evil eye
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,16.00,16.00,0.00,Details: NA
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Green
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: green
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,2,45.00,45.00,0.00,Details: plain
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,Details: plain
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,Details: plain
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,40.00,10.00,30.00,Details: Infinity
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,40.00,10.00,30.00,Details: infinity
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,25.00,25.00,0.00,"Details: Heart, adjustable."
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,25.00,25.00,0.00,Details: heart
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,28.00,28.00,0.00,Details: Raw Stone | Birth Stone: Turquoise (december)
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,28.00,28.00,0.00,Details: Raw Stone | Birth Stone: Turquoise (december)
+2024-12-18,St Georges Kiosk,Sterling Silver collections,SET,1,69.00,69.00,0.00,Details: Clover
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,40.00,40.00,0.00,Details: Tree of Life
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver anklets,1,32.00,32.00,0.00,Details: Tennis White
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Evil eye
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,48.00,48.00,0.00,
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,25.00,20.00,5.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-22,St Georges Kiosk,Sterling Silver collections,SET,1,94.00,94.00,0.00,Details: N/A
+2024-12-18,St Georges Kiosk,Gold Plated collections,stud earings,1,60.00,60.00,0.00,Details: Raw Stone | Birth Stone: Pearl moonstone (june)
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Lava
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: Blue with Eye
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Lava
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: blue with eye
+2024-12-18,St Georges Kiosk,Gold Plated collections,stud earings,1,30.00,30.00,0.00,Details: Pink
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,0.00,7.50,
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,0.00,7.50,
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,2,7.50,0.00,7.50,
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,0.00,10.00,
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,38.00,38.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,Details: Butterfly
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,Details: butterfly
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,0.00,7.50,Details: n/a
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,0.00,10.00,Details: n/a
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,38.00,38.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,0.00,7.50,Details: n/a
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,20.00,20.00,0.00,Details: Raw Stone | Birth Stone: Obsidian
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,20.00,20.00,0.00,Details: Raw Stone | Birth Stone: obsidian
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Turkish
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: turkish
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,40.00,0.00,Details: Orbit
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Circle
+2024-12-19,St Georges Kiosk,Sterling Silver collections,SET,1,100.00,100.00,0.00,
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,30.00,30.00,0.00,
+2024-12-19,St Georges Kiosk,Gold Plated collections,rings,1,40.00,40.00,0.00,Details: Raw Stone | Birth Stone: Amethyst (february)
+2024-12-19,St Georges Kiosk,Gold Plated collections,necklaces,1,45.00,45.00,0.00,Details: Mohave Stone | Mohave: Mohave emerald
+2024-12-19,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,20.00,20.00,0.00,
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,50.00,50.00,0.00,Details: Evil eye
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,28.00,28.00,0.00,Details: Evil eye
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bangles,1,130.00,130.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-19,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: dog & white heart
+2024-12-19,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: dog & white heart
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,12.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-19,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,
+2024-12-19,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,
+2024-12-19,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,2,7.50,7.50,0.00,
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: small star
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,Details: star
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: kids
+2024-12-29,St Georges Kiosk,Gold Plated collections,necklace chain,1,20.00,0.00,20.00,Details: chain
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: bear & rabbit
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,43.00,43.00,0.00,Details: Evil eye
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: bear & rabbit
+2024-12-29,St Georges Kiosk,Gold Plated collections,SET,1,79.00,79.00,0.00,Details: Evil eye
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,0.00,35.00,Details: Evil eye
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,beaded necklaces,1,10.00,0.00,10.00,Details: hamsa hand
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: flower
+2024-12-29,St Georges Kiosk,Gold Plated collections,rings,1,35.00,35.00,0.00,Details: moon & star
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: clover
+2024-12-29,St Georges Kiosk,Gold Plated collections,stud earings,1,28.00,28.00,0.00,Details: Raw Stone | Birth Stone: Peridot (august)
+2024-12-29,St Georges Kiosk,Gold Plated collections,dangling earings,1,28.00,28.00,0.00,Details: Raw Stone | Birth Stone: Peridot (august)
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver anklets,1,38.00,38.00,0.00,Details: star
+2024-12-29,St Georges Kiosk,Gold Plated collections,cufflinks,1,30.00,30.00,0.00,Details: Mohave Stone | Mohave: Mohave emerald
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: multi-colour
+2024-12-29,St Georges Kiosk,Gold Plated collections,bracelets,1,45.00,45.00,0.00,Details: Raw Stone | Birth Stone: Turquoise (december)
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bangles,1,48.00,48.00,0.00,Details: daisy
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,36.00,36.00,0.00,Details: daisy
+2024-12-29,St Georges Kiosk,Gold Plated collections,rings,1,45.00,45.00,0.00,Details: sapphire & citrine
+2024-12-29,St Georges Kiosk,Gold Plated collections,SET,1,78.00,78.00,0.00,Details: Raw Stone | Birth Stone: Sapphire (september)
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,18.00,18.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-29,St Georges Kiosk,Gold Plated collections,SET,1,87.00,87.00,0.00,Details: Raw Stone | Birth Stone: Opal tourmaline (october)
+2024-12-29,St Georges Kiosk,Gold Plated collections,rings,1,40.00,40.00,0.00,Details: Raw Stone | Birth Stone: Ruby (july)
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,36.00,36.00,0.00,Details: NA
+2024-12-23,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Zirconia | Zirconia: NA
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Evil eye
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,20.00,20.00,0.00,Details: black
+2024-12-29,St Georges Kiosk,Gold Plated collections,necklaces,1,45.00,45.00,0.00,Details: Raw Stone | Birth Stone: Emerald agate (may)
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,9.50,8.00,1.50,Details: kids
+2024-12-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,9.50,8.00,1.50,Details: kids
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: na
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,35.00,35.00,0.00,Details: Raw Stone | Birth Stone: Amethyst (february)
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,35.00,35.00,0.00,Details: NA
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,33.00,33.00,0.00,Details: Raw Stone | Birth Stone: Pearl moonstone (june)
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.33,0.00,25.33,Details: Mohave Stone | Mohave: Mix
+2024-12-23,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: NA
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Evil eye
+2024-12-23,St Georges Kiosk,Sterling Silver collections,SET,1,70.00,70.00,0.00,Details: Evil eye
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: daisy
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,35.00,35.00,0.00,Details: was for Karim
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,11.00,0.00,11.00,Details: flower
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,30.00,0.00,30.00,Details: Zirconia | Zirconia: emerald
+2024-12-29,St Georges Kiosk,Gold Plated collections,bracelets,1,36.00,6.00,30.00,Details: Evil eye
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,18.00,0.00,18.00,Details: na
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,9.00,0.00,9.00,Details: na
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,9.00,0.00,9.00,Details: na
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,9.00,0.00,9.00,Details: na
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,36.00,0.00,36.00,Details: Evil eye
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,0.00,45.00,Details: Evil eye
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,0.00,45.00,Details: Evil eye
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,38.00,38.00,0.00,Details: Zirconia | Zirconia: light blue
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: light blue
+2024-12-23,St Georges Kiosk,Sterling Silver collections,SET,1,77.00,77.00,0.00,Details: Zirconia | Zirconia: emerald
+2024-12-23,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,Details: NA
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,40.00,0.00,Details: NA
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-01,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,36.00,36.00,0.00,Details: clover white
+2024-12-01,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: clover white
+2024-12-01,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: fish eye
+2024-12-01,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,0.00,12.00,Details: Zirconia | Zirconia: pink
+2024-12-01,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,10.00,0.00,10.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-03,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,43.00,43.00,0.00,Details: Clover black
+2024-12-03,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,40.00,40.00,0.00,Details: Zirconia flower with long tail
+2024-12-03,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,28.50,28.50,0.00,Details: Evil eye
+2024-12-03,St Georges Kiosk,Handmade / Beaded collections,beaded necklaces,1,55.00,55.00,0.00,Details: Handmade blue heart bead
+2024-12-03,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,12.00,12.00,0.00,Details: Customised
+2024-12-04,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,
+2024-12-04,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,
+2024-12-05,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Onyx
+2024-12-05,St Georges Kiosk,Gold Plated collections,rings,1,40.00,0.00,40.00,Details: Blue opal double
+2024-12-05,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,55.00,55.00,0.00,Details: Men style
+2024-12-05,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,
+2024-12-05,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,0.00,15.00,
+2024-12-05,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,35.00,35.00,0.00,Details: Evil eye
+2024-12-05,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,35.00,35.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-05,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,40.00,40.00,0.00,Details: Tree of life
+2024-12-09,St Georges Kiosk,Gold Plated collections,dangling earings,1,25.00,0.00,25.00,Details: Mohave Stone | Mohave: Mohave sapphire
+2024-12-09,St Georges Kiosk,Gold Plated collections,dangling earings,1,25.00,0.00,25.00,Details: Mohave Stone | Mohave: Mohave sapphire
+2024-12-09,St Georges Kiosk,Gold Plated collections,dangling earings,1,25.00,0.00,25.00,Details: Mohave Stone | Mohave: Mohave sapphire
+2024-12-09,St Georges Kiosk,Gold Plated collections,dangling earings,1,25.00,0.00,25.00,Details: Mohave Stone | Mohave: Mohave sapphire
+2024-12-09,St Georges Kiosk,Gold Plated collections,dangling earings,1,25.00,0.00,25.00,Details: Mohave Stone | Mohave: Mohave sapphire
+2024-12-06,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,12.00,12.00,0.00,Details: Evil eye
+2024-12-06,St Georges Kiosk,Sterling Silver collections,Sterling Silver anklets,1,36.00,36.00,0.00,Details: Zirconia | Zirconia: pink
+2024-12-09,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,25.00,25.00,0.00,Details: Evil eye
+2025-01-01,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: hamza hand
+2025-01-01,St Georges Kiosk,Gold Plated collections,stud earings,1,32.00,32.00,0.00,Details: Raw Stone | Birth Stone: Pearl moonstone (june)
+2024-12-07,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,0.00,30.00,Details: Evil eye
+2024-12-07,St Georges Kiosk,Gold Plated collections,necklaces,1,38.00,38.00,0.00,Details: Raw Stone | Birth Stone: Turquoise (december)
+2024-12-07,St Georges Kiosk,Gold Plated collections,bracelets,1,45.00,45.00,0.00,Details: Raw Stone | Birth Stone: Turquoise (december)
+2024-12-08,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,24.00,24.00,0.00,Details: Citrine and lava ( men)
+2024-12-08,St Georges Kiosk,Gold Plated collections,rings,1,35.00,15.00,20.00,Details: Moon stone
+2024-12-08,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bangles,1,75.00,0.00,75.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-08,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Evil eye
+2024-12-08,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,40.00,0.00,40.00,Details: Evil eye
+2024-12-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,0.00,40.00,Details: Evil eye
+2024-12-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,0.00,30.00,Details: Evil eye
+2024-12-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,0.00,45.00,Details: Evil eye
+2024-12-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,40.00,0.00,40.00,Details: Crescent & small star
+2024-12-11,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,0.00,10.00,Details: small pink
+2024-12-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: light blue
+2024-12-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,30.00,0.00,30.00,Details: Daisy
+2024-12-11,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Hamsa Hand & Penguin
+2024-12-11,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Hamsa Hand & Penguin
+2024-12-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,31.00,31.00,0.00,Details: Evil eye
+2024-12-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Evil eye
+2024-12-11,St Georges Kiosk,Gold Plated collections,stud earings,1,29.00,29.00,0.00,Details: Mohave Stone | Mohave: Mohave turquoise
+2024-12-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Evil eye
+2024-12-12,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Evil eye
+2024-12-12,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Evil eye
+2024-12-12,St Georges Kiosk,Handmade / Beaded collections,Key Chains,1,17.00,17.00,0.00,Details: Grateful
+2024-12-12,St Georges Kiosk,Handmade / Beaded collections,BookMarks,1,17.00,17.00,0.00,Details: Keep Smiling
+2024-12-12,St Georges Kiosk,Gold Plated collections,necklaces,1,45.00,45.00,0.00,Details: Mohave Stone | Mohave: Mohave emerald
+2024-12-12,St Georges Kiosk,Gold Plated collections,bracelets,1,45.00,45.00,0.00,Details: Mohave Stone | Mohave: Mohave emerald
+2024-12-12,St Georges Kiosk,Gold Plated collections,stud earings,1,70.00,70.00,0.00,Details: Pearl
+2024-12-12,St Georges Kiosk,Gold Plated collections,stud earings,1,45.00,45.00,0.00,Details: Mohave Stone | Mohave: Mohave sapphire
+2024-12-12,St Georges Kiosk,Gold Plated collections,dangling earings,1,34.00,34.00,0.00,Details: Mohave Stone | Mohave: Purple Copper Turquoise
+2024-12-12,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Angel
+2024-12-12,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Clover white
+2024-12-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,40.00,40.00,0.00,Details: Evil eye
+2024-12-13,St Georges Kiosk,Gold Plated collections,dangling earings,1,30.00,30.00,0.00,Details: Mohave Stone | Mohave: Mohave sapphire
+2024-12-14,St Georges Kiosk,Gold Plated collections,rings,1,45.00,45.00,0.00,Details: Gold plated  handmade
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Cloverleaf
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,109.00,85.00,24.00,Details: Agate stone
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: 3 Clover bracelet
+2024-12-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,45.00,45.00,0.00,Details: 1 clover
+2024-12-14,St Georges Kiosk,Gold Plated collections,bracelets,1,36.00,36.00,0.00,Details: Evil eye
+2024-12-15,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,28.00,28.00,0.00,Details: Zirconia | Zirconia: Light yellow
+2024-12-15,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,0.00,10.00,Details: Rose quartz
+2024-12-15,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,40.00,40.00,0.00,Details: Evil eye
+2024-12-15,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,17.00,17.00,0.00,Details: kids earrings
+2024-12-15,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,17.00,17.00,0.00,Details: kids earrings
+2024-12-16,St Georges Kiosk,Gold Plated collections,necklaces,1,40.00,40.00,0.00,Details: Raw Stone | Birth Stone: Opal tourmaline (october)
+2024-12-16,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Daisy
+2024-12-16,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Daisy
+2024-12-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-17,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,48.00,48.00,0.00,Details: Palestine pendant
+2024-12-17,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,0.00,10.00,Details: Christmas Gloves
+2024-12-17,St Georges Kiosk,Gold Plated collections,necklaces,1,36.00,0.00,36.00,Details: Raw Stone | Birth Stone: Pearl moonstone (june)
+2024-12-17,St Georges Kiosk,Gold Plated collections,necklaces,1,45.00,45.00,0.00,Details: Amazonite
+2024-12-17,St Georges Kiosk,Gold Plated collections,rings,1,40.00,40.00,0.00,Details: Snake and ruby
+2024-12-17,St Georges Kiosk,Gold Plated collections,bracelets,1,45.00,45.00,0.00,Details: Raw Stone | Birth Stone: Amethyst (february)
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,0.00,45.00,Details: 3 white clover
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,50.00,0.00,50.00,Details: Zirconia | Zirconia: pink
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,50.00,0.00,50.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,0.00,30.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-18,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,20.00,0.00,20.00,Details: Rose quartz and evil eye
+2024-12-18,St Georges Kiosk,Gold Plated collections,stud earings,1,25.00,25.00,0.00,Details: Mohave Stone | Mohave: Mohave emerald
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,20.00,20.00,0.00,Details: Small heart
+2024-12-18,St Georges Kiosk,Gold Plated collections,SET,1,60.00,60.00,0.00,Details: Sapphire raw stone
+2024-12-18,St Georges Kiosk,Gold Plated collections,bracelets,1,45.00,45.00,0.00,Details: Raw Stone | Birth Stone: Amethyst (february)
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,12.00,0.00,Details: Nose ring
+2024-12-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,12.00,0.00,Details: Nose ring white small flower
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,0.00,30.00,Details: Evil eye
+2024-12-19,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,17.00,0.00,17.00,Details: Customize with name
+2024-12-19,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Evil eye and round zirconia
+2024-12-19,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Evil eye and round zirconia
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,35.00,35.00,0.00,Details: Infinity
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,20.00,20.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,50.00,50.00,0.00,Details: Evil eye
+2024-12-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,60.00,40.00,20.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-20,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Clover white
+2024-12-20,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,10.00,0.00,10.00,Details: Plain
+2024-12-20,St Georges Kiosk,Gold Plated collections,rings,1,35.00,0.00,35.00,Details: Rose quartz ring
+2024-12-20,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,50.00,50.00,0.00,Details: Love of my Life (arabic)
+2024-12-21,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,48.00,48.00,0.00,Details: Man rings
+2024-12-21,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: Evil eye
+2024-12-21,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,45.00,45.00,0.00,Details: ELEGANT STERLING SILVER KEFFIYEH-IN-SPIRED NECKLACE
+2024-12-21,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,45.00,45.00,0.00,Details: Clover
+2024-12-21,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,10.00,10.00,0.00,
+2024-12-22,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Evil eye
+2024-12-22,St Georges Kiosk,Sterling Silver collections,Baby Pin with evil eye,1,30.00,0.00,30.00,Details: Evil eye
+2024-12-22,St Georges Kiosk,Gold Plated collections,bracelets,1,40.00,40.00,0.00,Details: Rose quartz
+2024-12-22,St Georges Kiosk,Gold Plated collections,stud earings,1,22.00,22.00,0.00,Details: Raw Stone | Birth Stone: Rose Quarts (january)
+2024-12-22,St Georges Kiosk,Gold Plated collections,necklaces,1,45.00,45.00,0.00,Details: Raw Stone | Birth Stone: White Crystal
+2024-12-22,St Georges Kiosk,Sterling Silver collections,Sterling Silver anklets,1,38.00,38.00,0.00,Details: Zirconia | Zirconia: Several colours
+2024-12-22,St Georges Kiosk,Gold Plated collections,dangling earings,1,25.00,25.00,0.00,Details: Birth stone diamond
+2024-12-22,St Georges Kiosk,Gold Plated collections,bracelets,1,36.00,36.00,0.00,Details: Hamza Hand
+2024-12-22,St Georges Kiosk,Gold Plated collections,stud earings,1,22.00,3.00,19.00,Details: Peridot
+2024-12-22,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Flower
+2024-12-22,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Flower
+2024-12-23,St Georges Kiosk,Gold Plated collections,rings,1,40.00,40.00,0.00,Details: Green emerald
+2024-12-23,St Georges Kiosk,Gold Plated collections,necklaces,1,45.00,45.00,0.00,Details: Emerald pendant not triangle
+2024-12-23,St Georges Kiosk,Sterling Silver collections,SET,1,79.00,79.00,0.00,Details: Infinity
+2024-12-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,18.00,18.00,0.00,Details: Triple round
+2024-12-24,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,Details: Sapphire ring
+2024-12-24,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: BuTtErFlY bRaCeLeT
+2024-12-24,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,28.00,28.00,0.00,Details: Sun turquoise
+2024-12-24,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,15.00,15.00,0.00,Details: Butterfly pink
+2024-12-24,St Georges Kiosk,Gold Plated collections,stud earings,1,25.00,0.00,25.00,Details: Mohave Stone | Mohave: Mohave emerald
+2024-12-24,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,0.00,30.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-24,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,28.00,28.00,0.00,Details: Moon stone
+2024-12-24,St Georges Kiosk,Gold Plated collections,necklaces,1,35.00,35.00,0.00,Details: Rose quartz
+2024-12-24,St Georges Kiosk,Handmade / Beaded collections,beaded necklaces,1,30.00,30.00,0.00,Details: Evil eye
+2024-12-24,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Flower zirconia
+2024-12-26,St Georges Kiosk,Gold Plated collections,dangling earings,1,26.00,26.00,0.00,Details: Mohave Stone | Mohave: Mohave sapphire
+2024-12-26,St Georges Kiosk,Gold Plated collections,stud earings,1,19.00,19.00,0.00,Details: Blue sapphire
+2024-12-26,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,42.00,42.00,0.00,Details: Clover black with Zirconia
+2024-12-26,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,93.00,0.00,93.00,Details: Blue and apricot agate for men
+2024-12-26,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,34.00,34.00,0.00,Details: Evil eye
+2024-12-26,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,93.00,0.00,93.00,Details: Blue and apricot agate for men
+2024-12-27,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Butterfly
+2024-12-27,St Georges Kiosk,Sterling Silver collections,SET,1,60.00,60.00,0.00,Details: Oval purple
+2024-12-27,St Georges Kiosk,Handmade / Beaded collections,Key Chains,1,15.00,15.00,0.00,Details: Poland
+2024-12-27,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,32.00,32.00,0.00,Details: Sun turquoise small
+2024-12-28,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,58.00,8.00,50.00,Details: Man bracelets
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,20.00,0.00,20.00,Details: Zirconia | Zirconia: white (diamond)
+2024-12-29,St Georges Kiosk,Gold Plated collections,stud earings,1,22.00,22.00,0.00,Details: Amethyst birth stone studs
+2024-12-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Globe
+2024-12-30,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,30.00,0.00,30.00,Details: Green
+2024-12-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,40.00,40.00,0.00,Details: Small clover white
+2024-12-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Clover white
+2024-12-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Clover black
+2024-12-30,St Georges Kiosk,Gold Plated collections,stud earings,1,40.00,40.00,0.00,Details: White clover big ones
+2024-12-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,45.00,45.00,0.00,Details: Big clover white
+2024-12-31,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,36.00,36.00,0.00,Details: Evil eye
+2024-12-31,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Evil eye
+2024-12-31,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Evil eye
+2024-12-31,St Georges Kiosk,Gold Plated collections,SET,1,60.00,60.00,0.00,Details: Raw Stone | Birth Stone: Amethyst (february)
+2024-12-31,St Georges Kiosk,Gold Plated collections,necklaces,1,35.00,35.00,0.00,Details: Raw Stone | Birth Stone: Peridot (august)
+2025-01-01,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bangles,1,48.00,28.00,20.00,"Details: Daisy , green stone"
+2025-01-02,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,Details: Butterfly 🦋 and angel love blue
+2025-01-02,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,Details: Unicorn and whale
+2025-01-02,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,Details: Unicorn and whale
+2025-01-02,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,Details: Unicorn and whale
+2025-01-04,St Georges Kiosk,Sterling Silver collections,Nose piercings,1,12.00,12.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-01-06,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,25.00,25.00,0.00,Details: Evil eye
+2025-01-06,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-01-07,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,79.00,79.00,0.00,Details: Men's
+2025-01-10,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,36.00,36.00,0.00,Details: Daisy plain
+2025-01-10,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,25.00,25.00,0.00,Details: Adjustable daisy
+2025-01-11,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Beaded bracelet
+2025-01-11,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,Details: Charms
+2025-01-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Evil eye
+2025-01-15,St Georges Kiosk,Gold Plated collections,bracelets,1,36.00,36.00,0.00,Details: Hamza hand
+2025-01-15,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,0.00,15.00,Details: homemade
+2025-01-15,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,10.00,10.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-01-15,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,16.00,16.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-01-16,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Jasper beads
+2025-01-17,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,Details: Hand made earrings
+2025-01-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bangles,1,30.00,30.00,0.00,Details: Evil eye
+2025-01-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Mohave Stone | Mohave: Mohave white turquoise
+2025-01-18,St Georges Kiosk,Sterling Silver collections,SET,1,65.00,65.00,0.00,Details: Mohave Stone | Mohave: Onyx
+2025-01-20,St Georges Kiosk,Gold Plated collections,necklaces,1,45.00,45.00,0.00,Details: Evil eye
+2025-01-20,St Georges Kiosk,Gold Plated collections,necklaces,1,50.00,50.00,0.00,Details: Vancleef
+2025-01-21,St Georges Kiosk,Sterling Silver collections,Chain plain silver,1,18.00,0.00,18.00,Details: Zirconia | Zirconia: Plain chain
+2025-01-22,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Evil eye
+2025-01-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,10.00,0.00,10.00,Details: Plain white zirconia
+2025-01-23,St Georges Kiosk,Gold Plated collections,necklaces,1,36.00,36.00,0.00,Details: Mohave Stone | Mohave: Mohave amethyst
+2025-01-23,St Georges Kiosk,Gold Plated collections,bracelets,1,40.00,40.00,0.00,Details: Mohave Stone | Mohave: Mohave amethyst
+2025-01-23,St Georges Kiosk,Gold Plated collections,stud earings,1,25.00,25.00,0.00,Details: Mohave Stone | Mohave: Mohave amethyst
+2025-01-24,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,50.00,50.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-01-24,St Georges Kiosk,Gold Plated collections,necklaces,1,50.00,50.00,0.00,Details: Vancleef
+2025-01-24,St Georges Kiosk,Gold Plated collections,necklaces,1,48.00,48.00,0.00,Details: Vancleef
+2025-01-25,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Mohave Stone | Mohave: Mohave turquoise
+2025-01-25,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bangles,1,35.00,35.00,0.00,Details: Mohave Stone | Mohave: Black
+2025-01-25,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,Details: Zirconia | Zirconia: Ruby
+2025-01-25,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Evil eye
+2025-01-26,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,0.00,40.00,Details: Zirconia | Zirconia: White Heart
+2025-01-27,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,36.00,36.00,0.00,Details: Vancleef small
+2025-01-27,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,35.00,35.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-01-31,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Four leaf clover
+2025-02-01,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,0.00,10.00,Details: Beads
+2025-02-01,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,20.00,0.00,20.00,Details: Zirconia | Zirconia: white (diamond)
+2025-02-02,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,Details: Zirconia | Zirconia: pink
+2025-03-03,St Georges Kiosk,Sterling Silver collections,Silver bracelet for men,1,55.00,0.00,55.00,Details: Sterling silver male bracelet
+2025-02-03,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Flower
+2025-02-03,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Vancleef
+2025-02-05,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,40.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-02-06,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,60.00,0.00,60.00,Details: Allah pendant
+2025-02-08,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-02-08,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Life tree
+2025-02-10,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,Details: Handmade earrings
+2025-02-12,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,60.00,60.00,0.00,Details: Mum in Arabic necklace
+2025-02-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,12.00,12.00,0.00,Details: Named
+2025-02-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Rose quartz glass stone
+2025-02-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,26.00,26.00,0.00,Details: Flower
+2025-02-16,St Georges Kiosk,Sterling Silver collections,SET,1,66.00,66.00,0.00,Details: Turquoise stone in silver
+2025-02-17,St Georges Kiosk,Gold Plated collections,Mohav big purple earrings,1,35.00,0.00,35.00,Details: Mohave Stone | Mohave: Purple
+2025-02-20,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,18.00,18.00,0.00,Details: Children earrings ( they twist)
+2025-02-20,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,18.00,18.00,0.00,Details: Children earrings ( they twist)
+2025-02-20,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,18.00,18.00,0.00,Details: Children earrings ( they twist)
+2025-02-20,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Flower charms
+2025-02-24,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,26.00,26.00,0.00,Details: Evil eye
+2025-02-27,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,50.00,0.00,50.00,Details: Zirconia | Zirconia: white (diamond)
+2025-02-27,St Georges Kiosk,Gold Plated collections,stud earings,1,45.00,45.00,0.00,Details: Amethyst triangle earrings
+2025-03-01,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,36.00,0.00,36.00,Details: Raw Stone | Birth Stone: Pearl moonstone (june)
+2025-03-03,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,45.00,45.00,0.00,Details: Butterfly sterling silver necklace
+2025-03-03,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Butterfly
+2025-03-06,St Georges Kiosk,Gold Plated collections,SET,1,80.00,80.00,0.00,Details: Mohave Stone | Mohave: Mohave ruby
+2025-03-06,St Georges Kiosk,Gold Plated collections,rings,1,38.00,38.00,0.00,Details: Raw Stone | Birth Stone: Aquamarine (march)
+2025-03-06,St Georges Kiosk,Sterling Silver collections,SET,1,90.00,90.00,0.00,Details: Clover green
+2025-03-07,St Georges Kiosk,Gold Plated collections,stud earings,1,35.00,35.00,0.00,Details: Pink stone
+2025-03-07,St Georges Kiosk,Gold Plated collections,rings,1,45.00,45.00,0.00,Details: Green and white stone
+2025-03-07,St Georges Kiosk,Gold Plated collections,rings,1,60.00,60.00,0.00,Details: Big blue pink purple stone
+2025-03-08,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: Pink green and blue
+2025-03-08,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Raw Stone | Birth Stone: Turquoise (december)
+2025-03-08,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,30.00,30.00,0.00,Details: Mohave Stone | Mohave: Mohave ruby
+2025-03-09,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,50.00,50.00,0.00,Details: Palestine leaf
+2025-03-09,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,40.00,40.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-03-09,St Georges Kiosk,Gold Plated collections,rings,1,45.00,45.00,0.00,Details: Blue and yellow citrine
+2025-03-09,St Georges Kiosk,Gold Plated collections,rings,1,45.00,0.00,45.00,Details: Green glass emerald
+2025-03-09,St Georges Kiosk,Gold Plated collections,rings,1,60.00,0.00,60.00,Details: Turquoise amethyst rose quartz
+2025-03-09,St Georges Kiosk,Gold Plated collections,rings,1,45.00,0.00,45.00,Details: Amazonite and white stone
+2025-03-12,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,24.00,0.00,24.00,Details: Evil eye
+2025-03-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,0.00,45.00,Details: Evil eye
+2025-03-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,0.00,45.00,Details: Evil eye
+2025-03-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,0.00,45.00,Details: Evil eye
+2025-03-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,0.00,45.00,Details: Evil eye
+2025-03-16,St Georges Kiosk,Sterling Silver collections,SET,1,27.00,27.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-03-16,St Georges Kiosk,Gold Plated collections,dangling earings,1,30.00,30.00,0.00,Details: Mohave Stone | Mohave: Mohave amethyst
+2025-03-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,94.00,0.00,94.00,Details: Sapphire lady diana ring
+2025-03-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,60.00,60.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-03-16,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,Details: Mr Bunny
+2025-03-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,6.00,0.00,6.00,Details: Zirconia | Zirconia: white (diamond)
+2025-03-16,St Georges Kiosk,Gold Plated collections,SET,1,38.50,38.50,0.00,Details: Mohave Stone | Mohave: Mohave turquoise
+2025-03-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,24.50,24.50,0.00,Details: Clover 4 hearts
+2025-03-19,St Georges Kiosk,Gold Plated collections,stud earings,1,22.50,22.50,0.00,Details: Sunshine purple
+2025-03-19,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Raw citrine
+2025-03-20,St Georges Kiosk,Gold Plated collections,stud earings,1,37.00,37.00,0.00,Details: Mohave Stone | Mohave: Mohave white
+2025-03-20,St Georges Kiosk,Gold Plated collections,stud earings,1,37.00,37.00,0.00,Details: Mohave Stone | Mohave: Mohave white turquoise
+2025-03-20,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,37.00,37.00,0.00,Details: Vancleef green
+2025-03-21,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,22.00,22.00,0.00,Details: Palestine necklace
+2025-03-21,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,55.00,55.00,0.00,Details: Allah blue
+2025-03-23,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,18.00,18.00,0.00,Details: Children studs in silver
+2025-03-23,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,Details: Sunflower silver
+2025-03-23,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Raw Stone | Birth Stone: Amazonite and rose quartz
+2025-03-23,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Raw Stone | Birth Stone: Amazonite and rose quartz
+2025-03-24,St Georges Kiosk,Sterling Silver collections,SET,1,36.50,36.50,0.00,Details: Evil eye
+2025-03-26,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,12.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-03-26,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,20.00,20.00,0.00,Details: Evil eye
+2025-03-27,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,53.00,0.00,53.00,Details: Flower sapphire
+2025-03-28,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,10.00,10.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-03-28,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,12.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-03-28,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,12.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-03-28,St Georges Kiosk,Handmade / Beaded collections,Handmade earrings,1,15.00,0.00,15.00,Details: Handmade silver earrings
+2025-03-28,St Georges Kiosk,Handmade / Beaded collections,Earrings,1,15.00,0.00,15.00,Details: Handmade silver
+2025-03-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: Evil eye
+2025-03-29,St Georges Kiosk,Sterling Silver collections,Pendants,1,27.50,27.50,0.00,Details: Moon stone and black one
+2025-03-29,St Georges Kiosk,Sterling Silver collections,Silver earring,1,25.00,25.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-03-30,St Georges Kiosk,Gold Plated collections,necklaces,1,23.50,0.00,23.50,Details: Mohave Stone | Mohave: Mohave turquoise
+2025-03-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,20.00,0.00,20.00,Details: Evil eye
+2025-03-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,18.00,18.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-03-30,St Georges Kiosk,Sterling Silver collections,SET,1,39.00,39.00,0.00,Details: Clover white
+2025-03-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,20.00,20.00,0.00,Details: Tennis bracelet
+2025-03-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,10.00,10.00,0.00,Details: Zirconia | Zirconia: turquoise
+2025-03-31,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,15.00,5.00,10.00,Details: Zirconia | Zirconia: White Heart
+2025-05-02,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,Details: Zirconia | Zirconia: A pink ring and red
+2025-05-02,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,Details: Zirconia | Zirconia: A pink ring and red
+2025-04-02,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,2,15.00,15.00,0.00,Details: Handmade earrings
+2025-04-02,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,0.00,22.00,Details: Light blue with love charm
+2025-04-02,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: White diamond around dark blue in mifdle
+2025-04-02,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,Details: Handmade earrings
+2025-04-03,St Georges Kiosk,Gold Plated collections,rings,1,43.00,43.00,0.00,Details: Evil eye
+2025-04-03,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,30.00,30.00,0.00,Details: Plain antique silver
+2025-04-03,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,28.00,28.00,0.00,Details: Plain antique silver
+2025-04-03,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,28.00,28.00,0.00,Details: Moon stone
+2025-05-04,St Georges Kiosk,Handmade / Beaded collections,beaded necklaces,1,30.00,30.00,0.00,Details: Black seeds and citrine stone
+2025-04-04,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,12.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-04-04,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,89.00,89.00,0.00,Details: Zirconia | Zirconia: turquoise
+2025-04-04,St Georges Kiosk,Handmade / Beaded collections,Two butterfly earrings,1,15.00,15.00,0.00,Details: Handmade gold
+2025-04-04,St Georges Kiosk,Gold Plated collections,dangling earings,1,25.00,10.00,15.00,Details: Raw Stone | Birth Stone: Turquoise (december)
+2025-04-04,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: Flower diamond
+2025-04-05,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,12.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-04-06,St Georges Kiosk,Gold Plated collections,rings,1,45.00,45.00,0.00,Details: Blue opal planet
+2025-04-06,St Georges Kiosk,Gold Plated collections,dangling earings,1,30.00,30.00,0.00,Details: Mohave Stone | Mohave: Mohave amethyst
+2025-04-07,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,68.00,0.00,68.00,Details: Zirconia | Zirconia: Special occasions 15% loyalty card
+2025-06-05,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,2,7.50,7.50,0.00,Details: Butterfly and angel
+2025-04-07,St Georges Kiosk,Gold Plated collections,rings,1,45.00,45.00,0.00,Details: Rose and amazonite
+2025-04-08,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Flower white and black
+2025-04-07,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Butterfly and angel
+2025-04-08,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,Details: Flower white and black
+2025-04-08,St Georges Kiosk,Gold Plated collections,stud earings,1,45.00,45.00,0.00,Details: Green Vancleef
+2025-04-08,St Georges Kiosk,Gold Plated collections,necklaces,1,22.50,22.50,0.00,Details: Mohave Stone | Mohave: Mohave white turquoise
+2025-04-10,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Flower and heart
+2025-04-10,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,25.00,0.00,25.00,Details: Adjustable chain with star
+2025-04-10,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Turquoise handmade stone
+2025-04-10,St Georges Kiosk,Gold Plated collections,bracelets,1,55.00,0.00,55.00,Details: Clover 3 pieces black
+2025-04-10,St Georges Kiosk,Gold Plated collections,SET,1,75.00,0.00,75.00,Details: Mohave Stone | Mohave: Mohave sapphire
+2025-04-10,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,15.00,0.00,Details: Flower and heart
+2025-04-11,St Georges Kiosk,Sterling Silver collections,Belly piercing,1,26.00,26.00,0.00,Details: Zirconia | Zirconia: pink
+2025-04-11,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,8.00,8.00,0.00,Details: Handmade earrings
+2025-04-11,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,25.00,5.00,20.00,Details: Evil eye
+2025-04-11,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Handmade earrings
+2025-04-11,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Handmade earrings
+2025-04-11,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,Details: Handmade flower earrings
+2025-04-12,St Georges Kiosk,Gold Plated collections,necklaces,1,48.00,48.00,0.00,Details: Flower design
+2025-04-12,St Georges Kiosk,Gold Plated collections,stud earings,1,35.00,35.00,0.00,Details: Evil eye
+2025-04-12,St Georges Kiosk,Gold Plated collections,bracelets,1,36.00,36.00,0.00,Details: Evil eye
+2025-04-12,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,0.00,30.00,Details: Evil eye
+2025-04-12,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Moon stone and second bracelet turquoise colour
+2025-04-12,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Moon stone and second bracelet turquoise colour
+2025-04-13,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,28.00,28.00,0.00,Details: Zirconia | Zirconia: Amethyst zirconia
+2025-04-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Evil eye
+2025-04-15,St Georges Kiosk,Gold Plated collections,necklaces,1,36.00,36.00,0.00,Details: Raw Stone | Birth Stone: Emerald agate (may)
+2025-04-15,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Evil eye
+2025-04-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Evil eye
+2025-04-16,St Georges Kiosk,Gold Plated collections,dangling earings,1,35.00,35.00,0.00,Details: Mohave Stone | Mohave: Mohave emerald
+2025-04-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,30.00,30.00,0.00,Details: Antique dark silver
+2025-04-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: Flower multi color
+2025-04-16,St Georges Kiosk,Gold Plated collections,rings,1,45.00,45.00,0.00,Details: Clover
+2025-04-16,St Georges Kiosk,Gold Plated collections,Clover,1,45.00,45.00,0.00,Details: Green clover
+2025-04-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,50.00,50.00,0.00,Details: Evil eye
+2025-04-16,St Georges Kiosk,Gold Plated collections,rings,1,45.00,45.00,0.00,Details: Blue opal
+2025-04-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,40.00,0.00,Details: Clover white
+2025-04-16,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,10.00,0.00,Details: Simple pink charm
+2025-04-17,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,45.00,45.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-04-17,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,18.00,18.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-04-17,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,50.00,50.00,0.00,Details: Evil eye
+2025-04-17,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,0.00,22.00,Details: Amethyst
+2025-04-18,St Georges Kiosk,Gold Plated collections,stud earings,1,45.00,45.00,0.00,Details: Green Vancleef
+2025-04-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,25.00,5.00,20.00,Details: Infinity adjustable ring
+2025-04-22,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,10.00,2.00,Details: Zirconia | Zirconia: white (diamond)
+2025-04-22,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,10.00,10.00,0.00,Details: Zirconia | Zirconia: pink
+2025-04-22,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Two handmade earrings flower purple
+2025-04-22,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,7.50,7.50,0.00,Details: Two handmade earrings flower purple
+2025-04-27,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,24.00,24.00,0.00,Details: Glass stone
+2025-04-27,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,12.00,0.00,12.00,Details: Raw Stone | Birth Stone: Unicorn
+2025-04-27,St Georges Kiosk,Gold Plated collections,necklaces,1,25.00,0.00,25.00,Details: Raw Stone | Birth Stone: Rose quartz pendant only
+2025-04-27,St Georges Kiosk,Gold Plated collections,Anklet,1,22.00,2.00,20.00,Details: Snake anklet
+2025-04-28,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,43.00,0.00,43.00,Details: Raw Stone | Birth Stone: Ruby (july)
+2025-04-28,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,40.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-04-29,St Georges Kiosk,Gold Plated collections,stud earings,1,45.00,45.00,0.00,Details: Vancleef black
+2025-04-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,26.00,0.00,26.00,Details: Clover white
+2025-04-29,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,12.00,0.00,12.00,Details: Flower nose ring silver
+2025-04-29,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,10.00,0.00,10.00,Details: Flower light pink
+2025-04-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Heart with infinity
+2025-05-03,St Georges Kiosk,Sterling Silver collections,SET,1,102.95,102.95,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-05-04,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,10.00,0.00,Details: Pink and evil eye
+2025-05-04,St Georges Kiosk,Handmade / Beaded collections,beaded necklaces,1,30.00,30.00,0.00,Details: Black seeds and citrine stone
+2025-05-04,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,13.00,13.00,0.00,Details: Blue agate with evil eye
+2025-05-04,St Georges Kiosk,Gold Plated collections,stud earings,1,35.00,35.00,0.00,Details: Red hearts
+2025-05-03,St Georges Kiosk,Handmade / Beaded collections,SET,1,22.00,22.00,0.00,
+2025-05-06,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,26.00,26.00,0.00,Details: Clover black
+2025-05-06,St Georges Kiosk,Sterling Silver collections,Gold plated necklace with daisy pendant,1,36.00,36.00,0.00,Details: Daisy pendant abd necklace gold
+2025-05-08,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,30.00,30.00,0.00,Details: Clover earring
+2025-05-09,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,10.00,0.00,10.00,Details: Evil eye
+2025-05-09,St Georges Kiosk,Gold Plated collections,rings,1,30.00,30.00,0.00,Details: Handcrafted stone
+2025-05-09,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,26.00,26.00,0.00,Details: Zirconia | Zirconia: Blue
+2025-05-10,St Georges Kiosk,Gold Plated collections,necklaces,1,47.00,47.00,0.00,Details: Flower birthstone
+2025-05-10,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,40.00,0.00,Details: Tennis bracelet pink
+2025-05-10,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,36.00,36.00,0.00,Details: Daisy
+2025-05-10,St Georges Kiosk,Gold Plated collections,rings,1,40.00,40.00,0.00,Details: Pearl
+2025-05-10,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,38.00,38.00,0.00,Details: Zirconia
+2025-05-10,St Georges Kiosk,Gold Plated collections,rings,1,35.00,35.00,0.00,Details: Leaf
+2025-05-10,St Georges Kiosk,Gold Plated collections,rings,1,40.00,40.00,0.00,Details: Ruby ring color
+2025-05-11,St Georges Kiosk,Gold Plated collections,rings,1,60.00,60.00,0.00,Details: 3 big stones in one ring
+2025-05-12,St Georges Kiosk,Sterling Silver collections,Silver earring green gem,1,35.00,0.00,35.00,Details: Tear shape
+2025-05-12,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,48.00,48.00,0.00,Details: Plain silver men ring
+2025-05-12,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Evil eye
+2025-05-12,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,35.00,35.00,0.00,Details: Evil eye
+2025-05-13,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,20.00,20.00,0.00,Details: Evil eye
+2025-05-14,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,30.00,30.00,0.00,Details: Flowers
+2025-05-14,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Flower zirconia
+2025-05-15,St Georges Kiosk,Gold Plated collections,Plain necklace,1,15.00,0.00,15.00,Details: Plain necklace GP 18 k
+2025-05-15,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Clover green
+2025-05-15,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Zirconia | Zirconia: white (diamond)
+2025-05-16,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,45.00,45.00,0.00,Details: Clover
+2025-05-16,St Georges Kiosk,Gold Plated collections,bracelets,1,40.00,40.00,0.00,Details: Clover
+2025-05-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,130.00,130.00,0.00,Details: Bangle heart one piece
+2025-05-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Rings,1,48.00,48.00,0.00,Details: Rings for men plain
+2025-05-18,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,12.00,0.00,12.00,Details: Evil eye
+2025-05-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Stud Earings,1,20.00,20.00,0.00,Details: Zirconia | Zirconia: Light yellow
+2025-05-18,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,22.00,22.00,0.00,Details: Turquoise
+2025-05-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Butterfly
+2025-05-18,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,40.00,0.00,Details: Tennis bracelet white
+2025-05-19,St Georges Kiosk,Sterling Silver collections,Sterling Silver Nose rings,1,22.00,22.00,0.00,Details: Sterling silver
+2025-05-21,St Georges Kiosk,Sterling Silver collections,The hand made eating,1,8.00,0.00,8.00,Details: Just a design one
+2025-05-22,St Georges Kiosk,Gold Plated collections,rings,1,38.00,38.00,0.00,Details: Pearl
+2025-05-22,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Clover green
+2025-05-22,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bangles,1,46.00,46.00,0.00,Details: Star silver
+2025-05-25,St Georges Kiosk,Gold Plated collections,necklaces,1,38.00,0.00,38.00,Details: Mohave Stone | Mohave: Mohave turquoise
+2025-05-25,St Georges Kiosk,Gold Plated collections,necklaces,1,36.00,36.00,0.00,Details: Raw Stone | Birth Stone: Citrine yellow topaz (november)
+2025-05-29,St Georges Kiosk,Handmade / Beaded collections,beaded bracelets,1,66.00,66.00,0.00,Details: Beaded bracelets
+2025-05-30,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,30.00,30.00,0.00,Details: Clover
+2025-06-01,St Georges Kiosk,Handmade / Beaded collections,Earing Charms,1,15.00,0.00,15.00,Details: Sunflower and angel
+2025-06-02,St Georges Kiosk,Sterling Silver collections,Sterling Silver Necklaces,1,35.00,35.00,0.00,Details: Raw Stone | Birth Stone: Dark green
+2025-06-02,St Georges Kiosk,Sterling Silver collections,Sterling Silver Bracelets,1,40.00,0.00,40.00,Details: Evil eye

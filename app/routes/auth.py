@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
 
@@ -6,8 +6,8 @@ from app import db
 from app.models.user import User
 from app.models.roles import RoleWebsite, RoleCompany
 from app.forms.auth_forms import LoginForm, RegistrationForm, PasswordResetRequestForm
-from app.forms.auth_forms import ChangePasswordForm, PasswordResetForm, UpgradeRoleForm, CompanyRoleForm
-from app.utils.email import send_password_reset_email
+from app.forms.auth_forms import ChangePasswordForm, PasswordResetForm, UpgradeRoleForm, CompanyRoleForm, ResendVerificationForm
+from app.utils.email import send_password_reset_email, send_email_verification_email
 
 # Create blueprint
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -22,6 +22,11 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if user is not None and user.verify_password(form.password.data):
+            # Check if email is verified (except for admin users)
+            if not user.email_verified and not user.is_admin:
+                flash('Please verify your email address before logging in. Check your email for the verification link.', 'warning')
+                return render_template('auth/login.html', form=form)
+            
             login_user(user, form.remember_me.data)
             user.last_login = datetime.utcnow()
             db.session.commit()
@@ -64,13 +69,26 @@ def register():
         # Use the save method to enforce admin validation
         user.save()
         
+        # Send email verification for non-admin users
+        if not user.is_admin:
+            try:
+                send_email_verification_email(user)
+                flash('Your account has been created! Please check your email to verify your account before logging in.', 'success')
+            except Exception as e:
+                flash('Account created but email verification failed. Please contact support.', 'warning')
+        else:
+            # Admin users don't need email verification
+            user.email_verified = True
+            db.session.commit()
+        
         if is_first_user:
             flash('Your account has been created as the administrator.', 'success')
         else:
-            flash('Your account has been created. You can now login.', 'success')
+            if user.email_verified:
+                flash('Your account has been created. You can now login.', 'success')
         
-        # If subscriber, redirect to company creation
-        if user.role_website == 'subscriber':
+        # If subscriber and email verified, redirect to company creation
+        if user.role_website == 'subscriber' and user.email_verified:
             # Log the user in
             login_user(user)
             flash('Please create your company to continue.', 'info')
@@ -161,9 +179,10 @@ def password_reset(token):
     if form.validate_on_submit():
         user.password = form.password.data
         db.session.commit()
-        flash('Your password has been updated.', 'success')
+        flash('Your password has been updated successfully. You can now login with your new password.', 'success')
         return redirect(url_for('auth.login'))
-    return render_template('auth/password_reset.html', form=form)
+            
+    return render_template('auth/password_reset.html', form=form, token=token)
 
 @auth_bp.route('/change-password', methods=['GET', 'POST'])
 @login_required
@@ -179,3 +198,77 @@ def change_password():
         else:
             flash('Invalid old password.', 'error')
     return render_template('auth/change_password.html', form=form)
+
+@auth_bp.route('/verify-email/<token>')
+def verify_email(token):
+    """Email verification route"""
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard.index'))
+    
+    user = User.verify_email_token(token)
+    if user is None:
+        flash('The email verification link is invalid or has expired.', 'error')
+        return redirect(url_for('auth.login'))
+    
+    if user.email_verified:
+        flash('Your email has already been verified. You can now login.', 'info')
+        return redirect(url_for('auth.login'))
+    
+    user.verify_email()
+    flash('Your email has been verified successfully! You can now login.', 'success')
+    
+    # If this is a subscriber, redirect to company creation after login
+    if user.role_website == 'subscriber':
+        login_user(user)
+        flash('Please create your company to continue.', 'info')
+        return redirect(url_for('dashboard.create_company'))
+    
+    return redirect(url_for('auth.login'))
+
+@auth_bp.route('/resend-verification', methods=['GET', 'POST'])
+def resend_verification():
+    """Resend email verification"""
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard.index'))
+    
+    form = ResendVerificationForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data.lower()).first()
+        
+        if user and not user.email_verified and not user.is_admin:
+            try:
+                # Generate new token
+                token = user.generate_email_verification_token()
+                db.session.commit()
+                
+                # Generate verification URL
+                verification_url = url_for('auth.verify_email', token=token, _external=True)
+                
+                # Send email directly
+                from app.utils.email import send_email
+                result = send_email(
+                    to=user.email,
+                    subject='Verify Your Email Address',
+                    template='auth/email/verify_email',
+                    user=user,
+                    verification_url=verification_url
+                )
+                
+                # Check result
+                if result is None:
+                    flash('Email service is not configured. Please contact support.', 'error')
+                    return render_template('auth/resend_verification.html', form=form)
+                
+                flash('A new verification email has been sent to your email address. Please check your inbox.', 'success')
+                return redirect(url_for('auth.login'))
+                
+            except Exception as e:
+                db.session.rollback()
+                flash('Error sending verification email. Please try again later or contact support.', 'error')
+                return render_template('auth/resend_verification.html', form=form)
+        else:
+            # Security: don't reveal if email exists
+            flash('If an account with this email exists and requires verification, a new verification email has been sent.', 'info')
+            return redirect(url_for('auth.login'))
+    
+    return render_template('auth/resend_verification.html', form=form)

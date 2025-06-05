@@ -1,0 +1,673 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Moderator Permissions{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-users-cog"></i> Manage Moderator Permissions</h1>
+        <nav class="breadcrumb">
+            <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('company_admin.settings') }}">Settings</a>
+            <span>Moderators</span>
+        </nav>
+    </div>
+
+    {% if moderators %}
+    <!-- Bulk Actions Section -->
+    <div class="bulk-actions-section">
+        <div class="section-header">
+            <h2>Bulk Actions</h2>
+            <p>Select multiple moderators to update their permissions at once</p>
+        </div>
+        
+        <form id="bulkPermissionsForm" method="POST" action="{{ url_for('company_admin.bulk_update_permissions') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="hidden" name="user_ids" id="selectedUserIds">
+            
+            <div class="bulk-controls">
+                <div class="selection-info">
+                    <span id="selectedCount">0</span> moderators selected
+                    <button type="button" id="selectAll" class="btn-link">Select All</button>
+                    <button type="button" id="clearSelection" class="btn-link">Clear</button>
+                </div>
+                
+                <div class="bulk-actions" id="bulkActionsPanel" style="display: none;">
+                    <div class="bulk-field">
+                        <label>Data Range Access:</label>
+                        <select name="data_range_access">
+                            <option value="">No Change</option>
+                            <option value="current_day">Current Day Only</option>
+                            <option value="week">Past Week</option>
+                            <option value="month">Past Month</option>
+                            <option value="all_time">All Historical Data</option>
+                        </select>
+                    </div>
+                    
+                    <div class="bulk-field">
+                        <label>Store Access:</label>
+                        <select name="store_access_mode">
+                            <option value="">No Change</option>
+                            <option value="all">All Stores</option>
+                            <option value="none">No Stores</option>
+                            <option value="specific">Specific Stores</option>
+                        </select>
+                    </div>
+                    
+                    <div class="bulk-field store-selection" style="display: none;">
+                        <label>Select Stores:</label>
+                        <div class="checkbox-group">
+                            {% for store in stores %}
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="allowed_stores" value="{{ store.id }}">
+                                {{ store.name }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Apply Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Moderators List -->
+    <div class="moderators-section">
+        <div class="section-header">
+            <h2>Individual Moderator Permissions</h2>
+            <p>Configure specific permissions for each team member</p>
+        </div>
+        
+        <div class="moderators-grid">
+            {% for moderator in moderators %}
+            {% set permissions = moderator_permissions.get(moderator.id) %}
+            <div class="moderator-card">
+                <div class="moderator-header">
+                    <input type="checkbox" class="moderator-select" value="{{ moderator.id }}">
+                    <div class="moderator-info">
+                        <div class="moderator-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="moderator-details">
+                            <h3>{{ moderator.first_name }} {{ moderator.last_name }}</h3>
+                            <p>{{ moderator.email }}</p>
+                            <span class="role-badge">Moderator</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="permissions-summary">
+                    <div class="permission-row">
+                        <span class="label">Store Access:</span>
+                        <span class="value">
+                            {% if permissions and permissions.allowed_store_ids %}
+                                {% set allowed_ids = permissions.allowed_store_ids %}
+                                {% if allowed_ids|length == stores|length or not allowed_ids %}
+                                    All Stores
+                                {% else %}
+                                    {{ allowed_ids|length }} of {{ stores|length }} stores
+                                {% endif %}
+                            {% else %}
+                                All Stores
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="permission-row">
+                        <span class="label">Data Range:</span>
+                        <span class="value">
+                            {% if permissions %}
+                                {{ permissions.get_data_range_description() }}
+                            {% else %}
+                                Current Day Only
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="permission-badges">
+                        {% if not permissions or permissions.can_view_sales %}
+                        <span class="permission-badge active">View Sales</span>
+                        {% endif %}
+                        {% if not permissions or permissions.can_add_sales %}
+                        <span class="permission-badge active">Add Sales</span>
+                        {% endif %}
+                        {% if permissions and permissions.can_view_analytics %}
+                        <span class="permission-badge active">Analytics</span>
+                        {% endif %}
+                        {% if permissions and permissions.can_export_data %}
+                        <span class="permission-badge active">Export</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="moderator-actions">
+                    <a href="{{ url_for('company_admin.edit_moderator_permissions', user_id=moderator.id) }}" 
+                       class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Edit Permissions
+                    </a>
+                    <button type="button" class="btn btn-outline toggle-details-btn" data-moderator-id="{{ moderator.id }}">
+                        <i class="fas fa-eye"></i> View Details
+                    </button>
+                </div>
+                
+                <!-- Detailed Permissions (Hidden by default) -->
+                <div class="detailed-permissions" id="details-{{ moderator.id }}" style="display: none;">
+                    <div class="permissions-grid">
+                        <div class="permission-group">
+                            <h4>Sales Permissions</h4>
+                            <div class="permission-item">
+                                <span>View Sales Data</span>
+                                <span class="status {{ 'active' if not permissions or permissions.can_view_sales else 'inactive' }}">
+                                    {{ 'Yes' if not permissions or permissions.can_view_sales else 'No' }}
+                                </span>
+                            </div>
+                            <div class="permission-item">
+                                <span>Add Sales</span>
+                                <span class="status {{ 'active' if not permissions or permissions.can_add_sales else 'inactive' }}">
+                                    {{ 'Yes' if not permissions or permissions.can_add_sales else 'No' }}
+                                </span>
+                            </div>
+                            <div class="permission-item">
+                                <span>Edit Sales</span>
+                                <span class="status {{ 'active' if permissions and permissions.can_edit_sales else 'inactive' }}">
+                                    {{ 'Yes' if permissions and permissions.can_edit_sales else 'No' }}
+                                </span>
+                            </div>
+                            <div class="permission-item">
+                                <span>Delete Sales</span>
+                                <span class="status {{ 'active' if permissions and permissions.can_delete_sales else 'inactive' }}">
+                                    {{ 'Yes' if permissions and permissions.can_delete_sales else 'No' }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="permission-group">
+                            <h4>Advanced Permissions</h4>
+                            <div class="permission-item">
+                                <span>View Analytics</span>
+                                <span class="status {{ 'active' if permissions and permissions.can_view_analytics else 'inactive' }}">
+                                    {{ 'Yes' if permissions and permissions.can_view_analytics else 'No' }}
+                                </span>
+                            </div>
+                            <div class="permission-item">
+                                <span>Export Data</span>
+                                <span class="status {{ 'active' if permissions and permissions.can_export_data else 'inactive' }}">
+                                    {{ 'Yes' if permissions and permissions.can_export_data else 'No' }}
+                                </span>
+                            </div>
+                            <div class="permission-item">
+                                <span>Manage Products</span>
+                                <span class="status {{ 'active' if not permissions or permissions.can_manage_products else 'inactive' }}">
+                                    {{ 'Yes' if not permissions or permissions.can_manage_products else 'No' }}
+                                </span>
+                            </div>
+                            <div class="permission-item">
+                                <span>Manage Stores</span>
+                                <span class="status {{ 'active' if permissions and permissions.can_manage_stores else 'inactive' }}">
+                                    {{ 'Yes' if permissions and permissions.can_manage_stores else 'No' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <!-- No Moderators State -->
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <h2>No Moderators Yet</h2>
+        <p>You haven't approved any moderators for your company yet. Moderators will appear here once you approve join requests.</p>
+        <div class="empty-actions">
+            <a href="{{ url_for('company_admin.join_requests') }}" class="btn btn-primary">
+                <i class="fas fa-inbox"></i> Review Join Requests
+            </a>
+            <a href="{{ url_for('company_admin.invite_moderator') }}" class="btn btn-outline">
+                <i class="fas fa-envelope"></i> Send Direct Invite
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllBtn = document.getElementById('selectAll');
+    const clearSelectionBtn = document.getElementById('clearSelection');
+    const selectedCountSpan = document.getElementById('selectedCount');
+    const selectedUserIdsInput = document.getElementById('selectedUserIds');
+    const bulkActionsPanel = document.getElementById('bulkActionsPanel');
+    const moderatorCheckboxes = document.querySelectorAll('.moderator-select');
+    const storeAccessSelect = document.querySelector('select[name="store_access_mode"]');
+    const storeSelectionDiv = document.querySelector('.store-selection');
+    
+    function updateSelection() {
+        const selectedCheckboxes = document.querySelectorAll('.moderator-select:checked');
+        const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+        
+        selectedCountSpan.textContent = selectedIds.length;
+        selectedUserIdsInput.value = selectedIds.join(',');
+        
+        if (selectedIds.length > 0) {
+            bulkActionsPanel.style.display = 'block';
+        } else {
+            bulkActionsPanel.style.display = 'none';
+        }
+    }
+    
+    moderatorCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelection);
+    });
+    
+    selectAllBtn.addEventListener('click', function() {
+        moderatorCheckboxes.forEach(cb => cb.checked = true);
+        updateSelection();
+    });
+    
+    clearSelectionBtn.addEventListener('click', function() {
+        moderatorCheckboxes.forEach(cb => cb.checked = false);
+        updateSelection();
+    });
+    
+    storeAccessSelect.addEventListener('change', function() {
+        if (this.value === 'specific') {
+            storeSelectionDiv.style.display = 'block';
+        } else {
+            storeSelectionDiv.style.display = 'none';
+        }
+    });
+    
+    // Handle toggle details buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.toggle-details-btn')) {
+            const btn = e.target.closest('.toggle-details-btn');
+            const moderatorId = btn.getAttribute('data-moderator-id');
+            toggleDetails(moderatorId);
+        }
+    });
+});
+
+function toggleDetails(moderatorId) {
+    const detailsDiv = document.getElementById('details-' + moderatorId);
+    if (detailsDiv.style.display === 'none' || detailsDiv.style.display === '') {
+        detailsDiv.style.display = 'block';
+    } else {
+        detailsDiv.style.display = 'none';
+    }
+}
+</script>
+
+<style>
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.breadcrumb {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: #999;
+}
+
+.breadcrumb a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.breadcrumb span:not(:last-child)::after {
+    content: '>';
+    margin-left: 0.5rem;
+    color: #666;
+}
+
+.bulk-actions-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-header h2 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.section-header p {
+    color: #ccc;
+    margin-bottom: 1.5rem;
+}
+
+.bulk-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.selection-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #ccc;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.bulk-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+}
+
+.bulk-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.bulk-field label {
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.bulk-field select {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: #fff;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ccc;
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.moderators-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+.moderator-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.moderator-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.moderator-header {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.moderator-select {
+    transform: scale(1.2);
+}
+
+.moderator-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.moderator-avatar {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+}
+
+.moderator-details h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.25rem;
+}
+
+.moderator-details p {
+    margin: 0.25rem 0;
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.role-badge {
+    background: var(--primary-color);
+    color: #000;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.permissions-summary {
+    padding: 1rem 1.5rem;
+}
+
+.permission-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.permission-row .label {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.permission-row .value {
+    color: #fff;
+    font-weight: 600;
+}
+
+.permission-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.permission-badge {
+    background: rgba(var(--primary-color-rgb), 0.2);
+    color: var(--primary-color);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    border: 1px solid var(--primary-color);
+}
+
+.permission-badge.active {
+    background: var(--primary-color);
+    color: #000;
+}
+
+.moderator-actions {
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    gap: 1rem;
+}
+
+.detailed-permissions {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.permissions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.permission-group h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.permission-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.permission-item span:first-child {
+    color: #ccc;
+}
+
+.status {
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.status.active {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+}
+
+.status.inactive {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.empty-state h2 {
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: #ccc;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+}
+
+.empty-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #000;
+}
+
+.btn-primary:hover {
+    background: var(--primary-color-light);
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-outline:hover {
+    background: var(--primary-color);
+    color: #000;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .moderators-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .permissions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .bulk-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .empty-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+{% endblock %} 

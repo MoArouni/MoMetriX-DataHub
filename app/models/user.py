@@ -25,6 +25,10 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime, nullable=True)
     
+    # Email verification
+    email_verified = db.Column(db.Boolean, default=False, nullable=False)
+    email_verification_token = db.Column(db.String(255), nullable=True, index=True)
+    
     # Settings
     email_notifications = db.Column(db.Boolean, default=True)
     dark_mode = db.Column(db.Boolean, default=False)
@@ -109,6 +113,61 @@ class User(UserMixin, db.Model):
             return None
             
         return User.query.get(user_id)
+
+    def generate_email_verification_token(self, expires_in=3600):
+        """Generate a JWT token for email verification
+        
+        Args:
+            expires_in: Token expiry time in seconds (default: 1 hour)
+            
+        Returns:
+            str: JWT token
+        """
+        token_payload = {
+            'verify_email': self.id,
+            'exp': time() + expires_in
+        }
+        token = jwt.encode(
+            token_payload,
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256'
+        )
+        self.email_verification_token = token
+        return token
+    
+    @staticmethod
+    def verify_email_token(token):
+        """Verify an email verification token
+        
+        Args:
+            token: JWT token to verify
+            
+        Returns:
+            User or None: User instance if token is valid, None otherwise
+        """
+        try:
+            data = jwt.decode(
+                token, 
+                current_app.config['SECRET_KEY'],
+                algorithms=['HS256']
+            )
+        except:
+            return None
+        
+        user_id = data.get('verify_email')
+        if user_id is None:
+            return None
+            
+        user = User.query.get(user_id)
+        if user and user.email_verification_token == token:
+            return user
+        return None
+    
+    def verify_email(self):
+        """Mark email as verified and clear verification token"""
+        self.email_verified = True
+        self.email_verification_token = None
+        db.session.commit()
 
 @login_manager.user_loader
 def load_user(user_id):

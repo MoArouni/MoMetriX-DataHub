@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="policy-header text-center mb-5">
+                <h1>Privacy Policy</h1>
+                <p class="lead">Last updated: January 2025</p>
+            </div>
+
+            <div class="policy-content">
+                <section class="mb-5">
+                    <h2>1. Introduction</h2>
+                    <p>MoMetriX DataHub ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our sales management and data analytics platform.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>2. Information We Collect</h2>
+                    <h3>2.1 Personal Information</h3>
+                    <ul>
+                        <li>Account information (name, email address, username)</li>
+                        <li>Company information (company name, business details)</li>
+                        <li>Contact information (phone number, address)</li>
+                        <li>Payment information (processed securely through Stripe)</li>
+                    </ul>
+
+                    <h3>2.2 Business Data</h3>
+                    <ul>
+                        <li>Sales records and transaction data</li>
+                        <li>Product and inventory information</li>
+                        <li>Store and location data</li>
+                        <li>Customer analytics and reports</li>
+                    </ul>
+
+                    <h3>2.3 Technical Information</h3>
+                    <ul>
+                        <li>IP address and device information</li>
+                        <li>Browser type and version</li>
+                        <li>Usage patterns and analytics</li>
+                        <li>Cookies and similar technologies</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>3. How We Use Your Information</h2>
+                    <ul>
+                        <li>Provide and maintain our services</li>
+                        <li>Process transactions and manage subscriptions</li>
+                        <li>Generate analytics and reports</li>
+                        <li>Communicate with you about your account</li>
+                        <li>Improve our platform and develop new features</li>
+                        <li>Ensure security and prevent fraud</li>
+                        <li>Comply with legal obligations</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>4. Data Sharing and Disclosure</h2>
+                    <p>We do not sell, trade, or rent your personal information. We may share your information only in the following circumstances:</p>
+                    <ul>
+                        <li><strong>Service Providers:</strong> With trusted third-party services (e.g., Stripe for payments)</li>
+                        <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
+                        <li><strong>Business Transfers:</strong> In connection with mergers or acquisitions</li>
+                        <li><strong>Consent:</strong> With your explicit consent</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>5. Data Security</h2>
+                    <p>We implement appropriate technical and organizational measures to protect your data:</p>
+                    <ul>
+                        <li>Encryption of data in transit and at rest</li>
+                        <li>Regular security assessments and updates</li>
+                        <li>Access controls and authentication</li>
+                        <li>Secure hosting infrastructure</li>
+                        <li>Employee training on data protection</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>6. Your Rights</h2>
+                    <p>You have the following rights regarding your personal data:</p>
+                    <ul>
+                        <li><strong>Access:</strong> Request access to your personal data</li>
+                        <li><strong>Correction:</strong> Request correction of inaccurate data</li>
+                        <li><strong>Deletion:</strong> Request deletion of your data</li>
+                        <li><strong>Portability:</strong> Request a copy of your data</li>
+                        <li><strong>Restriction:</strong> Request restriction of processing</li>
+                        <li><strong>Objection:</strong> Object to certain processing activities</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>7. Data Retention</h2>
+                    <p>We retain your information for as long as necessary to provide our services and comply with legal obligations. When you delete your account, we will delete your personal data within 30 days, except where retention is required by law.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>8. International Transfers</h2>
+                    <p>Your data may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your data during international transfers.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>9. Children's Privacy</h2>
+                    <p>Our services are not intended for children under 16. We do not knowingly collect personal information from children under 16.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>10. Changes to This Policy</h2>
+                    <p>We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the new policy on this page and updating the "Last updated" date.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>11. Contact Us</h2>
+                    <p>If you have any questions about this Privacy Policy, please contact us:</p>
+                    <ul>
+                        <li>Email: {{ config.CONTACT_EMAIL or 'privacy@mometrix.com' }}</li>
+                        <li>Address: {{ config.CONTACT_ADDRESS or 'Your Business Address' }}</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.policy-header {
+    padding: 2rem 0;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.policy-content {
+    padding: 2rem 0;
+}
+
+.policy-content h2 {
+    color: #2c3e50;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.policy-content h3 {
+    color: #34495e;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.policy-content ul {
+    margin-bottom: 1rem;
+}
+
+.policy-content li {
+    margin-bottom: 0.5rem;
+}
+
+.policy-content p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %} 

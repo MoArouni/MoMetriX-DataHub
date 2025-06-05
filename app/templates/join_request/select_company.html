@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Complete Your Information{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-plus"></i> Complete Your Join Request</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        Please provide your information and select the company you'd like to join as a moderator.
+                    </p>
+                    
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                            Step 3 of 3
+                        </div>
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- User Information Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-user"></i> Your Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        {{ form.first_name.label(class="form-label") }}
+                                        {{ form.first_name(class="form-control" + (" is-invalid" if form.first_name.errors else ""), 
+                                                          placeholder="Enter your first name") }}
+                                        {% if form.first_name.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.first_name.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        {{ form.last_name.label(class="form-label") }}
+                                        {{ form.last_name(class="form-control" + (" is-invalid" if form.last_name.errors else ""), 
+                                                         placeholder="Enter your last name") }}
+                                        {% if form.last_name.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.last_name.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.username.label(class="form-label") }}
+                                    {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), 
+                                                   placeholder="Choose a unique username") }}
+                                    {% if form.username.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.username.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        This will be your username for logging into the system.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Company Selection Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-building"></i> Company Selection</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    {{ form.company_id.label(class="form-label") }}
+                                    {{ form.company_id(class="form-select" + (" is-invalid" if form.company_id.errors else "")) }}
+                                    {% if form.company_id.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.company_id.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        Select the company you want to join as a moderator.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.message.label(class="form-label") }}
+                                    {{ form.message(class="form-control" + (" is-invalid" if form.message.errors else ""), 
+                                                   rows="4", 
+                                                   placeholder="Tell the company admin why you want to join their team...") }}
+                                    {% if form.message.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.message.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        Optional: Include a message to help the admin understand your request.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>What happens next?</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Your request will be sent to the company administrator</li>
+                                <li>The admin will review your request and decide whether to approve it</li>
+                                <li>If approved, you'll receive an email with an invite link and passcode</li>
+                                <li>You'll have 15 minutes to accept the invite and complete registration</li>
+                                <li>If declined, you'll receive a notification email</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> Submit Join Request
+                            </button>
+                            <a href="{{ url_for('join_request.verify_email') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Verification
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -125,6 +125,209 @@ def register_commands(app):
         create_subscription_plans()
         click.echo('Subscription plans have been created.')
 
+    @app.cli.command('seed-faqs')
+    @with_appcontext
+    def seed_faqs():
+        """Seed default FAQs for the application."""
+        from app.models.qa import Question, Answer
+        from app.models.user import User
+        
+        # Get or create admin user for FAQ authoring
+        admin_user = User.query.filter_by(is_admin=True).first()
+        if not admin_user:
+            click.echo('No admin user found. Please create an admin user first.')
+            return
+        
+        # Default FAQs
+        faqs = [
+            {
+                'title': 'How do I join an existing company as a moderator?',
+                'content': '''To join an existing company as a moderator, follow these steps:
+
+1. **Start the Join Process**: Click on "Join Company" in the navigation menu or visit /join/
+2. **Email Verification**: Enter your email address and verify it with the 6-digit code sent to your email
+3. **Select Company**: Choose the company you want to join from the dropdown list and optionally add a message
+4. **Wait for Approval**: The company admin will receive an email notification and review your request
+5. **Accept Invitation**: Once approved, you'll receive an email with an invitation link and passcode
+6. **Complete Registration**: Follow the link, enter the passcode, and complete your profile
+
+The company admin (not the global website admin) will review and approve your request. You'll be notified via email about the decision.''',
+                'answer': '''The join process is designed to be secure and requires approval from the company administrator. Make sure to use a valid email address as all communications will be sent there.'''
+            },
+            {
+                'title': 'What are the different permission levels for moderators?',
+                'content': '''When a company admin approves your join request, they can assign one of three permission levels:
+
+**Data Entry Only**
+- Add and edit product data
+- Basic data entry capabilities
+- Cannot view sales reports
+
+**Data Entry + Daily Sales View**
+- All data entry permissions
+- View daily sales reports
+- Access to basic analytics
+
+**Full Access**
+- Complete access to all company data
+- View all sales reports and analytics
+- Manage products, stores, and locations
+- Access to advanced features
+
+The company admin can change your permission level at any time based on your role and responsibilities.''',
+                'answer': '''Permission levels are set by the company admin and determine what features and data you can access within the company's account.'''
+            },
+            {
+                'title': 'How do I reset my password?',
+                'content': '''If you've forgotten your password, you can reset it easily:
+
+1. **Go to Login Page**: Visit the login page
+2. **Click "Forgot Password"**: Look for the "Forgot your password?" link
+3. **Enter Your Email**: Provide the email address associated with your account
+4. **Check Your Email**: You'll receive a password reset link
+5. **Follow the Link**: Click the link in the email (valid for 1 hour)
+6. **Set New Password**: Enter and confirm your new password
+7. **Login**: Use your new password to access your account
+
+If you don't receive the email, check your spam folder or contact support.''',
+                'answer': '''Password reset links expire after 1 hour for security reasons. If the link expires, you'll need to request a new one.'''
+            },
+            {
+                'title': 'What subscription plans are available?',
+                'content': '''MoMetriX DataHub offers several subscription plans to meet different business needs:
+
+**Free Plan**
+- Basic features for small businesses
+- Limited data storage
+- Basic analytics
+
+**Professional Plan**
+- Advanced analytics and reporting
+- Increased data storage
+- Priority support
+- Multiple user accounts
+
+**Enterprise Plan**
+- Unlimited data storage
+- Advanced integrations
+- Custom features
+- Dedicated support
+
+Contact our sales team for custom enterprise solutions and pricing information.''',
+                'answer': '''You can upgrade or downgrade your subscription plan at any time through your account settings. Changes take effect at the next billing cycle.'''
+            },
+            {
+                'title': 'How do I create a company account?',
+                'content': '''To create a company account:
+
+1. **Register**: Create a user account with subscriber role
+2. **Verify Email**: Complete email verification if required
+3. **Create Company**: You'll be redirected to company creation page
+4. **Fill Details**: Enter company name, email, and contact information
+5. **Choose Plan**: Select a subscription plan that fits your needs
+6. **Complete Setup**: Finish the setup process
+
+As the company creator, you automatically become the company administrator with full access to manage join requests, user permissions, and company settings.''',
+                'answer': '''Only users with subscriber role can create companies. The company creator becomes the admin and can invite other users to join as moderators.'''
+            },
+            {
+                'title': 'How do I manage join requests for my company?',
+                'content': '''As a company administrator, you can manage join requests through the admin panel:
+
+1. **Access Admin Panel**: Look for "Join Requests" in your navigation menu
+2. **Review Requests**: See all pending, approved, and declined requests
+3. **Review Details**: Click on a request to see the applicant's message and details
+4. **Set Permissions**: Choose the appropriate permission level for the moderator
+5. **Approve or Decline**: Make your decision and the applicant will be notified
+6. **Track Invites**: Monitor sent invitations and their status
+
+You'll receive email notifications when new join requests are submitted.''',
+                'answer': '''Only company administrators (the company owner) can review and approve join requests. Regular moderators cannot manage other users.'''
+            },
+            {
+                'title': 'What data can I track with MoMetriX DataHub?',
+                'content': '''MoMetriX DataHub allows you to track comprehensive business data:
+
+**Sales Data**
+- Daily, weekly, monthly sales reports
+- Revenue tracking and trends
+- Product performance analytics
+
+**Product Management**
+- Product catalogs and categories
+- Inventory tracking
+- Product performance metrics
+
+**Store Management**
+- Multiple store locations
+- Store-specific analytics
+- Location-based reporting
+
+**Customer Analytics**
+- Customer behavior patterns
+- Purchase history
+- Customer segmentation
+
+All data is securely stored and can be exported for further analysis.''',
+                'answer': '''The platform is designed to handle various types of business data with robust analytics and reporting capabilities.'''
+            },
+            {
+                'title': 'Is my data secure?',
+                'content': '''Yes, we take data security very seriously:
+
+**Encryption**
+- All data is encrypted in transit and at rest
+- Secure HTTPS connections for all communications
+
+**Access Control**
+- Role-based permissions
+- Company-specific data isolation
+- Secure authentication systems
+
+**Backup & Recovery**
+- Regular automated backups
+- Disaster recovery procedures
+- Data redundancy
+
+**Compliance**
+- GDPR compliant data handling
+- Regular security audits
+- Industry-standard security practices
+
+Your company's data is completely isolated from other companies and only accessible to authorized users.''',
+                'answer': '''We follow industry best practices for data security and privacy. Your data is never shared with third parties without your explicit consent.'''
+            }
+        ]
+        
+        created_count = 0
+        for faq_data in faqs:
+            # Check if question already exists
+            existing = Question.query.filter_by(title=faq_data['title']).first()
+            if existing:
+                click.echo(f'FAQ already exists: {faq_data["title"]}')
+                continue
+            
+            # Create question
+            question = Question(
+                title=faq_data['title'],
+                content=faq_data['content'],
+                user_id=admin_user.id
+            )
+            db.session.add(question)
+            db.session.flush()  # Get the question ID
+            
+            # Create answer
+            answer = Answer(
+                content=faq_data['answer'],
+                question_id=question.id,
+                user_id=admin_user.id
+            )
+            db.session.add(answer)
+            created_count += 1
+        
+        db.session.commit()
+        click.echo(f'Successfully created {created_count} FAQs.')
+
     @click.command('migrate-products-to-embellishments')
     @with_appcontext
     def migrate_products_to_embellishments():

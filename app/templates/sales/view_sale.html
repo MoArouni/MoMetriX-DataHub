@@ -88,20 +88,6 @@
                 </div>
             </div>
             
-            {% if features %}
-            <div class="features-details">
-                <h3>Product Features</h3>
-                <div class="features-list">
-                    {% for feature in features %}
-                    <div class="feature-item">
-                        <div class="feature-name">{{ feature.name }}</div>
-                        <div class="feature-value">{{ feature.value }}</div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-            
             {% if sale.notes %}
             <div class="notes-section">
                 <h3>Notes</h3>
@@ -182,14 +168,14 @@
         font-weight: 500;
     }
     
-    .payment-details, .features-details, .notes-section {
+    .payment-details, .notes-section {
         background-color: rgba(255, 255, 255, 0.03);
         padding: 1.5rem;
         border-radius: 8px;
         margin-bottom: 1.5rem;
     }
     
-    .payment-details h3, .features-details h3, .notes-section h3 {
+    .payment-details h3, .notes-section h3 {
         color: var(--primary-color);
         margin-bottom: 1rem;
         font-size: 1.2rem;
@@ -229,28 +215,6 @@
     
     .payment-method-badge.unknown {
         background-color: #e74c3c;
-    }
-    
-    .features-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-    }
-    
-    .feature-item {
-        background-color: rgba(255, 255, 255, 0.05);
-        padding: 1rem;
-        border-radius: 5px;
-    }
-    
-    .feature-name {
-        font-size: 0.85rem;
-        color: #999;
-        margin-bottom: 0.5rem;
-    }
-    
-    .feature-value {
-        font-weight: 500;
     }
     
     .notes-content {

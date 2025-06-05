@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, current_app
 from app.forms.contact_form import ContactForm
 from app.utils.email import send_email
 from flask_login import current_user
@@ -18,7 +18,7 @@ def index():
     
     if form.validate_on_submit():
         # Send email to admin
-        admin_email = 'mohamadarouni5@gmail.com'  # Or use from config
+        admin_email = current_app.config.get('ADMIN_EMAIL', 'admin@example.com')
         send_email(
             to=admin_email,
             subject=f'Contact Form: {form.subject.data}',

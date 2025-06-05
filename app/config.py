@@ -17,6 +17,10 @@ class Config:
     UPLOAD_FOLDER = os.path.join(basedir, 'static', 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     
+    # Server configuration for URL generation
+    SERVER_NAME = os.environ.get('SERVER_NAME', 'localhost:5000')
+    PREFERRED_URL_SCHEME = os.environ.get('PREFERRED_URL_SCHEME', 'http')
+    
     # Environment-specific settings
     DEBUG = os.environ.get('FLASK_DEBUG', 'false').lower() in ['true', 'on', '1']
     TESTING = os.environ.get('FLASK_TESTING', 'false').lower() in ['true', 'on', '1']
@@ -47,13 +51,27 @@ class Config:
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'adminpassword')
     
     # Mail settings
-    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
+    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
     MAIL_PORT = int(os.environ.get('MAIL_PORT', '587'))
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
+    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'false').lower() in ['true', 'on', '1']
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     MAIL_SUBJECT_PREFIX = '[MoMetriX DataHub] '
-    MAIL_SENDER = 'MoMetriX DataHub <mmtxhelp@gmail.com>'
+    MAIL_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+    
+    # Contact information for footer and contact forms
+    CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'contact@example.com')
+    CONTACT_PHONE = os.environ.get('CONTACT_PHONE', '+1 (555) 123-4567')
+    CONTACT_ADDRESS = os.environ.get('CONTACT_ADDRESS', 'Your Business Address')
+    COMPANY_NAME = os.environ.get('COMPANY_NAME', 'MoMetriX DataHub')
+    
+    # Social media links
+    SOCIAL_TWITTER = os.environ.get('SOCIAL_TWITTER', 'https://twitter.com/yourcompany')
+    SOCIAL_LINKEDIN = os.environ.get('SOCIAL_LINKEDIN', 'https://linkedin.com/company/yourcompany')
+    SOCIAL_GITHUB = os.environ.get('SOCIAL_GITHUB', 'https://github.com/yourcompany')
+    SOCIAL_INSTAGRAM = os.environ.get('SOCIAL_INSTAGRAM', 'https://instagram.com/yourcompany')
     
     @staticmethod
     def init_app(app):

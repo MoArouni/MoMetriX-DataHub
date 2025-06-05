@@ -1,0 +1,30 @@
+Join Request Update - MoMetriX DataHub
+
+Join Request Status Update
+
+Hello,
+
+Thank you for your interest in joining {{ join_request.company.company_name }} as a moderator.
+
+REQUEST STATUS: DECLINED
+
+After careful consideration, your join request has been declined by the company administrator.
+
+While this particular request was not approved, we encourage you to:
+
+Alternative Options:
+- Contact the company directly - You may reach out to the company administrator for more information about their requirements
+- Apply to other companies - There may be other companies on our platform that are looking for moderators  
+- Create your own company - Consider starting your own company on our platform
+- Reapply in the future - Company needs may change over time
+
+We appreciate your interest in the MoMetriX DataHub platform and hope you'll continue to explore opportunities with us.
+
+If you have any questions about this decision or need assistance with other options, please don't hesitate to contact our support team.
+
+Best regards,
+The MoMetriX DataHub Team
+
+---
+This is an automated email. Please do not reply to this message.
+© 2024 MoMetriX DataHub. All rights reserved. 

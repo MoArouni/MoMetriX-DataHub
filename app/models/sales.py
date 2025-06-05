@@ -24,7 +24,6 @@ class Sale(db.Model):
     company = db.relationship('Company', backref=db.backref('sales', lazy='dynamic'))
     user = db.relationship('User', backref=db.backref('sales', lazy='dynamic'))
     # store and product relationships are defined in their respective models
-    product_features = db.relationship('ProductFeature', backref='sale', lazy='dynamic', cascade='all, delete-orphan')
     embellishments = db.relationship('Embellishment', secondary=sale_embellishments,
                                    backref=db.backref('sales', lazy='dynamic'))
     
@@ -47,46 +46,6 @@ class Sale(db.Model):
     
     def __repr__(self):
         return f'<Sale {self.id} - {self.total_amount}>'
-
-class ProductFeature(db.Model):
-    """Dynamic product features for sales"""
-    __tablename__ = 'product_features'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    sale_id = db.Column(db.Integer, db.ForeignKey('sales.id'), nullable=False)
-    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
-    value = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    company = db.relationship('Company', backref=db.backref('product_features', lazy='dynamic'))
-    
-    def __repr__(self):
-        return f'<ProductFeature {self.name}: {self.value}>'
-
-class FeatureRegistry(db.Model):
-    """Registry of feature names and values for autocomplete"""
-    __tablename__ = 'feature_registry'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
-    value = db.Column(db.String(255), nullable=False)
-    usage_count = db.Column(db.Integer, default=1)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # Relationships
-    company = db.relationship('Company', backref=db.backref('feature_registry', lazy='dynamic'))
-    
-    # Unique constraint across company, name, and value
-    __table_args__ = (
-        db.UniqueConstraint('company_id', 'name', 'value', name='_company_feature_name_value_uc'),
-    )
-    
-    def __repr__(self):
-        return f'<FeatureRegistry {self.name}: {self.value} ({self.usage_count})>'
 
 class SaleItem(db.Model):
     """Individual items in a sale"""

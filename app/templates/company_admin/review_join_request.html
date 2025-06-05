@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Review Join Request{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-4">
+                <h2><i class="fas fa-user-check text-primary me-2"></i>Review Join Request</h2>
+                <div class="ms-auto">
+                    <a href="{{ url_for('company_admin.join_requests') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Requests
+                    </a>
+                </div>
+            </div>
+
+            <!-- Request Details Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Request Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Personal Information</h6>
+                            <p><strong>Full Name:</strong> {{ join_request.full_name }}</p>
+                            <p><strong>Email:</strong> {{ join_request.email }}</p>
+                            <p><strong>Username:</strong> {{ join_request.username }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Request Information</h6>
+                            <p><strong>Company:</strong> {{ join_request.company.company_name }}</p>
+                            <p><strong>Status:</strong> 
+                                {% if join_request.status == 'pending' %}
+                                    <span class="badge bg-warning">Pending Review</span>
+                                {% elif join_request.status == 'approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% elif join_request.status == 'declined' %}
+                                    <span class="badge bg-danger">Declined</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ join_request.status|title }}</span>
+                                {% endif %}
+                            </p>
+                            <p><strong>Submitted:</strong> {{ join_request.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if join_request.message %}
+                    <div class="mt-3">
+                        <h6 class="text-muted">Message from Applicant</h6>
+                        <div class="alert alert-info">
+                            {{ join_request.message }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action Form -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-gavel me-2"></i>Take Action</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="reviewForm">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Role Permissions Selection -->
+                        <div class="mb-4">
+                            <label for="role_permissions" class="form-label">Role Permissions</label>
+                            <select name="role_permissions" id="role_permissions" class="form-select" required>
+                                <option value="">Select permissions...</option>
+                                <option value="data_entry">Data Entry Only</option>
+                                <option value="daily_sales">Data Entry + Daily Sales View</option>
+                                <option value="full_view">Full Access (All Data)</option>
+                            </select>
+                            <div class="form-text">
+                                Select the permissions this moderator will have if approved.
+                            </div>
+                            
+                            <!-- Permission Descriptions -->
+                            <div class="mt-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Permission Levels:</h6>
+                                        <ul class="list-unstyled mb-0">
+                                            <li><strong>Data Entry Only:</strong> Can add and edit data entries</li>
+                                            <li><strong>Data Entry + Daily Sales View:</strong> Can manage data and view daily sales reports</li>
+                                            <li><strong>Full Access:</strong> Complete access to all company data and reports</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" name="action" value="approve" class="btn btn-success btn-lg w-100" onclick="return validateApprove()">
+                                    <i class="fas fa-check me-2"></i>Approve Request
+                                </button>
+                                <small class="text-muted">
+                                    User will receive an email with invite link and passcode
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" name="action" value="decline" class="btn btn-danger btn-lg w-100" onclick="return confirm('Are you sure you want to decline this request? {{ join_request.full_name }} will be notified via email.')">
+                                    <i class="fas fa-times me-2"></i>Decline Request
+                                </button>
+                                <small class="text-muted">
+                                    User will be notified that their request was declined
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function validateApprove() {
+    const permissions = document.getElementById('role_permissions').value;
+    if (!permissions) {
+        alert('Please select role permissions before approving.');
+        return false;
+    }
+    return confirm('Are you sure you want to approve this request and grant "' + permissions + '" permissions to {{ join_request.full_name }}?');
+}
+</script>
+{% endblock %} 

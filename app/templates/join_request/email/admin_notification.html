@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Moderator Join Request</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .content {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+        }
+        .review-button {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        .info-box {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📋 New Join Request</h1>
+        <p>MoMetriX DataHub</p>
+    </div>
+    
+    <div class="content">
+        <h2>New Moderator Join Request</h2>
+        
+        <p>Hello {{ admin_user.first_name or admin_user.username }},</p>
+        
+        <p>A new user has requested to join <strong>{{ join_request.company.company_name }}</strong> as a moderator and is awaiting your review.</p>
+        
+        <div class="info-box">
+            <h4>Request Details:</h4>
+            <ul>
+                <li><strong>Email:</strong> {{ join_request.email }}</li>
+                <li><strong>Company:</strong> {{ join_request.company.company_name }}</li>
+                <li><strong>Submitted:</strong> {{ join_request.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</li>
+                {% if join_request.message %}
+                <li><strong>Message:</strong> "{{ join_request.message }}"</li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <p>As the company administrator, you can review this request and decide whether to approve or decline it. If approved, you'll be able to set the moderator's permissions level.</p>
+        
+        <div style="text-align: center;">
+            <a href="{{ review_url }}" class="review-button">Review Join Request</a>
+        </div>
+        
+        <p><strong>Available Permission Levels:</strong></p>
+        <ul>
+            <li><strong>Data Entry Only:</strong> Can add and edit basic data entries</li>
+            <li><strong>Data Entry + Daily Sales View:</strong> Can manage data and view daily sales reports</li>
+            <li><strong>Full Access:</strong> Complete access to all company data and reports</li>
+        </ul>
+        
+        <p>Please review this request at your earliest convenience.</p>
+        
+        <p>Best regards,<br>
+        The MoMetriX DataHub Team</p>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated email. Please do not reply to this message.</p>
+        <p>&copy; 2024 MoMetriX DataHub. All rights reserved.</p>
+    </div>
+</body>
+</html> 

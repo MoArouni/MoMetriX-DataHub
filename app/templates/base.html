@@ -87,7 +87,7 @@
             padding: 0;
             max-width: 1400px;
             display: flex;
-            justify-content: space-evenly;
+            justify-content: space-between;
             align-items: center;
             padding: 0 1rem;
         }
@@ -221,194 +221,31 @@
             transform: translateY(-2px);
         }
 
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 30px;
-            height: 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            z-index: 10;
-            margin-left: auto;
-        }
-
-        .bar {
-            width: 100%;
-            height: 3px;
-            background-color: var(--primary-color);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger.bar:nth-child(2) {
-            width: 70%;
-        }
-
-        /* Sidebar menu styles */
-        .sidebar-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .sidebar-toggle:hover {
-            background: rgba(var(--primary-color-rgb), 0.15);
-            transform: scale(1.05);
-        }
-        
-        .sidebar-menu {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 300px;
-            height: 100vh;
-            background: rgba(18, 18, 18, 0.98);
-            backdrop-filter: blur(10px);
-            z-index: 2000;
-            transition: right 0.3s ease;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
-            overflow-y: auto;
-        }
-        
-        .sidebar-menu.active {
-            right: 0;
-        }
-        
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1999;
-            display: none;
-        }
-        
-        .sidebar-overlay.active {
-            display: block;
-        }
-        
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .sidebar-header span {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        .close-sidebar {
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-        
-        .close-sidebar:hover {
-            color: var(--primary-color);
-        }
-        
-        .sidebar-content {
-            padding: 1.5rem;
-        }
-        
-        .sidebar-title {
-            margin-bottom: 1.5rem;
-            color: #999;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .sidebar-links {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .sidebar-links li a {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem 0;
-            color: #fff;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .sidebar-links li a:hover {
-            color: var(--primary-color);
-        }
-        
-        .sidebar-links li a i {
-            width: 20px;
-            margin-right: 0.8rem;
-        }
-        
-        .sidebar-divider {
-            height: 1px;
-            background-color: rgba(255, 255, 255, 0.1);
-            margin: 1rem 0;
-        }
-
         /* Media Queries for Responsive Navigation */
         @media (max-width: 991px) {
-            .hamburger {
-                display: flex;
-                position: absolute;
-                right: 1rem;
-                top: 50%;
-                transform: translateY(-50%);
-            }
-            
             .nav-container {
                 position: relative;
                 padding: 0.75rem 1rem;
+                flex-direction: column;
+                gap: 1rem;
             }
-
+            
             .nav-links {
-                position: fixed;
-                top: 70px;
-                left: 0;
+                position: static;
                 width: 100%;
-                background: rgba(18, 18, 18, 0.95);
-                backdrop-filter: blur(10px);
+                background: transparent;
                 flex-direction: column;
                 align-items: center;
                 padding: 2rem 0;
                 gap: 1.5rem;
-                transform: translateY(-100%);
-                opacity: 0;
-                transition: transform 0.3s ease, opacity 0.3s ease;
-                pointer-events: none;
-                z-index: 9;
-                height: calc(100vh - 70px);
-                overflow-y: auto;
-            }
-
-            .nav-links.active {
-                transform: translateY(0);
+                transform: none;
                 opacity: 1;
                 pointer-events: auto;
+                z-index: 9;
+                height: auto;
+                overflow: visible;
             }
-
+            
             .nav-links li a {
                 font-size: 1.1rem;
             }
@@ -435,7 +272,8 @@
                 display: none;
             }
             
-            .dropdown.active .dropdown-menu {
+            .dropdown:hover .dropdown-menu,
+            .dropdown:focus-within .dropdown-menu {
                 display: block;
             }
             
@@ -447,39 +285,17 @@
             .role-label-container {
                 display: none;
             }
-
-            .hamburger.active .bar:nth-child(1) {
-                transform: translateY(8px) rotate(45deg);
-            }
-
-            .hamburger.active .bar:nth-child(2) {
-                opacity: 0;
-            }
-
-            .hamburger.active .bar:nth-child(3) {
-                transform: translateY(-8px) rotate(-45deg);
-            }
-            
-            /* Position sidebar toggle button */
-            .sidebar-toggle {
-                position: absolute;
-                right: 4rem;
-                top: 50%;
-                transform: translateY(-50%);
-            }
-            
-            /* Make sidebar take full width on very small screens */
-            @media (max-width: 480px) {
-                .sidebar-menu {
-                    width: 100%;
-                    right: -100%;
-                }
-            }
         }
 
         /* Adjust main content padding to match new nav height */
         main {
             padding-top: 7rem;
+        }
+        
+        @media (max-width: 991px) {
+            main {
+                padding-top: 20rem;
+            }
         }
     </style>
 
@@ -494,12 +310,6 @@
             </a>
             
             {% include 'nav-authenticated.html' %}
-            
-            <button class="hamburger" id="hamburger">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </button>
         </div>
     </nav>
 
@@ -529,9 +339,9 @@
 
                 <div class="footer-section contact">
                     <h3>Contact Us</h3>
-                    <p><i class="fas fa-envelope"></i> mohamadarouni5@gmail.com</p>
-                    <p><i class="fas fa-phone"></i> +44 7484239767</p>
-                    <p><i class="fas fa-map-marker-alt"></i> Greater London, United Kingdom</p>
+                    <p><i class="fas fa-envelope"></i> {{ config.CONTACT_EMAIL or 'contact@example.com' }}</p>
+                    <p><i class="fas fa-phone"></i> {{ config.CONTACT_PHONE or '+1 (555) 123-4567' }}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ config.CONTACT_ADDRESS or 'Your Business Address' }}</p>
                 </div>
 
                 <div class="footer-section links">
@@ -541,6 +351,19 @@
                         <li><a href="{{ url_for('blog.index') }}">Blog</a></li>
                         <li><a href="{{ url_for('pricing.index') }}">Pricing</a></li>
                         <li><a href="{{ url_for('qa.index') }}">Q&A</a></li>
+                        <li><a href="{{ url_for('support.index') }}">Support</a></li>
+                        <li><a href="{{ url_for('documentation.index') }}">Documentation</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section policies">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="{{ url_for('policies.privacy') }}">Privacy Policy</a></li>
+                        <li><a href="{{ url_for('policies.terms') }}">Terms of Service</a></li>
+                        <li><a href="{{ url_for('policies.cookies') }}">Cookie Policy</a></li>
+                        <li><a href="{{ url_for('policies.data_protection') }}">Data Protection</a></li>
+                        <li><a href="{{ url_for('policies.acceptable_use') }}">Acceptable Use</a></li>
                     </ul>
                 </div>
 
@@ -559,12 +382,12 @@
 
             <div class="footer-bottom">
                 <div class="social-icons">
-                    <a href="https://x.com/mo_arouni" class="social-icon" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.linkedin.com/in/mohamad-arouni-578168293/" class="social-icon" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="https://github.com/MohamadArouni" class="social-icon" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="https://www.instagram.com/mohamad_arouni/" class="social-icon" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="{{ config.SOCIAL_TWITTER }}" class="social-icon" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="{{ config.SOCIAL_LINKEDIN }}" class="social-icon" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="{{ config.SOCIAL_GITHUB }}" class="social-icon" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="{{ config.SOCIAL_INSTAGRAM }}" class="social-icon" target="_blank"><i class="fab fa-instagram"></i></a>
                 </div>
-                <p>&copy; 2025 Data Analytics Hub. All rights reserved.</p>
+                <p>&copy; 2025 {{ config.COMPANY_NAME }}. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -713,66 +536,6 @@
 
     <!-- Core JavaScript -->
     <script>
-        // Mobile Menu Toggle
-        document.getElementById('hamburger').addEventListener('click', function(event) {
-            event.stopPropagation();
-            document.querySelector('.nav-links').classList.toggle('active');
-            this.classList.toggle('active');
-        });
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const nav = document.querySelector('nav');
-            const navLinks = document.querySelector('.nav-links');
-            const hamburger = document.getElementById('hamburger');
-            
-            if (navLinks.classList.contains('active') && 
-                !navLinks.contains(event.target) && 
-                !hamburger.contains(event.target)) {
-                navLinks.classList.remove('active');
-                hamburger.classList.remove('active');
-            }
-        });
-        
-        // Mobile dropdown menu toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            // For mobile: make dropdown toggles work with click
-            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-            
-            dropdownToggles.forEach(toggle => {
-                toggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const dropdown = this.closest('.dropdown');
-                    
-                    // Close other open dropdowns before opening this one
-                    document.querySelectorAll('.dropdown.active').forEach(openDropdown => {
-                        if (openDropdown !== dropdown) {
-                            openDropdown.classList.remove('active');
-                        }
-                    });
-                    
-                    dropdown.classList.toggle('active');
-                });
-            });
-            
-            // Make dropdown menu items work properly
-            const dropdownMenuItems = document.querySelectorAll('.dropdown-menu li a');
-            dropdownMenuItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    // Don't stop propagation here to allow navigation
-                    // Just close the mobile menu if open
-                    const navLinks = document.querySelector('.nav-links');
-                    const hamburger = document.getElementById('hamburger');
-                    
-                    if (navLinks.classList.contains('active')) {
-                        navLinks.classList.remove('active');
-                        hamburger.classList.remove('active');
-                    }
-                });
-            });
-        });
-
         // Close alerts after 5 seconds
         document.querySelectorAll('.alert').forEach(alert => {
             setTimeout(() => {
@@ -888,58 +651,12 @@
                     });
                 });
             });
-            
-            // Email validation helper function
-            function validateEmail(email) {
-                const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                return re.test(String(email).toLowerCase());
-            }
         });
         
-        // Sidebar menu toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            // Create overlay element
-            const overlay = document.createElement('div');
-            overlay.className = 'sidebar-overlay';
-            document.body.appendChild(overlay);
-            
-            // Toggle sidebar
-            const sidebarToggle = document.querySelector('.sidebar-toggle');
-            const sidebar = document.querySelector('.sidebar-menu');
-            const closeSidebar = document.querySelector('.close-sidebar');
-            
-            if (sidebarToggle && sidebar) {
-                // Open sidebar when clicking the toggle button
-                sidebarToggle.addEventListener('click', function() {
-                    sidebar.classList.add('active');
-                    overlay.classList.add('active');
-                    document.body.style.overflow = 'hidden'; // Prevent scrolling
-                });
-                
-                // Close sidebar when clicking the close button
-                if (closeSidebar) {
-                    closeSidebar.addEventListener('click', function() {
-                        sidebar.classList.remove('active');
-                        overlay.classList.remove('active');
-                        document.body.style.overflow = '';
-                    });
-                }
-                
-                // Close sidebar when clicking the overlay
-                overlay.addEventListener('click', function() {
-                    sidebar.classList.remove('active');
-                    overlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
-                
-                // Make sidebar links work
-                const sidebarLinks = document.querySelectorAll('.sidebar-links li a');
-                
-                // No need to add click handlers to the links
-                // The default anchor behavior should work correctly
-                // Just make sure the sidebar menu HTML has proper href attributes
-            }
-        });
+        // Email validation function
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
     </script>
 
     {% block extra_js %}{% endblock %}

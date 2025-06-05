@@ -360,6 +360,46 @@
         gap: 2rem;
         justify-content: center;
     }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .feature-item {
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-item h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+
+    .feature-item h3 i {
+        margin-right: 0.5rem;
+        font-size: 1.5rem;
+    }
+
+    .feature-item p {
+        color: #cccccc;
+        line-height: 1.6;
+    }
+
+    .stat-number i {
+        font-size: 3rem;
+        color: var(--primary-color);
+    }
 </style>
 {% endblock %}
 
@@ -367,36 +407,36 @@
 <!-- Hero Section -->
 <section class="hero-section">
     <div class="hero-content">
-        <h1 class="hero-title">Transform Your Data into Insights</h1>
+        <h1 class="hero-title">Streamline Your Sales Management</h1>
         <p class="hero-subtitle">
-            Unlock the power of your data with our advanced analytics platform. 
-            Make better business decisions with clear, actionable insights.
+            Powerful sales tracking and analytics platform designed for businesses. 
+            Manage your sales data, track performance, and gain valuable insights to grow your business.
         </p>
         <div class="hero-buttons">
-            <a href="{{ url_for('auth.login') }}" class="hero-btn btn-primary">Get Started</a>
+            <a href="{{ url_for('auth.register') }}" class="hero-btn btn-primary">Get Started Free</a>
             <a href="{{ url_for('features.index') }}" class="hero-btn btn-secondary">Learn More</a>
         </div>
     </div>
 </section>
 
-<!-- Stats Section -->
+<!-- Features Overview Section -->
 <section class="stats-section">
     <div class="stats-container">
         <div class="stat-item">
-            <div class="stat-number">99%</div>
-            <div class="stat-label">Customer Satisfaction</div>
+            <div class="stat-number"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-label">Sales Analytics</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">2M+</div>
-            <div class="stat-label">Data Points Analyzed</div>
+            <div class="stat-number"><i class="fas fa-store"></i></div>
+            <div class="stat-label">Multi-Store Management</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">10k+</div>
-            <div class="stat-label">Active Users</div>
+            <div class="stat-number"><i class="fas fa-upload"></i></div>
+            <div class="stat-label">Data Import/Export</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">30+</div>
-            <div class="stat-label">Integration Options</div>
+            <div class="stat-number"><i class="fas fa-users"></i></div>
+            <div class="stat-label">Team Collaboration</div>
         </div>
     </div>
 </section>
@@ -404,96 +444,48 @@
 <!-- Vision & Mission Section -->
 <section class="vision-mission">
     <div class="container">
-        <h2>Our Vision</h2>
+        <h2>Why Choose MoMetriX DataHub?</h2>
         <p>
-            We envision a world where data-driven decision making is accessible to everyone, 
-            regardless of technical expertise. Our mission is to democratize data analytics 
-            by providing powerful yet intuitive tools that transform complex data into clear, 
-            actionable insights.
+            Our platform is specifically designed for businesses that need to track sales, manage products, 
+            and gain insights from their data. Whether you're a small retailer or a growing enterprise, 
+            our tools help you make informed decisions based on real sales data.
         </p>
         
-        <h2>Why Choose Us?</h2>
-        <p>
-            Our platform combines powerful analytics capabilities with an intuitive interface, 
-            making advanced data analysis accessible to everyone. Whether you're analyzing sales trends, 
-            optimizing business operations, or exploring market opportunities, our comprehensive suite 
-            of tools empowers you to make data-driven decisions with confidence.
-        </p>
-        
-        <a href="{{ url_for('features.index') }}" class="hero-btn btn-primary">Explore Our Features</a>
-    </div>
-</section>
-
-<!-- Testimonials Section -->
-<section class="testimonials">
-    <div class="container">
-        <div class="testimonials-title">
-            <h2>What Our Users Say</h2>
-        </div>
-        
-        <div class="testimonials-grid">
-            <div class="testimonial-card">
-                <div class="testimonial-quote">"</div>
-                <p class="testimonial-content">
-                    This platform has completely transformed how we approach data analysis. What used to take days now takes minutes. The insights we've gained have directly contributed to a 35% increase in our quarterly revenue.
-                </p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">
-                        <img src="/static/images/testimonial1.jpg" alt="Sarah Johnson">
-                    </div>
-                    <div class="testimonial-info">
-                        <h4>Sarah Johnson</h4>
-                        <p>Data Analyst, TechCorp</p>
-                    </div>
-                </div>
+        <h2>Key Features</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <h3><i class="fas fa-chart-bar"></i> Sales Tracking</h3>
+                <p>Record and track all your sales transactions with detailed analytics and reporting.</p>
             </div>
-            
-            <div class="testimonial-card">
-                <div class="testimonial-quote">"</div>
-                <p class="testimonial-content">
-                    As someone without a technical background, I was amazed at how easy it was to get started. The visualization tools are incredible, and the customer support team is always ready to help when needed.
-                </p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">
-                        <img src="/static/images/testimonial2.jpg" alt="Michael Chen">
-                    </div>
-                    <div class="testimonial-info">
-                        <h4>Michael Chen</h4>
-                        <p>Marketing Director, GrowthBrand</p>
-                    </div>
-                </div>
+            <div class="feature-item">
+                <h3><i class="fas fa-boxes"></i> Product Management</h3>
+                <p>Organize your products by categories, manage inventory, and track performance.</p>
             </div>
-            
-            <div class="testimonial-card">
-                <div class="testimonial-quote">"</div>
-                <p class="testimonial-content">
-                    The integration capabilities are second to none. We've connected all our data sources and now have a single source of truth. The real-time dashboards have become essential for our daily operations.
-                </p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">
-                        <img src="/static/images/testimonial3.jpg" alt="Emily Rodriguez">
-                    </div>
-                    <div class="testimonial-info">
-                        <h4>Emily Rodriguez</h4>
-                        <p>CTO, Innovate Solutions</p>
-                    </div>
-                </div>
+            <div class="feature-item">
+                <h3><i class="fas fa-building"></i> Store Management</h3>
+                <p>Manage multiple store locations and compare performance across different sites.</p>
+            </div>
+            <div class="feature-item">
+                <h3><i class="fas fa-file-csv"></i> Data Import/Export</h3>
+                <p>Easily import existing sales data and export reports for external analysis.</p>
             </div>
         </div>
+        
+        <a href="{{ url_for('features.index') }}" class="hero-btn btn-primary">Explore All Features</a>
     </div>
 </section>
 
 <!-- CTA Section -->
 <section class="cta-section">
     <div class="cta-content">
-        <h2>Ready to Transform Your Data?</h2>
+        <h2>Ready to Get Started?</h2>
         <p>
-            Join thousands of businesses that are already leveraging our platform to gain valuable insights 
-            and drive growth. Get started today with our free trial - no credit card required.
+            Join businesses that are already using MoMetriX DataHub to streamline their sales management 
+            and gain valuable insights. Start with our free plan - no credit card required.
         </p>
         <div class="cta-buttons">
-            <a href="{{ url_for('auth.login') }}" class="hero-btn btn-primary">Start Free Trial</a>
-            <a href="{{ url_for('contact.index') }}" class="hero-btn btn-secondary">Contact Sales</a>
+            <a href="{{ url_for('auth.register') }}" class="hero-btn btn-primary">Start Free</a>
+            <a href="{{ url_for('pricing.index') }}" class="hero-btn btn-secondary">View Pricing</a>
         </div>
     </div>
 </section>

@@ -1,0 +1,619 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription Information{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-credit-card"></i> Subscription & Billing</h1>
+        <nav class="breadcrumb">
+            <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('company_admin.settings') }}">Settings</a>
+            <span>Subscription</span>
+        </nav>
+    </div>
+
+    <div class="subscription-layout">
+        <!-- Current Plan Information -->
+        <div class="plan-info-section">
+            <div class="current-plan-card">
+                <div class="plan-header">
+                    <div class="plan-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="plan-details">
+                        {% if subscription and plan %}
+                        <h2>{{ plan.name }} Plan</h2>
+                        <p class="plan-price">${{ plan.price }}/{{ plan.billing_cycle }}</p>
+                        <p class="plan-status status-active">Active</p>
+                        {% else %}
+                        <h2>Free Plan</h2>
+                        <p class="plan-price">$0/month</p>
+                        <p class="plan-status status-free">Current Plan</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if subscription and plan %}
+                <div class="plan-dates">
+                    <div class="date-item">
+                        <span class="label">Current Period:</span>
+                        <span class="value">{{ subscription.current_period_start.strftime('%b %d, %Y') }} - {{ subscription.current_period_end.strftime('%b %d, %Y') if subscription.current_period_end else 'Ongoing' }}</span>
+                    </div>
+                    <div class="date-item">
+                        <span class="label">Subscribed Since:</span>
+                        <span class="value">{{ subscription.created_at.strftime('%B %d, %Y') }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Usage Statistics -->
+        <div class="usage-section">
+            <h3>Usage Statistics</h3>
+            
+            {% if subscription and plan %}
+            <div class="usage-cards">
+                <div class="usage-card">
+                    <div class="usage-header">
+                        <h4>Users</h4>
+                        <span class="usage-count">{{ usage_stats.users }}/{{ plan.max_users }}</span>
+                    </div>
+                    <div class="usage-bar">
+                        <div class="usage-fill" data-width="{{ subscription.user_usage_percent }}"></div>
+                    </div>
+                    <p class="usage-description">
+                        {% if subscription.user_usage_percent > 80 %}
+                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                            Approaching user limit
+                        {% else %}
+                            <i class="fas fa-check-circle text-success"></i>
+                            Good usage level
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <div class="usage-card">
+                    <div class="usage-header">
+                        <h4>Monthly Sales</h4>
+                        <span class="usage-count">{{ subscription.sales_count }}/{{ plan.max_sales }}</span>
+                    </div>
+                    <div class="usage-bar">
+                        <div class="usage-fill" data-width="{{ subscription.sales_usage_percent }}"></div>
+                    </div>
+                    <p class="usage-description">
+                        {% if subscription.sales_usage_percent > 80 %}
+                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                            Approaching sales limit
+                        {% else %}
+                            <i class="fas fa-check-circle text-success"></i>
+                            Good usage level
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <div class="usage-card">
+                    <div class="usage-header">
+                        <h4>Stores</h4>
+                        <span class="usage-count">{{ usage_stats.stores }}</span>
+                    </div>
+                    <div class="feature-status">
+                        <i class="fas fa-store"></i>
+                        <span>Configured</span>
+                    </div>
+                </div>
+                
+                <div class="usage-card">
+                    <div class="usage-header">
+                        <h4>Moderators</h4>
+                        <span class="usage-count">{{ usage_stats.moderators }}</span>
+                    </div>
+                    <div class="feature-status">
+                        <i class="fas fa-users"></i>
+                        <span>Active</span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- Free Plan Usage -->
+            <div class="free-plan-usage">
+                <div class="usage-info">
+                    <h4>Free Plan Limits</h4>
+                    <div class="limit-item">
+                        <span>Users:</span>
+                        <span>{{ usage_stats.users }}/3</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>Sales per month:</span>
+                        <span>Limited to 100</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>Stores:</span>
+                        <span>{{ usage_stats.stores }}</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>Analytics:</span>
+                        <span>Basic</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Available Plans -->
+    <div class="plans-section">
+        <h3>Available Plans</h3>
+        <div class="plans-grid">
+            {% for available_plan in plans %}
+            <div class="plan-card {% if subscription and plan and plan.id == available_plan.id %}current-plan{% endif %}">
+                <div class="plan-card-header">
+                    <h4>{{ available_plan.name }}</h4>
+                    <div class="plan-card-price">
+                        <span class="price">${{ available_plan.price }}</span>
+                        <span class="period">/{{ available_plan.billing_cycle }}</span>
+                    </div>
+                </div>
+                
+                <div class="plan-features">
+                    <div class="feature-item">
+                        <i class="fas fa-users"></i>
+                        <span>Up to {{ available_plan.max_users }} users</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>{{ available_plan.max_sales }} sales/month</span>
+                    </div>
+                    {% if available_plan.feature_analytics %}
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Advanced Analytics</span>
+                    </div>
+                    {% endif %}
+                    {% if available_plan.feature_export %}
+                    <div class="feature-item">
+                        <i class="fas fa-download"></i>
+                        <span>Data Export</span>
+                    </div>
+                    {% endif %}
+                    {% if available_plan.feature_premium_tools %}
+                    <div class="feature-item">
+                        <i class="fas fa-tools"></i>
+                        <span>Premium Tools</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="plan-action">
+                    {% if subscription and plan and plan.id == available_plan.id %}
+                    <button class="btn btn-current" disabled>Current Plan</button>
+                    {% elif available_plan.name == 'Free' %}
+                    {% if not subscription or plan.name != 'Free' %}
+                    <a href="#" class="btn btn-outline">Downgrade</a>
+                    {% else %}
+                    <button class="btn btn-current" disabled>Current Plan</button>
+                    {% endif %}
+                    {% else %}
+                    <a href="{{ url_for('payment.checkout', plan_id=available_plan.id) }}" class="btn btn-primary">
+                        {% if subscription %}Upgrade{% else %}Choose Plan{% endif %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Billing Information -->
+    {% if subscription and subscription.payment_method %}
+    <div class="billing-section">
+        <h3>Billing Information</h3>
+        <div class="billing-card">
+            <div class="billing-info">
+                <div class="info-item">
+                    <span class="label">Payment Method:</span>
+                    <span class="value">{{ subscription.payment_method }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Next Billing Date:</span>
+                    <span class="value">{{ subscription.current_period_end.strftime('%B %d, %Y') if subscription.current_period_end else 'N/A' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Status:</span>
+                    <span class="value status-{{ subscription.status }}">{{ subscription.status.title() }}</span>
+                </div>
+            </div>
+            <div class="billing-actions">
+                <a href="{{ url_for('payment.manage') }}" class="btn btn-outline">
+                    <i class="fas fa-cog"></i> Manage Billing
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.breadcrumb {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: #999;
+}
+
+.breadcrumb a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.breadcrumb span:not(:last-child)::after {
+    content: '>';
+    margin-left: 0.5rem;
+    color: #666;
+}
+
+.subscription-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.current-plan-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-light));
+    border-radius: 12px;
+    padding: 2rem;
+    color: #000;
+}
+
+.plan-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.plan-icon {
+    font-size: 2.5rem;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.plan-details h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.plan-price {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+    font-weight: 600;
+}
+
+.plan-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-active {
+    background: rgba(46, 204, 113, 0.2);
+    color: #27ae60;
+}
+
+.status-free {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.plan-dates {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 1rem;
+}
+
+.date-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.date-item .label {
+    font-weight: 600;
+}
+
+.usage-section h3,
+.plans-section h3,
+.billing-section h3 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.usage-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.usage-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.usage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.usage-header h4 {
+    margin: 0;
+    color: #fff;
+}
+
+.usage-count {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.usage-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.usage-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-color-light));
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.usage-description {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.text-warning {
+    color: #f39c12;
+}
+
+.text-success {
+    color: #27ae60;
+}
+
+.feature-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.free-plan-usage {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.usage-info h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.limit-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.limit-item span:first-child {
+    color: #ccc;
+}
+
+.limit-item span:last-child {
+    color: #fff;
+    font-weight: 600;
+}
+
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.plan-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.plan-card.current-plan {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.3);
+}
+
+.plan-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.plan-card-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.plan-card-header h4 {
+    margin: 0 0 1rem 0;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.plan-card-price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.price {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.period {
+    color: #ccc;
+}
+
+.plan-features {
+    margin-bottom: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    color: #ccc;
+}
+
+.feature-item i {
+    color: var(--primary-color);
+    width: 20px;
+}
+
+.plan-action {
+    text-align: center;
+}
+
+.billing-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.billing-info {
+    flex: 1;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-item .label {
+    color: #ccc;
+}
+
+.info-item .value {
+    color: #fff;
+    font-weight: 600;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #000;
+}
+
+.btn-primary:hover {
+    background: var(--primary-color-light);
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-outline:hover {
+    background: var(--primary-color);
+    color: #000;
+}
+
+.btn-current {
+    background: rgba(255, 255, 255, 0.1);
+    color: #999;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .subscription-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .plans-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .billing-card {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.usage-fill[data-width]').forEach(function(el) {
+        setTimeout(function() {
+            el.style.width = el.getAttribute('data-width') + '%';
+        }, 100);
+    });
+});
+</script>
+
+{% endblock %} 

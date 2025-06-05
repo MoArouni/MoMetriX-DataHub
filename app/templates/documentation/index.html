@@ -292,7 +292,8 @@
                 <h4 class="docs-nav-section-title">Company Management</h4>
                 <ul class="docs-nav-items">
                     <li class="docs-nav-item"><a href="#create-company" class="docs-nav-link">Creating a Company</a></li>
-                    <li class="docs-nav-item"><a href="#team-management" class="docs-nav-link">Team Management</a></li>
+                    <li class="docs-nav-item"><a href="#join-requests" class="docs-nav-link">Join Request System</a></li>
+                    <li class="docs-nav-item"><a href="#team-management" class="docs-nav-link">Managing Team Members</a></li>
                     <li class="docs-nav-item"><a href="#company-settings" class="docs-nav-link">Company Settings</a></li>
                 </ul>
             </div>
@@ -496,40 +497,93 @@ Esc: Close any modal dialogs
             </div>
         </section>
         
-        <!-- Team Management Section -->
-        <section class="docs-section" id="team-management">
-            <h2 class="docs-section-title">Team Management</h2>
+        <!-- Join Request System Section -->
+        <section class="docs-section" id="join-requests">
+            <h2 class="docs-section-title">Join Request System</h2>
             <p class="docs-text">
-                Collaborate with your team by inviting them to your company account. Each team member can be assigned specific roles and permissions.
+                The join request system allows users to request access to existing companies as moderators. This secure process ensures that only authorized individuals can access company data.
             </p>
             
-            <h3 class="docs-subsection-title">Adding Team Members</h3>
+            <h3 class="docs-subsection-title">For Users Requesting to Join</h3>
+            
             <div class="docs-step">
                 <div class="docs-step-number">1</div>
                 <div class="docs-step-content">
-                    <h4 class="docs-step-title">Navigate to Team Settings</h4>
-                    <p class="docs-step-text">From your dashboard, go to "Settings" and then select the "Team" tab.</p>
+                    <h4 class="docs-step-title">Start the Join Process</h4>
+                    <p class="docs-step-text">Click on "Join Company" in the navigation menu or visit the join page directly. This option is available for users who don't currently belong to a company.</p>
                 </div>
             </div>
             
             <div class="docs-step">
                 <div class="docs-step-number">2</div>
                 <div class="docs-step-content">
-                    <h4 class="docs-step-title">Invite New Member</h4>
-                    <p class="docs-step-text">Click on "Invite Team Member" and enter their email address.</p>
+                    <h4 class="docs-step-title">Email Verification</h4>
+                    <p class="docs-step-text">Enter your email address and verify it with the 6-digit code sent to your email. This ensures you have access to the email address you're using.</p>
                 </div>
             </div>
             
             <div class="docs-step">
                 <div class="docs-step-number">3</div>
                 <div class="docs-step-content">
-                    <h4 class="docs-step-title">Assign Role</h4>
-                    <p class="docs-step-text">Select an appropriate role for the team member:</p>
+                    <h4 class="docs-step-title">Select Company</h4>
+                    <p class="docs-step-text">Choose the company you want to join from the dropdown list. You can also add an optional message explaining why you want to join and your relevant experience.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">4</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Wait for Approval</h4>
+                    <p class="docs-step-text">The company administrator will receive an email notification about your request. They will review your request and either approve or decline it.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">5</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Accept Invitation</h4>
+                    <p class="docs-step-text">If approved, you'll receive an email with an invitation link and a passcode. Click the link and enter the passcode to proceed.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">6</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Complete Registration</h4>
+                    <p class="docs-step-text">Fill out your profile information including username, first name, last name, and password. Once completed, you'll be automatically logged in and can start working with the company.</p>
+                </div>
+            </div>
+            
+            <h3 class="docs-subsection-title">For Company Administrators</h3>
+            <p class="docs-text">
+                As a company administrator (the person who created the company), you can manage join requests through the admin panel:
+            </p>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">1</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Access Join Requests</h4>
+                    <p class="docs-step-text">Look for "Join Requests" in your navigation menu. This option is only visible to company administrators.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">2</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Review Requests</h4>
+                    <p class="docs-step-text">View all pending, approved, and declined requests. You can filter by status and see details like the applicant's email and message.</p>
+                </div>
+            </div>
+            
+            <div class="docs-step">
+                <div class="docs-step-number">3</div>
+                <div class="docs-step-content">
+                    <h4 class="docs-step-title">Set Permission Level</h4>
+                    <p class="docs-step-text">When approving a request, choose the appropriate permission level:</p>
                     <ul>
-                        <li><strong>Administrator:</strong> Full access to all company features and settings</li>
-                        <li><strong>Manager:</strong> Can manage most data but cannot change company settings</li>
-                        <li><strong>Data Entry:</strong> Can input and edit sales data but has limited access to analytics</li>
-                        <li><strong>Viewer:</strong> Read-only access to data and reports</li>
+                        <li><strong>Data Entry Only:</strong> Basic data entry capabilities, cannot view sales reports</li>
+                        <li><strong>Data Entry + Daily Sales View:</strong> Data entry plus access to daily sales reports</li>
+                        <li><strong>Full Access:</strong> Complete access to all company data and features</li>
                     </ul>
                 </div>
             </div>
@@ -537,80 +591,121 @@ Esc: Close any modal dialogs
             <div class="docs-step">
                 <div class="docs-step-number">4</div>
                 <div class="docs-step-content">
-                    <h4 class="docs-step-title">Customize Permissions (Optional)</h4>
-                    <p class="docs-step-text">For more granular control, you can customize specific permissions for each team member.</p>
+                    <h4 class="docs-step-title">Approve or Decline</h4>
+                    <p class="docs-step-text">Make your decision and the applicant will be automatically notified via email. Approved users receive invitation links, while declined users receive a polite notification.</p>
                 </div>
             </div>
             
-            <h3 class="docs-subsection-title">Managing Team Members</h3>
-            <p class="docs-text">
-                From the Team Management page, you can also:
-            </p>
+            <h3 class="docs-subsection-title">Security Features</h3>
             <ul class="docs-list">
-                <li>Edit roles and permissions for existing team members</li>
-                <li>Revoke access for team members who should no longer have access</li>
-                <li>Resend invitation emails if a team member hasn't accepted yet</li>
-                <li>View activity logs for each team member</li>
+                <li><strong>Email Verification:</strong> All requests require email verification to prevent spam</li>
+                <li><strong>Time-Limited Codes:</strong> Verification codes and invitation links expire for security</li>
+                <li><strong>Admin Approval:</strong> Only company administrators can approve join requests</li>
+                <li><strong>Secure Tokens:</strong> Invitation links use cryptographically secure tokens</li>
+                <li><strong>One-Time Use:</strong> Invitation links can only be used once</li>
             </ul>
             
+            <div class="docs-tip">
+                <h4 class="docs-tip-title">Best Practices</h4>
+                <p class="docs-tip-text">When reviewing join requests, consider the person's role in your organization and assign the minimum permission level needed for their job. You can always upgrade permissions later if needed.</p>
+            </div>
+            
             <div class="docs-warning">
-                <h4 class="docs-warning-title">Access Control Note</h4>
-                <p class="docs-warning-text">Be careful when assigning administrator roles, as administrators have full control over your company data and settings. Only assign this role to trusted individuals who need full access.</p>
+                <h4 class="docs-warning-title">Important Note</h4>
+                <p class="docs-warning-text">Only the company administrator (the person who created the company) can review join requests. This ensures that only authorized personnel can grant access to company data.</p>
             </div>
         </section>
         
-        <!-- Categories Section -->
-        <section class="docs-section" id="categories">
-            <h2 class="docs-section-title">Setting Up Categories</h2>
+        <!-- Team Management Section -->
+        <section class="docs-section" id="team-management">
+            <h2 class="docs-section-title">Managing Team Members</h2>
             <p class="docs-text">
-                Categories help you organize your products for better data management and reporting. Setting up a clear category structure is an important first step before adding your products.
+                Once team members have joined your company through the join request system, you can manage their roles and permissions as needed.
             </p>
             
-            <h3 class="docs-subsection-title">Creating Categories</h3>
+            <h3 class="docs-subsection-title">Permission Levels Explained</h3>
             <div class="docs-step">
                 <div class="docs-step-number">1</div>
                 <div class="docs-step-content">
-                    <h4 class="docs-step-title">Access Categories</h4>
-                    <p class="docs-step-text">Navigate to "Products" > "Categories" in the main navigation.</p>
+                    <h4 class="docs-step-title">Data Entry Only</h4>
+                    <p class="docs-step-text">Perfect for staff who need to input sales data and manage products but don't need access to financial reports or analytics.</p>
                 </div>
             </div>
             
             <div class="docs-step">
                 <div class="docs-step-number">2</div>
                 <div class="docs-step-content">
-                    <h4 class="docs-step-title">Add New Category</h4>
-                    <p class="docs-step-text">Click on "Add Category" and enter the category name, description, and any relevant attributes.</p>
+                    <h4 class="docs-step-title">Data Entry + Daily Sales View</h4>
+                    <p class="docs-step-text">Ideal for supervisors or managers who need to see daily performance metrics in addition to data entry capabilities.</p>
                 </div>
             </div>
             
             <div class="docs-step">
                 <div class="docs-step-number">3</div>
                 <div class="docs-step-content">
-                    <h4 class="docs-step-title">Set Up Hierarchy (Optional)</h4>
-                    <p class="docs-step-text">You can create a hierarchical structure by setting parent-child relationships between categories. This is useful for organizing subcategories.</p>
+                    <h4 class="docs-step-title">Full Access</h4>
+                    <p class="docs-step-text">For trusted team members who need complete access to all company data, analytics, and management features.</p>
                 </div>
             </div>
             
-            <div class="docs-step">
-                <div class="docs-step-number">4</div>
-                <div class="docs-step-content">
-                    <h4 class="docs-step-title">Add Category Attributes (Optional)</h4>
-                    <p class="docs-step-text">Define specific attributes that apply to products in this category, such as size, color, material, etc.</p>
-                </div>
-            </div>
-            
-            <h3 class="docs-subsection-title">Category Management Tips</h3>
+            <h3 class="docs-subsection-title">Managing Moderator Invites</h3>
+            <p class="docs-text">
+                You can track all sent invitations through the "Moderator Invites" section:
+            </p>
             <ul class="docs-list">
-                <li>Aim for a logical structure that reflects how your business organizes products</li>
-                <li>Avoid creating too many top-level categories; use subcategories instead</li>
-                <li>Consider your reporting needs when designing your category structure</li>
-                <li>Use consistent naming conventions for better organization</li>
+                <li>View the status of all sent invitations (pending, used, expired)</li>
+                <li>Copy invitation links to resend manually if needed</li>
+                <li>Monitor when invitations were accepted</li>
+                <li>See which permission level was assigned to each invite</li>
             </ul>
             
             <div class="docs-tip">
                 <h4 class="docs-tip-title">Pro Tip</h4>
-                <p class="docs-tip-text">Before setting up your full category structure, take some time to plan it out. A well-thought-out category hierarchy will make product management and reporting much easier in the long run.</p>
+                <p class="docs-tip-text">Invitation links expire after 15 minutes for security. If a team member doesn't use their invitation in time, you'll need to approve their join request again to generate a new invitation.</p>
             </div>
+        </section>
+        
+        <!-- Company Settings Section -->
+        <section class="docs-section" id="company-settings">
+            <h2 class="docs-section-title">Company Settings</h2>
+            <p class="docs-text">
+                Manage your company profile, subscription, and other administrative settings from the company settings panel.
+            </p>
+            
+            <h3 class="docs-subsection-title">Profile Management</h3>
+            <p class="docs-text">
+                Keep your company information up to date:
+            </p>
+            <ul class="docs-list">
+                <li>Update company name and contact information</li>
+                <li>Modify business address and phone numbers</li>
+                <li>Upload or change company logo</li>
+                <li>Update industry classification</li>
+            </ul>
+            
+            <h3 class="docs-subsection-title">Subscription Management</h3>
+            <p class="docs-text">
+                Monitor and manage your subscription:
+            </p>
+            <ul class="docs-list">
+                <li>View current plan details and usage</li>
+                <li>Upgrade or downgrade subscription plans</li>
+                <li>Update billing information</li>
+                <li>Download invoices and payment history</li>
+            </ul>
+            
+            <div class="docs-warning">
+                <h4 class="docs-warning-title">Access Control</h4>
+                <p class="docs-warning-text">Only company administrators can modify company settings and subscription details. This ensures that critical business information remains secure.</p>
+            </div>
+        </section>
+        
+        <!-- Team Management Section (Original) -->
+        <section class="docs-section" id="team-management-old">
+            <h2 class="docs-section-title">Legacy Team Management</h2>
+            <p class="docs-text">
+                <em>Note: This section describes the old team management system. The new join request system (described above) is now the recommended way to add team members.</em>
+            </p>
         </section>
     </div>
 </div>

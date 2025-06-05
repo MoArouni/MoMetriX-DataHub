@@ -190,21 +190,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="section-header mt-4">
-                        <h3><i class="fas fa-tags"></i> Product Features</h3>
-                        <span class="section-hint">Add any specific features for this product</span>
-                    </div>
-                    
-                    <div class="features-container">
-                        <div id="features-container">
-                            <!-- Dynamic features will be added here -->
-                        </div>
-                        
-                        <button type="button" id="add-feature" class="btn-feature-add">
-                            <i class="fas fa-plus"></i> Add Feature
-                        </button>
-                    </div>
                 </div>
             </div>
             
@@ -421,53 +406,6 @@
         color: #3498db;
     }
     
-    .features-container {
-        background-color: rgba(255, 255, 255, 0.03);
-        border-radius: 8px;
-        padding: 1.5rem;
-    }
-    
-    .btn-feature-add {
-        background-color: transparent;
-        color: var(--primary-color);
-        border: 1px solid var(--primary-color);
-        border-radius: 20px;
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .btn-feature-add:hover {
-        background-color: var(--primary-color);
-        color: #000;
-    }
-    
-    .feature-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr auto;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        align-items: center;
-    }
-    
-    .feature-remove {
-        background-color: transparent;
-        color: #ff5555;
-        border: none;
-        cursor: pointer;
-        font-size: 1.2rem;
-        padding: 0.25rem;
-        transition: transform 0.3s ease;
-    }
-    
-    .feature-remove:hover {
-        transform: scale(1.1);
-    }
-    
     .form-actions {
         display: flex;
         justify-content: flex-end;
@@ -542,8 +480,7 @@
     }
     
     @media (max-width: 767px) {
-        .payment-split,
-        .feature-row {
+        .payment-split {
             grid-template-columns: 1fr;
         }
         
@@ -551,8 +488,7 @@
             padding: 1.5rem;
         }
         
-        .payment-info,
-        .features-container {
+        .payment-info {
             padding: 1rem;
         }
     }
@@ -571,8 +507,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const paymentMethodElement = document.getElementById('payment-method');
     const balanceElement = document.getElementById('balance');
     const balanceContainer = document.getElementById('balance-container');
-    const addFeatureBtn = document.getElementById('add-feature');
-    const featuresContainer = document.getElementById('features-container');
     
     // Product choices from Jinja
     const productChoices = JSON.parse('{{ product_choices|tojson }}');
@@ -711,66 +645,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     cardAmountInput.addEventListener('input', updatePaymentSummary);
-    
-    // Add feature button
-    addFeatureBtn.addEventListener('click', function() {
-        addFeatureRow();
-    });
-    
-    // Add a new feature row
-    function addFeatureRow() {
-        const featureRow = document.createElement('div');
-        featureRow.className = 'feature-row';
-        
-        const nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameInput.name = 'feature_name[]';
-        nameInput.className = 'form-control feature-name';
-        nameInput.placeholder = 'Feature Name (e.g. Color)';
-        nameInput.required = true;
-        
-        const valueInput = document.createElement('input');
-        valueInput.type = 'text';
-        valueInput.name = 'feature_value[]';
-        valueInput.className = 'form-control feature-value';
-        valueInput.placeholder = 'Feature Value (e.g. Gold)';
-        valueInput.required = true;
-        
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'feature-remove';
-        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
-        removeBtn.addEventListener('click', function() {
-            featuresContainer.removeChild(featureRow);
-        });
-        
-        featureRow.appendChild(nameInput);
-        featureRow.appendChild(valueInput);
-        featureRow.appendChild(removeBtn);
-        
-        featuresContainer.appendChild(featureRow);
-        
-        // Set focus to the new feature name field
-        nameInput.focus();
-        
-        // Set up autocomplete (simplified - you might want to use a library for better UX)
-        setupFeatureAutocomplete(nameInput, valueInput);
-    }
-    
-    // Set up autocomplete for features
-    function setupFeatureAutocomplete(nameInput, valueInput) {
-        // When feature name changes, fetch possible values
-        nameInput.addEventListener('change', function() {
-            if (this.value) {
-                fetch('/sales/setup/api/feature-values?name=' + encodeURIComponent(this.value))
-                    .then(function(response) { return response.json(); })
-                    .then(function(data) {
-                        // Here you could populate a datalist or implement autocomplete
-                        console.log('Available values:', data);
-                    });
-            }
-        });
-    }
     
     // Initial update
     updatePaymentSummary();

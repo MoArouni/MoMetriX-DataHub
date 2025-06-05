@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to {{ company.company_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .success-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .passcode-box {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+            border: 2px dashed #6c757d;
+        }
+        .passcode {
+            font-size: 32px;
+            font-weight: bold;
+            color: #007bff;
+            letter-spacing: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #218838;
+        }
+        .steps {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #007bff;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎉 Congratulations!</h1>
+        <p>You've been approved to join {{ company.company_name }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="success-box">
+            <h2>Welcome to the Team!</h2>
+            <p>Your join request has been <strong>approved</strong>! We're excited to have you as a moderator for <strong>{{ company.company_name }}</strong>.</p>
+        </div>
+        
+        <div class="steps">
+            <h3>📋 Next Steps:</h3>
+            <div class="step">
+                <strong>Step 1:</strong> Click the registration link below
+            </div>
+            <div class="step">
+                <strong>Step 2:</strong> Enter the 6-digit passcode when prompted
+            </div>
+            <div class="step">
+                <strong>Step 3:</strong> Complete your account setup
+            </div>
+            <div class="step">
+                <strong>Step 4:</strong> Start moderating!
+            </div>
+        </div>
+        
+        <div class="passcode-box">
+            <h3>🔐 Your 6-Digit Passcode:</h3>
+            <div class="passcode">{{ passcode }}</div>
+            <p><small>This passcode expires in <strong>5 minutes</strong></small></p>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="{{ invite_url }}" class="btn">Complete Registration</a>
+        </div>
+        
+        <div class="warning-box">
+            <strong>⚠️ Important:</strong>
+            <ul>
+                <li>This invitation link expires in <strong>15 minutes</strong></li>
+                <li>The passcode expires in <strong>5 minutes</strong></li>
+                <li>You can only use this invitation once</li>
+                <li>Keep this passcode secure and don't share it</li>
+            </ul>
+        </div>
+        
+        <p><strong>Your Role Permissions:</strong></p>
+        <div style="background: white; padding: 15px; border-radius: 5px; border-left: 3px solid #28a745;">
+            {% if invite.role_permissions == 'data_entry' %}
+                <strong>Data Entry Only</strong> - You can add and edit data entries
+            {% elif invite.role_permissions == 'daily_sales' %}
+                <strong>Data Entry + Daily Sales View</strong> - You can manage data and view daily sales reports
+            {% elif invite.role_permissions == 'full_view' %}
+                <strong>Full Access</strong> - You have complete access to all company data and reports
+            {% else %}
+                <strong>{{ invite.role_permissions|title }}</strong>
+            {% endif %}
+        </div>
+        
+        <p>If you have any questions or need assistance, please contact your company administrator.</p>
+        
+        <p>Welcome aboard!<br>
+        <strong>{{ company.company_name }} Team</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from MoMetriX DataHub.</p>
+        <p>If you did not request to join this company, please ignore this email.</p>
+    </div>
+</body>
+</html> 

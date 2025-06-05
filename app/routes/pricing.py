@@ -21,27 +21,27 @@ def index():
                 name="Free",
                 price=0.00,
                 billing_cycle="monthly",
-                max_sales=100,
-                max_users=3,
+                max_sales=50,
+                max_users=2,
+                feature_analytics=True,
+                feature_export=False,
+                feature_premium_tools=False
+            )
+            
+            standard_plan = SubscriptionPlan(
+                name="Standard",
+                price=19.99,
+                billing_cycle="monthly",
+                max_sales=500,
+                max_users=5,
                 feature_analytics=True,
                 feature_export=True,
                 feature_premium_tools=False
             )
             
-            pro_plan = SubscriptionPlan(
-                name="Pro",
-                price=29.00,
-                billing_cycle="monthly",
-                max_sales=1000,
-                max_users=10,
-                feature_analytics=True,
-                feature_export=True,
-                feature_premium_tools=True
-            )
-            
-            enterprise_plan = SubscriptionPlan(
-                name="Enterprise",
-                price=99.00,
+            premium_plan = SubscriptionPlan(
+                name="Premium",
+                price=49.99,
                 billing_cycle="monthly",
                 max_sales=0,  # Unlimited
                 max_users=0,  # Unlimited
@@ -52,8 +52,8 @@ def index():
             
             # Add to database
             db.session.add(free_plan)
-            db.session.add(pro_plan)
-            db.session.add(enterprise_plan)
+            db.session.add(standard_plan)
+            db.session.add(premium_plan)
             db.session.commit()
             
             # Retrieve the newly created plans
@@ -65,50 +65,50 @@ def index():
                     'name': 'Free',
                     'price': '0',
                     'features': [
-                        'Basic data analysis',
-                        'Limited API access',
-                        'Community support',
-                        'Basic visualization tools',
-                        'Up to 100 sales entries',
-                        'Up to 3 users per company'
+                        'Sales tracking and management',
+                        'Basic product and store management',
+                        'Up to 50 sales entries per month',
+                        'Up to 2 users per company',
+                        'Basic analytics and reports',
+                        'Community support'
                     ],
                     'recommended': False,
-                    'button_text': 'Current Plan' if current_user.is_authenticated and current_user.company and current_user.company.is_free_plan else 'Get Started',
-                    'plan_id': 1  # Add plan_id for template
+                    'button_text': 'Current Plan' if current_user.is_authenticated and current_user.company and current_user.company.is_free_plan else 'Get Started Free',
+                    'plan_id': 1
                 },
                 {
-                    'name': 'Pro',
-                    'price': '29',
+                    'name': 'Standard',
+                    'price': '19.99',
                     'features': [
-                        'Advanced data analysis',
-                        'Full API access',
-                        'Priority support',
-                        'Advanced visualization tools',
-                        'Custom reports',
-                        'Team collaboration',
-                        'Up to 1,000 sales entries',
-                        'Up to 10 users per company'
+                        'Everything in Free',
+                        'Up to 500 sales entries per month',
+                        'Up to 5 users per company',
+                        'Data import/export (CSV)',
+                        'Advanced analytics and reports',
+                        'Email support',
+                        'Data backup and restore'
                     ],
                     'recommended': True,
-                    'button_text': 'Upgrade Now',
-                    'plan_id': 2  # Add plan_id for template
+                    'button_text': 'Upgrade to Standard',
+                    'plan_id': 2
                 },
                 {
-                    'name': 'Enterprise',
-                    'price': '99',
+                    'name': 'Premium',
+                    'price': '49.99',
                     'features': [
-                        'Everything in Pro',
-                        'Dedicated support',
-                        'Custom solutions',
-                        'SLA guarantee',
-                        'Advanced security',
-                        'Training sessions',
+                        'Everything in Standard',
                         'Unlimited sales entries',
-                        'Unlimited users'
+                        'Unlimited users',
+                        'Advanced data analytics',
+                        'Custom reports and dashboards',
+                        'Priority support',
+                        'API access',
+                        'Advanced security features',
+                        'Custom integrations'
                     ],
                     'recommended': False,
-                    'button_text': 'Contact Sales',
-                    'plan_id': 3  # Add plan_id for template
+                    'button_text': 'Upgrade to Premium',
+                    'plan_id': 3
                 }
             ]
             return render_template('pricing/index.html', plans=default_plans)
@@ -125,48 +125,75 @@ def index():
         # Set appropriate button text
         if is_current:
             button_text = 'Current Plan'
-        elif plan.name == 'Enterprise':
-            button_text = 'Contact Sales'
+        elif plan.name == 'Free':
+            button_text = 'Get Started Free'
+        elif plan.name == 'Standard':
+            button_text = 'Upgrade to Standard'
+        elif plan.name == 'Premium':
+            button_text = 'Upgrade to Premium'
         else:
-            button_text = 'Upgrade Now'
+            button_text = 'Contact Sales'
         
-        # Build features list based on plan attributes
+        # Build features list based on plan attributes and name
         features = []
         
-        if plan.max_sales == 0:
-            features.append('Unlimited sales entries')
+        if plan.name == 'Free':
+            features = [
+                'Sales tracking and management',
+                'Basic product and store management',
+                f'Up to {plan.max_sales} sales entries per month',
+                f'Up to {plan.max_users} users per company',
+                'Basic analytics and reports',
+                'Community support'
+            ]
+        elif plan.name == 'Standard':
+            features = [
+                'Everything in Free',
+                f'Up to {plan.max_sales} sales entries per month',
+                f'Up to {plan.max_users} users per company',
+                'Data import/export (CSV)',
+                'Advanced analytics and reports',
+                'Email support',
+                'Data backup and restore'
+            ]
+        elif plan.name == 'Premium':
+            features = [
+                'Everything in Standard',
+                'Unlimited sales entries',
+                'Unlimited users',
+                'Advanced data analytics',
+                'Custom reports and dashboards',
+                'Priority support',
+                'API access',
+                'Advanced security features',
+                'Custom integrations'
+            ]
         else:
-            features.append(f'Up to {plan.max_sales:,} sales entries')
-            
-        if plan.max_users == 0:
-            features.append('Unlimited users')
-        else:
-            features.append(f'Up to {plan.max_users} users per company')
-            
-        if plan.feature_analytics:
-            features.append('Data analysis tools')
-            
-        if plan.feature_export:
-            features.append('Data export capabilities')
-            
-        if plan.feature_premium_tools:
-            features.append('Premium analysis tools')
-            
-        # Other features based on plan name
-        if plan.name == 'Pro' or plan.name == 'Enterprise':
-            features.append('Priority support')
-            features.append('Advanced visualization')
-            
-        if plan.name == 'Enterprise':
-            features.append('Dedicated support')
-            features.append('Custom solutions')
-            features.append('SLA guarantee')
+            # Fallback for other plans
+            if plan.max_sales == 0:
+                features.append('Unlimited sales entries')
+            else:
+                features.append(f'Up to {plan.max_sales:,} sales entries')
+                
+            if plan.max_users == 0:
+                features.append('Unlimited users')
+            else:
+                features.append(f'Up to {plan.max_users} users per company')
+                
+            if plan.feature_analytics:
+                features.append('Data analysis tools')
+                
+            if plan.feature_export:
+                features.append('Data export capabilities')
+                
+            if plan.feature_premium_tools:
+                features.append('Premium analysis tools')
         
         default_plans.append({
             'name': plan.name,
-            'price': str(int(plan.price)),
+            'price': f'{plan.price:.2f}' if plan.price > 0 else '0',
             'features': features,
-            'recommended': plan.name == 'Pro',
+            'recommended': plan.name == 'Standard',
             'button_text': button_text,
             'plan_id': plan.id
         })

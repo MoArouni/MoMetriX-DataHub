@@ -5,7 +5,7 @@ def init_roles():
     """Initialize default roles in the database"""
     try:
         # Create website roles if they don't exist
-        default_website_roles = ['admin', 'moderator', 'subscriber']
+        default_website_roles = ['admin', 'moderator', 'subscriber', 'viewer']
         for role_name in default_website_roles:
             if not RoleWebsite.query.get(role_name):
                 role = RoleWebsite(role_name=role_name)

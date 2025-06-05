@@ -1,0 +1,31 @@
+📋 New Join Request - MoMetriX DataHub
+
+New Moderator Join Request
+
+Hello {{ admin_user.first_name or admin_user.username }},
+
+A new user has requested to join {{ join_request.company.company_name }} as a moderator and is awaiting your review.
+
+Request Details:
+- Email: {{ join_request.email }}
+- Company: {{ join_request.company.company_name }}
+- Submitted: {{ join_request.created_at.strftime('%Y-%m-%d %H:%M UTC') }}
+{% if join_request.message %}- Message: "{{ join_request.message }}"{% endif %}
+
+As the company administrator, you can review this request and decide whether to approve or decline it. If approved, you'll be able to set the moderator's permissions level.
+
+Review this request at: {{ review_url }}
+
+Available Permission Levels:
+- Data Entry Only: Can add and edit basic data entries
+- Data Entry + Daily Sales View: Can manage data and view daily sales reports
+- Full Access: Complete access to all company data and reports
+
+Please review this request at your earliest convenience.
+
+Best regards,
+The MoMetriX DataHub Team
+
+---
+This is an automated email. Please do not reply to this message.
+© 2024 MoMetriX DataHub. All rights reserved. 

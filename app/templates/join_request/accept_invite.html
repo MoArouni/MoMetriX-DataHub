@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Accept Invitation{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-plus"></i> Accept Moderator Invitation</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        You've been invited to join a company as a moderator! Please enter the 6-digit 
+                        passcode from your email to verify your invitation.
+                    </p>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-clock"></i>
+                        <strong>Time Sensitive:</strong> This invitation expires in 15 minutes, and the passcode expires in 5 minutes.
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.passcode.label(class="form-label") }}
+                            {{ form.passcode(class="form-control text-center" + (" is-invalid" if form.passcode.errors else ""), 
+                                           placeholder="000000", 
+                                           maxlength="6",
+                                           style="font-size: 1.5rem; letter-spacing: 0.5rem;") }}
+                            {% if form.passcode.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.passcode.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Enter the 6-digit passcode from your invitation email.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check"></i> Verify & Continue
+                            </button>
+                            <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-home"></i> Back to Home
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    Don't have an invitation? <a href="{{ url_for('join_request.start') }}">Request to join a company</a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-format passcode input
+document.addEventListener('DOMContentLoaded', function() {
+    const passcodeInput = document.getElementById('passcode');
+    if (passcodeInput) {
+        passcodeInput.addEventListener('input', function(e) {
+            // Remove any non-digit characters
+            this.value = this.value.replace(/\D/g, '');
+            
+            // Limit to 6 digits
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+        });
+        
+        // Auto-submit when 6 digits are entered
+        passcodeInput.addEventListener('input', function(e) {
+            if (this.value.length === 6) {
+                // Small delay to allow user to see the complete code
+                setTimeout(() => {
+                    this.form.submit();
+                }, 500);
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

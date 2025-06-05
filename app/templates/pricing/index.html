@@ -4,9 +4,25 @@
 
 {% block extra_css %}
 <style>
+    .demo-banner {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #9eff00 100%);
+        color: #000;
+        padding: 1.5rem 2rem;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(var(--primary-color-rgb), 0.3);
+    }
+    
+    .demo-banner i {
+        margin-right: 0.5rem;
+        font-size: 1.3rem;
+    }
+    
     .pricing-header {
         text-align: center;
-        padding: 5rem 0 3rem;
+        padding: 3rem 0 3rem;
     }
     
     .pricing-header h1 {
@@ -44,6 +60,7 @@
         display: flex;
         flex-direction: column;
         position: relative;
+        opacity: 0.7;
     }
     
     .pricing-card:hover {
@@ -60,6 +77,30 @@
         transform: scale(1.05) translateY(-10px);
     }
     
+    .demo-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border-radius: 15px;
+    }
+    
+    .demo-text {
+        color: var(--primary-color);
+        font-size: 2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transform: rotate(-15deg);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    
     .recommendation-badge {
         position: absolute;
         top: 1.5rem;
@@ -72,6 +113,7 @@
         border-radius: 50px;
         text-transform: uppercase;
         letter-spacing: 1px;
+        z-index: 5;
     }
     
     .pricing-header-card {
@@ -161,6 +203,45 @@
         background-color: rgba(var(--primary-color-rgb), 0.1);
     }
     
+    .demo-notice {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        border: 2px solid var(--primary-color);
+        border-radius: 10px;
+        padding: 2rem;
+        margin: 3rem auto;
+        max-width: 800px;
+        text-align: center;
+    }
+    
+    .demo-notice h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+    
+    .demo-notice p {
+        color: #cccccc;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+    
+    .demo-cta {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background-color: var(--primary-color);
+        color: #000;
+        font-weight: 600;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .demo-cta:hover {
+        background-color: var(--primary-color-light);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(var(--primary-color-rgb), 0.3);
+    }
+    
     .faq-section {
         padding: 5rem 0;
         background-color: rgba(18, 18, 18, 0.7);
@@ -239,26 +320,51 @@
         .pricing-card.recommended:hover {
             transform: translateY(-10px);
         }
+        
+        .demo-text {
+            font-size: 1.5rem;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Demo Mode Banner -->
+<div class="demo-banner">
+    <i class="fas fa-star"></i>
+    <strong>DEMO MODE:</strong> Platform is currently free for all users! Experience all features at no cost while we're in beta.
+</div>
+
 <div class="pricing-header">
     <h1>Simple, Transparent Pricing</h1>
-    <p>Choose the plan that works best for your business. All plans include access to our core analytics platform.</p>
+    <p>Choose the plan that works best for your business. All plans include access to our sales management and analytics platform.</p>
+</div>
+
+<!-- Demo Notice -->
+<div class="demo-notice">
+    <h3><i class="fas fa-gift"></i> Currently in Demo Mode</h3>
+    <p>
+        We're excited to offer <strong>free access</strong> to all features of MoMetriX DataHub while we're in beta! 
+        This is your chance to explore our sales management platform, import your data, and discover how it can 
+        help your business grow - all without any cost.
+    </p>
+    <a href="{{ url_for('auth.register') }}" class="demo-cta">Start Using for Free</a>
 </div>
 
 <div class="pricing-container">
     {% for plan in plans %}
     <div class="pricing-card {% if plan.recommended %}recommended{% endif %}">
+        <div class="demo-overlay">
+            <div class="demo-text">FREE</div>
+        </div>
+        
         {% if plan.recommended %}
         <div class="recommendation-badge">Recommended</div>
         {% endif %}
         
         <div class="pricing-header-card">
             <h2 class="pricing-name">{{ plan.name }}</h2>
-            <div class="pricing-price">${{ plan.price }}</div>
+            <div class="pricing-price">£{{ plan.price }}</div>
             <div class="pricing-duration">per month</div>
         </div>
         
@@ -271,15 +377,7 @@
         </div>
         
         <div class="pricing-action">
-            {% if plan.button_text == 'Current Plan' %}
-                <button class="pricing-btn current">{{ plan.button_text }}</button>
-            {% elif plan.button_text == 'Contact Sales' %}
-                <a href="{{ url_for('contact.index') }}" class="pricing-btn">{{ plan.button_text }}</a>
-            {% elif current_user.is_authenticated %}
-                <a href="{{ url_for('pricing.upgrade', plan_id=plan.plan_id) }}" class="pricing-btn">{{ plan.button_text }}</a>
-            {% else %}
-                <a href="{{ url_for('auth.register') }}" class="pricing-btn">{{ plan.button_text }}</a>
-            {% endif %}
+            <a href="{{ url_for('auth.register') }}" class="pricing-btn">Try Free Now</a>
         </div>
     </div>
     {% endfor %}
@@ -291,55 +389,66 @@
         
         <div class="faq-item">
             <div class="faq-question">
-                Can I change my plan later? <i class="fas fa-chevron-down"></i>
+                How long will the demo mode last? <i class="fas fa-chevron-down"></i>
             </div>
             <div class="faq-answer">
                 <div class="faq-answer-content">
-                    Yes, you can upgrade or downgrade your plan at any time. When upgrading, you'll be charged the prorated difference for the remainder of your billing cycle. When downgrading, the new rate will apply at the start of your next billing cycle.
+                    We're currently in beta and offering free access to all users. We'll provide advance notice before transitioning to paid plans, and early users will receive special pricing benefits.
                 </div>
             </div>
         </div>
         
         <div class="faq-item">
             <div class="faq-question">
-                Do you offer annual billing? <i class="fas fa-chevron-down"></i>
+                What features are available during demo mode? <i class="fas fa-chevron-down"></i>
             </div>
             <div class="faq-answer">
                 <div class="faq-answer-content">
-                    Yes, we offer a 20% discount for annual subscriptions. You can choose your billing preference (monthly or annual) during signup or change it from your account settings.
+                    All features are available during demo mode! This includes sales tracking, product management, multi-store support, data import/export, analytics, and team collaboration tools.
                 </div>
             </div>
         </div>
         
         <div class="faq-item">
             <div class="faq-question">
-                Is there a free trial available? <i class="fas fa-chevron-down"></i>
+                Are there any usage limits during demo mode? <i class="fas fa-chevron-down"></i>
             </div>
             <div class="faq-answer">
                 <div class="faq-answer-content">
-                    Yes, all paid plans come with a 14-day free trial. No credit card is required to start the trial. You can upgrade to a paid plan at any time during or after your trial.
+                    While in demo mode, you have generous usage limits that should accommodate most business needs. We'll notify users well in advance if any limits change.
                 </div>
             </div>
         </div>
         
         <div class="faq-item">
             <div class="faq-question">
-                What payment methods do you accept? <i class="fas fa-chevron-down"></i>
+                What will happen to my data when demo mode ends? <i class="fas fa-chevron-down"></i>
             </div>
             <div class="faq-answer">
                 <div class="faq-answer-content">
-                    We accept all major credit cards (Visa, MasterCard, American Express) and PayPal. For Enterprise plans, we also offer invoice payment options.
+                    Your data is safe and will be preserved. When we transition to paid plans, you'll have the option to continue with a paid subscription or export your data.
                 </div>
             </div>
         </div>
         
         <div class="faq-item">
             <div class="faq-question">
-                Can I cancel my subscription at any time? <i class="fas fa-chevron-down"></i>
+                Can I provide feedback during the demo period? <i class="fas fa-chevron-down"></i>
             </div>
             <div class="faq-answer">
                 <div class="faq-answer-content">
-                    Yes, you can cancel your subscription at any time from your account settings. Your subscription will remain active until the end of your current billing cycle, and you won't be charged again.
+                    Absolutely! We encourage feedback from our beta users. Your input helps us improve the platform and shape our future development roadmap.
+                </div>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                Will early users get special pricing when demo mode ends? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    Yes! Early adopters and beta users will receive special discounts and pricing benefits when we launch our paid plans. We value your early support and feedback.
                 </div>
             </div>
         </div>
