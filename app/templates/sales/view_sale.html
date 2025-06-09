@@ -14,17 +14,17 @@
             <div class="sale-info-grid">
                 <div class="info-item">
                     <div class="info-label">Store</div>
-                    <div class="info-value">{{ sale.store.name }}</div>
+                    <div class="info-value">{{ sale.store_name or (sale.store.name if sale.store else 'Unknown Store') }}</div>
                 </div>
                 
                 <div class="info-item">
                     <div class="info-label">Product</div>
-                    <div class="info-value">{{ sale.product.name }}</div>
+                    <div class="info-value">{{ sale.product_name or (sale.product.name if sale.product else 'Unknown Product') }}</div>
                 </div>
                 
                 <div class="info-item">
                     <div class="info-label">Category</div>
-                    <div class="info-value">{{ sale.product.category.name }}</div>
+                    <div class="info-value">{{ sale.product_category or (sale.product.category.name if sale.product and sale.product.category else 'Unknown Category') }}</div>
                 </div>
                 
                 <div class="info-item">

@@ -1,0 +1,1347 @@
+{% extends "base.html" %}
+
+{% block title %}Demo - See MoMetriX DataHub in Action{% endblock %}
+
+{% block content %}
+<div class="demo-container">
+    <!-- Hero Section -->
+    <div class="demo-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1><i class="fas fa-play-circle"></i> See MoMetriX DataHub in Action</h1>
+                <p>Experience the complete workflow from setup to insights - all the features you need to manage your business data</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Demo Timeline -->
+    <div class="demo-timeline">
+        <div class="container">
+            <div class="timeline-header">
+                <h2>Complete Feature Overview</h2>
+                <p>Discover all the tools and capabilities that make MoMetriX DataHub your complete business management solution</p>
+            </div>
+
+            <!-- Feature 1: Company & Store Setup -->
+            <div class="timeline-step" data-step="1">
+                <div class="step-marker">
+                    <div class="step-number">1</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-building"></i> Company & Store Management</h3>
+                        <p>Set up your company profile and manage multiple store locations with detailed information and settings.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Create company profile with branding</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-store"></i>
+                                <span>Add multiple store locations</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Store addresses and contact details</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Individual store settings and preferences</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Store Management</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="store-setup">
+                                    <div class="company-info">
+                                        <h4>Company Profile</h4>
+                                        <div class="info-item">
+                                            <label>Company Name</label>
+                                            <span>Electronics Plus</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Industry</label>
+                                            <span>Retail Electronics</span>
+                                        </div>
+                                    </div>
+                                    <div class="stores-list">
+                                        <h4>Store Locations</h4>
+                                        <div class="store-item">
+                                            <i class="fas fa-store"></i>
+                                            <div>
+                                                <strong>Downtown Store</strong>
+                                                <small>123 Main St, City Center</small>
+                                            </div>
+                                        </div>
+                                        <div class="store-item">
+                                            <i class="fas fa-store"></i>
+                                            <div>
+                                                <strong>Mall Location</strong>
+                                                <small>456 Shopping Mall, Level 2</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2: Product & Category Management -->
+            <div class="timeline-step" data-step="2">
+                <div class="step-marker">
+                    <div class="step-number">2</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-boxes"></i> Product & Category Management</h3>
+                        <p>Organize your inventory with categories and detailed product information for better tracking and analysis.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-tags"></i>
+                                <span>Create custom product categories</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-barcode"></i>
+                                <span>Add products with SKUs and details</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>Set base prices and cost tracking</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-edit"></i>
+                                <span>Bulk edit and manage products</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Product Management</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="product-management">
+                                    <div class="categories-section">
+                                        <h4>Categories</h4>
+                                        <div class="category-list">
+                                            <div class="category-item">
+                                                <i class="fas fa-laptop"></i>
+                                                <span>Electronics</span>
+                                                <small>45 products</small>
+                                            </div>
+                                            <div class="category-item">
+                                                <i class="fas fa-tshirt"></i>
+                                                <span>Clothing</span>
+                                                <small>23 products</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="products-section">
+                                        <h4>Products</h4>
+                                        <div class="product-item">
+                                            <div class="product-info">
+                                                <strong>iPhone 15 Pro</strong>
+                                                <small>SKU: IPH15P-128</small>
+                                            </div>
+                                            <div class="product-price">$999.00</div>
+                                        </div>
+                                        <div class="product-item">
+                                            <div class="product-info">
+                                                <strong>Samsung Galaxy S24</strong>
+                                                <small>SKU: SGS24-256</small>
+                                            </div>
+                                            <div class="product-price">$899.00</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3: Sales Data Entry -->
+            <div class="timeline-step" data-step="3">
+                <div class="step-marker">
+                    <div class="step-number">3</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-cash-register"></i> Sales Data Entry</h3>
+                        <p>Record sales transactions quickly and efficiently with multiple input methods and automatic calculations.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-keyboard"></i>
+                                <span>Quick manual sales entry</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-file-csv"></i>
+                                <span>Bulk CSV import with validation</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-calculator"></i>
+                                <span>Automatic total calculations</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Date and time tracking</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Sales Entry</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="sales-entry">
+                                    <div class="entry-form">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Store</label>
+                                                <select>
+                                                    <option>Downtown Store</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Date</label>
+                                                <input type="date" value="2024-06-08" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Product</label>
+                                                <select>
+                                                    <option>iPhone 15 Pro</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Quantity</label>
+                                                <input type="number" value="2" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="total-section">
+                                            <div class="total-item">
+                                                <span>Unit Price:</span>
+                                                <span>$999.00</span>
+                                            </div>
+                                            <div class="total-item">
+                                                <span>Total:</span>
+                                                <span><strong>$1,998.00</strong></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 4: Team Management -->
+            <div class="timeline-step" data-step="4">
+                <div class="step-marker">
+                    <div class="step-number">4</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-users-cog"></i> Team Management</h3>
+                        <p>Manage your team with our simplified 3-level permission system for secure and organized access control.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Join request approval system</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>3-level permission system</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Date range access controls</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-store"></i>
+                                <span>Store-specific access permissions</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Team Permissions</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="team-management">
+                                    <div class="permission-setting">
+                                        <h4>1. What can they do?</h4>
+                                        <div class="permission-options">
+                                            <div class="option selected">
+                                                <i class="fas fa-calendar-day"></i>
+                                                <span>Add & See Daily Sales</span>
+                                            </div>
+                                            <div class="option">
+                                                <i class="fas fa-crown"></i>
+                                                <span>See Everything</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-setting">
+                                        <h4>2. Date range for seeing data</h4>
+                                        <div class="permission-options">
+                                            <div class="option selected">
+                                                <span>Current Day Only</span>
+                                            </div>
+                                            <div class="option">
+                                                <span>All Time</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-setting">
+                                        <h4>3. Which stores can they access?</h4>
+                                        <div class="stores-access">
+                                            <div class="store-access-item checked">
+                                                <i class="fas fa-check"></i>
+                                                <span>Downtown Store</span>
+                                            </div>
+                                            <div class="store-access-item">
+                                                <i class="fas fa-times"></i>
+                                                <span>Mall Location</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 5: Analytics & Reporting -->
+            <div class="timeline-step" data-step="5">
+                <div class="step-marker">
+                    <div class="step-number">5</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-chart-line"></i> Analytics & Reporting</h3>
+                        <p>Transform your sales data into actionable insights with comprehensive analytics and customizable reports.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Interactive sales charts</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-filter"></i>
+                                <span>Advanced filtering by date, store, product</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-trophy"></i>
+                                <span>Top products and performance metrics</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-download"></i>
+                                <span>Export reports to CSV/Excel</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Sales Analytics</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="analytics-dashboard">
+                                    <div class="analytics-filters">
+                                        <select>
+                                            <option>Last 30 Days</option>
+                                        </select>
+                                        <select>
+                                            <option>All Stores</option>
+                                        </select>
+                                        <select>
+                                            <option>All Categories</option>
+                                        </select>
+                                    </div>
+                                    <div class="chart-area">
+                                        <div class="chart-placeholder">
+                                            <div class="chart-bars">
+                                                <div class="bar" style="height: 60%"></div>
+                                                <div class="bar" style="height: 80%"></div>
+                                                <div class="bar" style="height: 45%"></div>
+                                                <div class="bar" style="height: 90%"></div>
+                                                <div class="bar" style="height: 70%"></div>
+                                                <div class="bar" style="height: 85%"></div>
+                                                <div class="bar" style="height: 95%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="top-products">
+                                        <h5>Top Products</h5>
+                                        <div class="product-rank">
+                                            <span>1. iPhone 15 Pro</span>
+                                            <span>35% of sales</span>
+                                        </div>
+                                        <div class="product-rank">
+                                            <span>2. Samsung Galaxy S24</span>
+                                            <span>22% of sales</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 6: Data Import/Export -->
+            <div class="timeline-step" data-step="6">
+                <div class="step-marker">
+                    <div class="step-number">6</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-exchange-alt"></i> Data Import & Export</h3>
+                        <p>Seamlessly import existing data and export reports with our flexible data management tools.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-file-upload"></i>
+                                <span>CSV import with validation</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-magic"></i>
+                                <span>Automatic product creation</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-file-download"></i>
+                                <span>Export sales data and reports</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Data validation and error checking</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Data Import/Export</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="import-export">
+                                    <div class="import-section">
+                                        <h4>Import Data</h4>
+                                        <div class="upload-area">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <p>Drop CSV file here or click to browse</p>
+                                            <small>Supports sales data, products, and categories</small>
+                                        </div>
+                                    </div>
+                                    <div class="export-section">
+                                        <h4>Export Options</h4>
+                                        <div class="export-options">
+                                            <button class="export-btn">
+                                                <i class="fas fa-file-csv"></i>
+                                                Export Sales Data
+                                            </button>
+                                            <button class="export-btn">
+                                                <i class="fas fa-chart-bar"></i>
+                                                Export Analytics Report
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 7: Company Settings & Customization -->
+            <div class="timeline-step" data-step="7">
+                <div class="step-marker">
+                    <div class="step-number">7</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-cogs"></i> Company Settings & Customization</h3>
+                        <p>Customize your workspace with company branding, data schemas, and advanced configuration options.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-palette"></i>
+                                <span>Custom company branding</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-database"></i>
+                                <span>Custom data schema configuration</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-bell"></i>
+                                <span>Notification preferences</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Security and privacy settings</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Company Settings</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="settings-panel">
+                                    <div class="settings-section">
+                                        <h4>Company Profile</h4>
+                                        <div class="setting-item">
+                                            <label>Company Name</label>
+                                            <input type="text" value="Electronics Plus" readonly>
+                                        </div>
+                                        <div class="setting-item">
+                                            <label>Industry</label>
+                                            <select>
+                                                <option>Retail Electronics</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="settings-section">
+                                        <h4>Data Schema</h4>
+                                        <div class="schema-fields">
+                                            <div class="field-item">
+                                                <span>Product SKU</span>
+                                                <span class="field-type">Text</span>
+                                            </div>
+                                            <div class="field-item">
+                                                <span>Sale Date</span>
+                                                <span class="field-type">Date</span>
+                                            </div>
+                                            <div class="field-item">
+                                                <span>Quantity</span>
+                                                <span class="field-type">Number</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="demo-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Get Started?</h2>
+                <p>Experience all these features and more with MoMetriX DataHub</p>
+                <div class="cta-actions">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket"></i> Start Your Free Trial
+                    </a>
+                    <a href="{{ url_for('contact.index') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-comments"></i> Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Demo Page Styles */
+.demo-container {
+    min-height: 100vh;
+    background: var(--bg-color);
+}
+
+.demo-hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--text-color);
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.demo-timeline {
+    padding: 4rem 0;
+}
+
+.timeline-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.timeline-header h2 {
+    font-size: 2.2rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.timeline-header p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.timeline-step {
+    display: flex;
+    margin-bottom: 4rem;
+    position: relative;
+}
+
+.timeline-step:nth-child(even) .step-content {
+    flex-direction: row-reverse;
+}
+
+.step-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 2rem;
+    position: relative;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.step-line {
+    width: 3px;
+    height: 200px;
+    background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+    margin-top: 1rem;
+}
+
+.timeline-step:last-child .step-line {
+    display: none;
+}
+
+.step-content {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    flex: 1;
+}
+
+.step-info {
+    flex: 1;
+    max-width: 500px;
+}
+
+.step-info h3 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.step-info p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.step-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.feature-item i {
+    color: var(--secondary-color);
+    width: 20px;
+}
+
+.step-visual {
+    flex: 1;
+    max-width: 500px;
+}
+
+.demo-screen {
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.demo-screen:hover {
+    transform: translateY(-5px);
+}
+
+.screen-header {
+    background: var(--surface-color);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.screen-dots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.screen-dots span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+}
+
+.screen-title {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.screen-content {
+    padding: 1.5rem;
+    background: var(--surface-color);
+}
+
+/* Store Setup Styles */
+.store-setup {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.company-info h4,
+.stores-list h4 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.info-item label {
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.info-item span {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.store-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.store-item i {
+    color: var(--secondary-color);
+}
+
+.store-item strong {
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.store-item small {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.8rem;
+}
+
+/* Product Management Styles */
+.product-management {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.categories-section h4,
+.products-section h4 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.category-item i {
+    color: var(--secondary-color);
+    margin-right: 0.5rem;
+}
+
+.category-item span {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.category-item small {
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.product-info strong {
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.product-info small {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.8rem;
+    display: block;
+}
+
+.product-price {
+    color: var(--secondary-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Sales Entry Styles */
+.sales-entry .entry-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.75rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.total-section {
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.total-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.total-item:last-child {
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
+/* Team Management Styles */
+.team-management .permission-setting {
+    margin-bottom: 1.5rem;
+}
+
+.team-management h4 {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.permission-options {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.permission-options .option {
+    padding: 0.75rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.6;
+}
+
+.permission-options .option.selected {
+    border-color: var(--secondary-color);
+    background: rgba(3, 218, 198, 0.1);
+    opacity: 1;
+}
+
+.stores-access {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.store-access-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    color: var(--text-color);
+    font-size: 0.85rem;
+}
+
+.store-access-item.checked i {
+    color: var(--secondary-color);
+}
+
+.store-access-item:not(.checked) i {
+    color: var(--error-color);
+}
+
+/* Analytics Styles */
+.analytics-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.analytics-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.analytics-filters select {
+    padding: 0.5rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 4px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.8rem;
+}
+
+.chart-area {
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 1rem;
+    height: 120px;
+}
+
+.chart-placeholder {
+    height: 100%;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: end;
+    gap: 0.5rem;
+    height: 100%;
+}
+
+.bar {
+    width: 15px;
+    background: linear-gradient(to top, var(--primary-color), var(--secondary-color));
+    border-radius: 2px 2px 0 0;
+}
+
+.top-products h5 {
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.product-rank {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-color);
+}
+
+/* Import/Export Styles */
+.import-export {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.import-section h4,
+.export-section h4 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.upload-area {
+    border: 2px dashed var(--primary-color);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background: var(--card-bg);
+}
+
+.upload-area i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.upload-area p {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.upload-area small {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.8rem;
+}
+
+.export-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.export-btn {
+    padding: 0.75rem;
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Settings Styles */
+.settings-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.settings-section h4 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.setting-item {
+    margin-bottom: 1rem;
+}
+
+.setting-item label {
+    display: block;
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.setting-item input,
+.setting-item select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.schema-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.field-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.field-type {
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+/* CTA Section */
+.demo-cta {
+    background: linear-gradient(135deg, var(--surface-color) 0%, var(--card-bg) 100%);
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 2.2rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.cta-content p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 2rem;
+}
+
+.cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--bg-color);
+}
+
+.btn-outline-light {
+    background: transparent;
+    color: var(--text-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-light:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+.btn-lg {
+    font-size: 1.1rem;
+    padding: 1.25rem 2.5rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .timeline-step {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .timeline-step:nth-child(even) .step-content {
+        flex-direction: column;
+    }
+    
+    .step-marker {
+        margin: 0 0 2rem 0;
+    }
+    
+    .step-line {
+        height: 100px;
+    }
+    
+    .step-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .step-info {
+        max-width: none;
+    }
+    
+    .step-visual {
+        max-width: none;
+        width: 100%;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .permission-options {
+        flex-direction: column;
+    }
+    
+    .analytics-filters {
+        flex-direction: column;
+    }
+    
+    .cta-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+</style>
+{% endblock %}
+</rewritten_file>

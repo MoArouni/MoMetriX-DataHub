@@ -75,11 +75,11 @@ class SalesImportExportService:
         for sale in sales:
             row = [
                 sale.sale_date.strftime('%Y-%m-%d'),
-                sale.store.name if sale.store else 'Unknown Store',
-                sale.product.category.name if sale.product and sale.product.category else 'Unknown Category',
-                sale.product.name if sale.product else 'Unknown Product',
+                sale.store_name if hasattr(sale, 'store_name') and sale.store_name else (sale.store.name if sale.store else 'Unknown Store'),
+                sale.product_category if hasattr(sale, 'product_category') and sale.product_category else (sale.product.category.name if sale.product and sale.product.category else 'Unknown Category'),
+                sale.product_name if hasattr(sale, 'product_name') and sale.product_name else (sale.product.name if sale.product else 'Unknown Product'),
                 str(sale.quantity),
-                f"{sale.total_amount:.2f}",
+                f"{sale.total:.2f}" if hasattr(sale, 'total') and sale.total else f"{sale.total_amount:.2f}",
                 f"{sale.card_amount:.2f}",
                 f"{sale.cash_amount:.2f}",
                 sale.notes or ''
@@ -106,12 +106,12 @@ class SalesImportExportService:
         # Parse CSV
         csv_reader = csv.DictReader(io.StringIO(csv_content))
         
-        # Validate headers
-        expected_headers = set(self.CSV_HEADERS)
+        # Validate headers - only require essential ones
+        required_headers = {'sale_date'}  # Only sale_date is truly required
         actual_headers = set(csv_reader.fieldnames or [])
         
-        if not expected_headers.issubset(actual_headers):
-            missing_headers = expected_headers - actual_headers
+        if not required_headers.issubset(actual_headers):
+            missing_headers = required_headers - actual_headers
             error_messages.append(f"Missing required headers: {', '.join(missing_headers)}")
             return 0, 0, error_messages
         
@@ -137,9 +137,90 @@ class SalesImportExportService:
         
         return successful_imports, failed_imports, error_messages
     
+    def import_sales_with_progress(self, csv_content: str, user_id: int, progress_callback=None) -> Tuple[int, int, List[str]]:
+        """
+        Import sales data from CSV content with progress tracking
+        
+        Args:
+            csv_content: CSV content as string
+            user_id: ID of the user performing the import
+            progress_callback: Optional callback function for progress updates
+            
+        Returns:
+            Tuple of (successful_imports, failed_imports, error_messages)
+        """
+        successful_imports = 0
+        failed_imports = 0
+        error_messages = []
+        
+        # Parse CSV
+        csv_reader = csv.DictReader(io.StringIO(csv_content))
+        
+        # Validate headers - only require essential ones
+        required_headers = {'sale_date'}  # Only sale_date is truly required
+        actual_headers = set(csv_reader.fieldnames or [])
+        
+        if not required_headers.issubset(actual_headers):
+            missing_headers = required_headers - actual_headers
+            error_messages.append(f"Missing required headers: {', '.join(missing_headers)}")
+            return 0, 0, error_messages
+        
+        # Count total rows first for progress calculation
+        rows = list(csv_reader)
+        total_rows = len(rows)
+        
+        if total_rows == 0:
+            error_messages.append("No data rows found in CSV")
+            return 0, 0, error_messages
+        
+        # Process each row with progress tracking
+        batch_size = 50  # Process in batches for better performance
+        processed_count = 0
+        
+        for i, row in enumerate(rows):
+            row_num = i + 2  # Start at 2 since row 1 is header
+            
+            try:
+                sale = self._create_sale_from_row(row, user_id, row_num)
+                if sale:
+                    db.session.add(sale)
+                    successful_imports += 1
+                    
+                    # Commit in batches
+                    if (i + 1) % batch_size == 0:
+                        try:
+                            db.session.commit()
+                        except IntegrityError as e:
+                            db.session.rollback()
+                            error_messages.append(f"Database error in batch ending at row {row_num}: {str(e)}")
+                            # Continue with next batch
+                            
+            except Exception as e:
+                failed_imports += 1
+                error_messages.append(f"Row {row_num}: {str(e)}")
+                current_app.logger.error(f"Import error on row {row_num}: {str(e)}")
+            
+            processed_count += 1
+            
+            # Update progress if callback provided
+            if progress_callback:
+                progress = int((processed_count / total_rows) * 100)
+                status = f"Processing sales data... ({processed_count}/{total_rows})"
+                detail = f"Imported {successful_imports} records, {failed_imports} failed"
+                progress_callback(progress, status, detail)
+        
+        # Final commit for remaining records
+        try:
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            error_messages.append(f"Database error during final commit: {str(e)}")
+        
+        return successful_imports, failed_imports, error_messages
+    
     def _create_sale_from_row(self, row: Dict[str, str], user_id: int, row_num: int) -> Sale:
         """
-        Create a Sale object from a CSV row
+        Create a Sale object from a CSV row - automatically creates missing stores, categories, and products
         
         Args:
             row: Dictionary representing a CSV row
@@ -155,117 +236,109 @@ class SalesImportExportService:
         except ValueError:
             raise ValueError(f"Invalid date format in sale_date: {row['sale_date']}")
         
-        # Get or create store
-        store_name = row['store_name'].strip()
-        if not store_name:
-            raise ValueError("store_name cannot be empty")
+        # Handle missing values with defaults
+        store_name = row.get('store_name', '').strip() or 'Default Store'
+        product_category = row.get('product_category', '').strip() or 'General'
+        product_name = row.get('product_name', '').strip() or 'Unknown Product'
         
-        store = Store.query.filter_by(
-            name=store_name, 
-            company_id=self.company_id
-        ).first()
+        # Parse numeric fields with defaults
+        try:
+            quantity = int(row.get('quantity', '1').strip()) if row.get('quantity', '').strip() else 1
+            if quantity <= 0:
+                quantity = 1
+        except ValueError:
+            quantity = 1
         
+        try:
+            total = Decimal(row.get('total', '0').strip()) if row.get('total', '').strip() else Decimal('0.00')
+            if total < 0:
+                total = Decimal('0.00')
+        except ValueError:
+            total = Decimal('0.00')
+        
+        try:
+            card_amount = Decimal(row.get('card_amount', '0').strip()) if row.get('card_amount', '').strip() else Decimal('0.00')
+            if card_amount < 0:
+                card_amount = Decimal('0.00')
+        except ValueError:
+            card_amount = Decimal('0.00')
+        
+        try:
+            cash_amount = Decimal(row.get('cash_amount', '0').strip()) if row.get('cash_amount', '').strip() else Decimal('0.00')
+            if cash_amount < 0:
+                cash_amount = Decimal('0.00')
+        except ValueError:
+            cash_amount = Decimal('0.00')
+        
+        # If total is 0 but we have card/cash amounts, calculate total
+        if total == 0 and (card_amount > 0 or cash_amount > 0):
+            total = card_amount + cash_amount
+        
+        # If total is provided but card/cash don't add up, adjust cash amount
+        calculated_total = card_amount + cash_amount
+        if total > 0 and abs(calculated_total - total) > Decimal('0.01'):
+            # Adjust cash amount to make totals match
+            cash_amount = total - card_amount
+            if cash_amount < 0:
+                card_amount = total
+                cash_amount = Decimal('0.00')
+        
+        notes = row.get('notes', '').strip()
+        
+        # Auto-create store if it doesn't exist
+        store = Store.query.filter_by(company_id=self.company_id, name=store_name).first()
         if not store:
-            # Auto-create store if it doesn't exist
             store = Store(
+                company_id=self.company_id,
                 name=store_name,
-                company_id=self.company_id
+                location='Auto-created during import'
             )
             db.session.add(store)
-            db.session.flush()  # Get the ID without committing
+            db.session.flush()  # Get the ID
         
-        # Get or create product category
-        category_name = row['product_category'].strip()
-        if not category_name:
-            raise ValueError("product_category cannot be empty")
-        
-        category = ProductCategory.query.filter_by(
-            name=category_name,
-            company_id=self.company_id
-        ).first()
-        
+        # Auto-create category if it doesn't exist
+        category = ProductCategory.query.filter_by(company_id=self.company_id, name=product_category).first()
         if not category:
-            # Auto-create category if it doesn't exist
             category = ProductCategory(
-                name=category_name,
-                company_id=self.company_id
+                company_id=self.company_id,
+                name=product_category
             )
             db.session.add(category)
-            db.session.flush()  # Get the ID without committing
+            db.session.flush()  # Get the ID
         
-        # Get or create product
-        product_name = row['product_name'].strip()
-        if not product_name:
-            raise ValueError("product_name cannot be empty")
-        
+        # Auto-create product if it doesn't exist
         product = Product.query.filter_by(
-            name=product_name,
-            category_id=category.id,
-            company_id=self.company_id
+            company_id=self.company_id, 
+            name=product_name, 
+            category_id=category.id
         ).first()
-        
         if not product:
-            # Auto-create product if it doesn't exist
-            # Extract base price from total if available
-            try:
-                total_amount = Decimal(row['total'].strip())
-                quantity = int(row['quantity'].strip())
-                base_price = total_amount / quantity if quantity > 0 else total_amount
-            except (ValueError, ZeroDivisionError):
-                base_price = Decimal('0.00')
-            
+            # Calculate base price per unit
+            base_price = total / quantity if quantity > 0 else total
             product = Product(
+                company_id=self.company_id,
                 name=product_name,
                 category_id=category.id,
-                company_id=self.company_id,
-                base_price=base_price
+                base_price=base_price  # Use the per-unit price as base price
             )
             db.session.add(product)
-            db.session.flush()  # Get the ID without committing
+            db.session.flush()  # Get the ID
         
-        # Parse numeric fields
-        try:
-            quantity = int(row['quantity'].strip())
-            if quantity <= 0:
-                raise ValueError("quantity must be positive")
-        except ValueError:
-            raise ValueError(f"Invalid quantity: {row['quantity']}")
-        
-        try:
-            card_amount = Decimal(row['card_amount'].strip()) if row['card_amount'].strip() else Decimal('0.00')
-        except ValueError:
-            raise ValueError(f"Invalid card_amount: {row['card_amount']}")
-        
-        try:
-            cash_amount = Decimal(row['cash_amount'].strip()) if row['cash_amount'].strip() else Decimal('0.00')
-        except ValueError:
-            raise ValueError(f"Invalid cash_amount: {row['cash_amount']}")
-        
-        # Validate that total matches card + cash amounts
-        try:
-            total_from_csv = Decimal(row['total'].strip())
-            calculated_total = card_amount + cash_amount
-            
-            # Allow small discrepancy due to rounding
-            if abs(total_from_csv - calculated_total) > Decimal('0.01'):
-                current_app.logger.warning(
-                    f"Row {row_num}: Total amount mismatch. "
-                    f"CSV total: {total_from_csv}, Calculated: {calculated_total}"
-                )
-        except ValueError:
-            raise ValueError(f"Invalid total amount: {row['total']}")
-        
-        # Create sale object
+        # Create the sale object with both direct CSV data and linked entities
         sale = Sale(
             company_id=self.company_id,
             user_id=user_id,
-            store_id=store.id,
-            product_id=product.id,
             sale_date=sale_date,
+            store_id=store.id,
+            store_name=store_name,
+            product_id=product.id,
+            product_category=product_category,
+            product_name=product_name,
             quantity=quantity,
+            total=total,
             card_amount=card_amount,
             cash_amount=cash_amount,
-            notes=row['notes'].strip() if row['notes'] else None
+            notes=notes
         )
         
         return sale
@@ -285,12 +358,12 @@ class SalesImportExportService:
         try:
             csv_reader = csv.DictReader(io.StringIO(csv_content))
             
-            # Validate headers
-            expected_headers = set(self.CSV_HEADERS)
+            # Validate headers - only require essential ones
+            required_headers = {'sale_date'}  # Only sale_date is truly required
             actual_headers = set(csv_reader.fieldnames or [])
             
-            if not expected_headers.issubset(actual_headers):
-                missing_headers = expected_headers - actual_headers
+            if not required_headers.issubset(actual_headers):
+                missing_headers = required_headers - actual_headers
                 error_messages.append(f"Missing required headers: {', '.join(missing_headers)}")
             
             # Check if there are any data rows
@@ -298,16 +371,10 @@ class SalesImportExportService:
             for row_num, row in enumerate(csv_reader, start=2):
                 row_count += 1
                 
-                # Basic validation on first few rows
+                # Basic validation on first few rows - only check essential fields
                 if row_count <= 5:  # Only validate first 5 rows for performance
-                    if not row['sale_date'].strip():
+                    if not row.get('sale_date', '').strip():
                         error_messages.append(f"Row {row_num}: sale_date cannot be empty")
-                    if not row['store_name'].strip():
-                        error_messages.append(f"Row {row_num}: store_name cannot be empty")
-                    if not row['product_category'].strip():
-                        error_messages.append(f"Row {row_num}: product_category cannot be empty")
-                    if not row['product_name'].strip():
-                        error_messages.append(f"Row {row_num}: product_name cannot be empty")
             
             if row_count == 0:
                 error_messages.append("CSV file contains no data rows")

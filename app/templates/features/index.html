@@ -2,485 +2,715 @@
 
 {% block title %}MoMetriX DataHub - Features{% endblock %}
 
-{% block extra_css %}
+{% block content %}
+<div class="features-container">
+    <!-- Hero Section -->
+    <section class="features-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Powerful Features for Your Business</h1>
+                <p>Everything you need to manage sales data, track performance, and grow your business - all in one comprehensive platform.</p>
+                <a href="{{ url_for('features.demo') }}" class="cta-btn">
+                    <i class="fas fa-play-circle"></i> See Features in Action
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Features Grid -->
+    <section class="core-features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Core Business Management Features</h2>
+                <p>Comprehensive tools designed specifically for retail and sales businesses</p>
+            </div>
+            
+            <div class="features-grid">
+                <!-- Company & Store Management -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Company & Store Management</h3>
+                    <p>Set up your company profile and manage multiple store locations with detailed information, addresses, and individual settings.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Company profile with branding</li>
+                        <li><i class="fas fa-check"></i> Multiple store locations</li>
+                        <li><i class="fas fa-check"></i> Store-specific settings</li>
+                        <li><i class="fas fa-check"></i> Contact information management</li>
+                    </ul>
+                </div>
+
+                <!-- Product & Category Management -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <h3>Product & Category Management</h3>
+                    <p>Organize your inventory with custom categories and detailed product information for better tracking and analysis.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Custom product categories</li>
+                        <li><i class="fas fa-check"></i> Product SKUs and details</li>
+                        <li><i class="fas fa-check"></i> Base price management</li>
+                        <li><i class="fas fa-check"></i> Bulk product operations</li>
+                    </ul>
+                </div>
+
+                <!-- Sales Data Entry -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cash-register"></i>
+                    </div>
+                    <h3>Sales Data Entry</h3>
+                    <p>Record sales transactions quickly with multiple input methods and automatic calculations for accurate data tracking.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Quick manual entry</li>
+                        <li><i class="fas fa-check"></i> Bulk CSV import</li>
+                        <li><i class="fas fa-check"></i> Automatic calculations</li>
+                        <li><i class="fas fa-check"></i> Date and time tracking</li>
+                    </ul>
+                </div>
+
+                <!-- Team Management -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <h3>Team Management</h3>
+                    <p>Control team access with our simplified 3-level permission system for secure and organized collaboration.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Join request approval</li>
+                        <li><i class="fas fa-check"></i> 3-level permission system</li>
+                        <li><i class="fas fa-check"></i> Date range access controls</li>
+                        <li><i class="fas fa-check"></i> Store-specific permissions</li>
+                    </ul>
+                </div>
+
+                <!-- Analytics & Reporting -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Analytics & Reporting</h3>
+                    <p>Transform your sales data into actionable insights with comprehensive analytics and customizable reports.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Interactive sales charts</li>
+                        <li><i class="fas fa-check"></i> Advanced filtering options</li>
+                        <li><i class="fas fa-check"></i> Top products analysis</li>
+                        <li><i class="fas fa-check"></i> Performance metrics</li>
+                    </ul>
+                </div>
+
+                <!-- Data Import/Export -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3>Data Import & Export</h3>
+                    <p>Seamlessly import existing data and export reports with flexible data management and validation tools.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> CSV import with validation</li>
+                        <li><i class="fas fa-check"></i> Automatic product creation</li>
+                        <li><i class="fas fa-check"></i> Export sales data</li>
+                        <li><i class="fas fa-check"></i> Report generation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Features -->
+    <section class="advanced-features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Advanced Configuration</h2>
+                <p>Customize your workspace to match your business needs</p>
+            </div>
+            
+            <div class="advanced-grid">
+                <div class="advanced-feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Company Settings</h3>
+                    <p>Customize your company profile, branding, and workspace preferences to match your business identity.</p>
+                </div>
+
+                <div class="advanced-feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Custom Data Schema</h3>
+                    <p>Configure custom data fields and schema to match your specific business requirements and data structure.</p>
+                </div>
+
+                <div class="advanced-feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Security & Privacy</h3>
+                    <p>Enterprise-grade security with role-based access controls and data privacy protection for your business.</p>
+                </div>
+
+                <div class="advanced-feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Responsive</h3>
+                    <p>Access your data anywhere with our fully responsive design that works perfectly on all devices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Permission System Detail -->
+    <section class="permission-system">
+        <div class="container">
+            <div class="permission-content">
+                <div class="permission-info">
+                    <h2>Simplified Permission System</h2>
+                    <p>Our 3-level permission system makes team management simple and secure. Control exactly what each team member can access.</p>
+                    
+                    <div class="permission-levels">
+                        <div class="permission-level">
+                            <div class="level-number">1</div>
+                            <div class="level-content">
+                                <h4>Access Level</h4>
+                                <p>Choose between "Add & See Daily Sales" or "See Everything" based on their role.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="permission-level">
+                            <div class="level-number">2</div>
+                            <div class="level-content">
+                                <h4>Date Range</h4>
+                                <p>Control whether they can see "Current Day Only" or "All Time" historical data.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="permission-level">
+                            <div class="level-number">3</div>
+                            <div class="level-content">
+                                <h4>Store Access</h4>
+                                <p>Select which specific stores they can access or give them access to all locations.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="permission-visual">
+                    <div class="permission-demo">
+                        <div class="demo-header">
+                            <h4>Permission Settings</h4>
+                        </div>
+                        <div class="demo-content">
+                            <div class="demo-setting">
+                                <span class="setting-label">Access Level:</span>
+                                <span class="setting-value">Add & See Daily Sales</span>
+                            </div>
+                            <div class="demo-setting">
+                                <span class="setting-label">Date Range:</span>
+                                <span class="setting-value">Current Day Only</span>
+                            </div>
+                            <div class="demo-setting">
+                                <span class="setting-label">Store Access:</span>
+                                <span class="setting-value">Downtown Store</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integration & Compatibility -->
+    <section class="integration-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Built for Your Workflow</h2>
+                <p>Designed to integrate seamlessly with your existing business processes</p>
+            </div>
+            
+            <div class="integration-features">
+                <div class="integration-item">
+                    <i class="fas fa-file-csv"></i>
+                    <h3>CSV Compatibility</h3>
+                    <p>Import and export data in standard CSV format for easy integration with spreadsheets and other tools.</p>
+                </div>
+                
+                <div class="integration-item">
+                    <i class="fas fa-cloud"></i>
+                    <h3>Cloud-Based</h3>
+                    <p>Access your data from anywhere with our secure cloud infrastructure and automatic backups.</p>
+                </div>
+                
+                <div class="integration-item">
+                    <i class="fas fa-sync"></i>
+                    <h3>Real-Time Updates</h3>
+                    <p>See changes instantly across all devices and team members with real-time data synchronization.</p>
+                </div>
+                
+                <div class="integration-item">
+                    <i class="fas fa-lock"></i>
+                    <h3>Secure & Reliable</h3>
+                    <p>Enterprise-grade security with encrypted data transmission and secure user authentication.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="features-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Transform Your Business?</h2>
+                <p>Start using all these powerful features today with our free trial</p>
+                <div class="cta-buttons">
+                    <a href="{{ url_for('auth.register') }}" class="cta-btn primary">
+                        <i class="fas fa-rocket"></i> Start Free Trial
+                    </a>
+                    <a href="{{ url_for('features.demo') }}" class="cta-btn secondary">
+                        <i class="fas fa-play-circle"></i> Watch Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
 <style>
-    /* Quote Section */
-    .quote-section {
-        background-color: rgba(20, 20, 20, 0.9);
-        padding: 6rem 0;
-        text-align: center;
-        position: relative;
+/* Features Page Styles */
+.features-container {
+    min-height: 100vh;
+    background: var(--bg-color);
+}
+
+.features-hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--text-color);
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.core-features {
+    padding: 4rem 0;
+    background: var(--surface-color);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header h2 {
+    font-size: 2.2rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.section-header p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 15px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--secondary-color);
+    box-shadow: 0 10px 30px rgba(3, 218, 198, 0.2);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+    color: var(--bg-color);
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.feature-card p {
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+
+.feature-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.feature-list i {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+
+.advanced-features {
+    padding: 4rem 0;
+    background: var(--bg-color);
+}
+
+.advanced-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.advanced-feature {
+    background: var(--surface-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.advanced-feature:hover {
+    transform: translateY(-3px);
+    border-color: var(--secondary-color);
+}
+
+.advanced-feature .feature-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.advanced-feature h3 {
+    font-size: 1.25rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.advanced-feature p {
+    color: var(--text-color);
+    opacity: 0.8;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.permission-system {
+    padding: 4rem 0;
+    background: var(--surface-color);
+}
+
+.permission-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .permission-content {
+        grid-template-columns: 1fr 1fr;
     }
-    
-    .quote-container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-    
-    .quote-text {
-        font-size: 2.5rem;
-        font-style: italic;
-        color: #fff;
-        margin-bottom: 1.5rem;
-        line-height: 1.4;
-        position: relative;
-    }
-    
-    .quote-text::before,
-    .quote-text::after {
-        content: '"';
-        color: var(--primary-color);
-        font-size: 4rem;
-        position: absolute;
-        opacity: 0.7;
-    }
-    
-    .quote-text::before {
-        left: -2rem;
-        top: -1rem;
-    }
-    
-    .quote-text::after {
-        right: -2rem;
-        bottom: -2rem;
-    }
-    
-    .quote-author {
-        color: var(--primary-color);
-        font-size: 1.2rem;
-        font-weight: 600;
-    }
-    
-    /* Mission Section */
-    .mission-section {
-        padding: 6rem 0;
-        background-color: var(--surface-color);
-    }
-    
-    .mission-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-    
-    .section-title {
-        text-align: center;
-        margin-bottom: 4rem;
-    }
-    
-    .section-title h2 {
-        font-size: 3rem;
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-    }
-    
-    .section-title p {
-        color: #cccccc;
-        max-width: 700px;
-        margin: 0 auto;
-        font-size: 1.2rem;
-        line-height: 1.7;
-    }
-    
-    .mission-values {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 3rem;
-        margin-bottom: 6rem;
-    }
-    
-    .value-card {
-        background-color: rgba(30, 30, 30, 0.7);
-        border-radius: 10px;
-        padding: 2.5rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .value-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    }
-    
-    .value-icon {
-        width: 80px;
-        height: 80px;
-        margin: 0 auto 2rem;
-        background-color: rgba(var(--primary-color-rgb), 0.1);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .value-icon i {
-        font-size: 2.5rem;
-        color: var(--primary-color);
-    }
-    
-    .value-title {
-        font-size: 1.8rem;
-        color: #ffffff;
-        margin-bottom: 1.5rem;
-    }
-    
-    .value-desc {
-        color: #cccccc;
-        line-height: 1.7;
-    }
-    
-    /* Features Section */
-    .features-section {
-        padding: 6rem 0;
-        background-color: rgba(18, 18, 18, 0.9);
-    }
-    
-    .feature-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 3rem;
-    }
-    
-    .feature-item {
-        display: flex;
-        background-color: rgba(30, 30, 30, 0.7);
-        border-radius: 10px;
-        overflow: hidden;
-        padding: 2rem;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .feature-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-    }
-    
-    .feature-icon-wrapper {
-        margin-right: 1.5rem;
-        color: var(--primary-color);
+}
+
+.permission-info h2 {
+    font-size: 2rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.permission-info p {
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.permission-levels {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.permission-level {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.level-number {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.level-content h4 {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.level-content p {
+    color: var(--text-color);
+    opacity: 0.8;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.permission-visual {
+    display: flex;
+    justify-content: center;
+}
+
+.permission-demo {
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 400px;
+    width: 100%;
+}
+
+.demo-header {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    padding: 1rem;
+    text-align: center;
+}
+
+.demo-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.demo-content {
+    padding: 1.5rem;
+}
+
+.demo-setting {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.demo-setting:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.setting-label {
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.setting-value {
+    color: var(--secondary-color);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.integration-section {
+    padding: 4rem 0;
+    background: var(--bg-color);
+}
+
+.integration-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.integration-item {
+    text-align: center;
+    padding: 2rem;
+}
+
+.integration-item i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.integration-item h3 {
+    font-size: 1.25rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.integration-item p {
+    color: var(--text-color);
+    opacity: 0.8;
+    line-height: 1.5;
+}
+
+.features-cta {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, var(--surface-color) 0%, var(--card-bg) 100%);
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 2.2rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.cta-content p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 2rem;
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.cta-btn {
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    font-size: 1.1rem;
+}
+
+.cta-btn:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.cta-btn.primary {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border-color: var(--primary-color);
+}
+
+.cta-btn.primary:hover {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--bg-color);
+}
+
+.cta-btn.secondary {
+    background: transparent;
+    color: var(--text-color);
+    border-color: var(--primary-color);
+}
+
+.cta-btn.secondary:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .hero-content h1 {
         font-size: 2rem;
-        flex-shrink: 0;
     }
     
-    .feature-content h3 {
-        color: #ffffff;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
+    .features-grid {
+        grid-template-columns: 1fr;
     }
     
-    .feature-content p {
-        color: #cccccc;
-        line-height: 1.6;
+    .advanced-grid {
+        grid-template-columns: 1fr;
     }
     
-    /* Process Section */
-    .process-section {
-        padding: 6rem 0;
-        background-color: var(--surface-color);
+    .integration-features {
+        grid-template-columns: 1fr;
     }
     
-    .process-steps {
-        display: flex;
-        justify-content: space-between;
-        position: relative;
-        max-width: 1000px;
-        margin: 0 auto;
-        flex-wrap: wrap;
-    }
-    
-    .process-steps::before {
-        content: '';
-        position: absolute;
-        top: 70px;
-        left: 60px;
-        right: 60px;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-color) 0%, rgba(var(--primary-color-rgb), 0.3) 100%);
-        z-index: 0;
-    }
-    
-    .process-step {
-        text-align: center;
-        max-width: 200px;
-        position: relative;
-        z-index: 1;
-    }
-    
-    .step-number {
-        width: 80px;
-        height: 80px;
-        background-color: var(--primary-color);
-        color: #000;
-        border-radius: 50%;
-        display: flex;
+    .cta-buttons {
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        font-weight: 800;
-        margin: 0 auto 2rem;
-        box-shadow: 0 10px 30px rgba(var(--primary-color-rgb), 0.3);
-    }
-    
-    .step-title {
-        color: #ffffff;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    .step-desc {
-        color: #cccccc;
-        line-height: 1.6;
-    }
-    
-    /* CTA Section */
-    .cta-section {
-        background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.1) 0%, rgba(var(--primary-color-rgb), 0.2) 100%);
-        padding: 6rem 0;
-        text-align: center;
-    }
-    
-    .cta-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-    
-    .cta-title {
-        font-size: 3rem;
-        color: #ffffff;
-        margin-bottom: 1.5rem;
-    }
-    
-    .cta-text {
-        font-size: 1.2rem;
-        color: #cccccc;
-        margin-bottom: 3rem;
-        line-height: 1.7;
     }
     
     .cta-btn {
-        display: inline-block;
-        padding: 1.2rem 2.5rem;
-        background-color: var(--primary-color);
-        color: #000;
-        font-size: 1.1rem;
-        font-weight: 600;
-        border-radius: 50px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 10px 30px rgba(var(--primary-color-rgb), 0.3);
+        width: 100%;
+        max-width: 300px;
     }
     
-    .cta-btn:hover {
-        background-color: var(--primary-color-light);
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(var(--primary-color-rgb), 0.4);
+    .permission-levels {
+        gap: 1rem;
     }
     
-    @media (max-width: 768px) {
-        .quote-text {
-            font-size: 2rem;
-        }
-        
-        .quote-text::before,
-        .quote-text::after {
-            font-size: 3rem;
-        }
-        
-        .process-steps::before {
-            display: none;
-        }
-        
-        .process-step {
-            width: 100%;
-            margin-bottom: 3rem;
-        }
+    .permission-level {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
     }
+}
 </style>
 {% endblock %}
-
-{% block content %}
-<!-- Quote Section -->
-<section class="quote-section">
-    <div class="quote-container">
-        <p class="quote-text">Simplicity is the ultimate sophistication.</p>
-        <p class="quote-author">— Leonardo da Vinci</p>
-    </div>
-</section>
-
-<!-- Mission Section -->
-<section class="mission-section">
-    <div class="mission-container">
-        <div class="section-title">
-            <h2>Why MoMetriX DataHub?</h2>
-            <p>We built MoMetriX DataHub specifically for businesses that need powerful yet simple sales management and analytics tools.</p>
-        </div>
-        
-        <div class="mission-values">
-            <div class="value-card">
-                <div class="value-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h3 class="value-title">Sales-Focused</h3>
-                <p class="value-desc">Purpose-built for sales tracking and management, with features designed specifically for retail and business operations.</p>
-            </div>
-            
-            <div class="value-card">
-                <div class="value-icon">
-                    <i class="fas fa-users-cog"></i>
-                </div>
-                <h3 class="value-title">Easy to Use</h3>
-                <p class="value-desc">Intuitive interface that requires no technical training. Your team can start using it immediately.</p>
-            </div>
-            
-            <div class="value-card">
-                <div class="value-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3 class="value-title">Secure & Reliable</h3>
-                <p class="value-desc">Your business data is protected with enterprise-grade security and regular backups.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Features Section -->
-<section class="features-section">
-    <div class="mission-container">
-        <div class="section-title">
-            <h2>Core Features</h2>
-            <p>Everything you need to manage your sales data and grow your business.</p>
-        </div>
-        
-        <div class="feature-list">
-            <div class="feature-item">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-cash-register"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>Sales Tracking</h3>
-                    <p>Record and track all sales transactions with detailed information including payment methods, quantities, and customer notes.</p>
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-boxes"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>Product Management</h3>
-                    <p>Organize products by categories, track inventory, and manage pricing across your entire product catalog.</p>
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-store"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>Multi-Store Support</h3>
-                    <p>Manage multiple store locations, compare performance, and track sales across different sites from one dashboard.</p>
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-chart-bar"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>Sales Analytics</h3>
-                    <p>Get insights into your sales performance with daily, monthly, and custom date range reports and analytics.</p>
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-file-csv"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>Data Import/Export</h3>
-                    <p>Import existing sales data from CSV files and export reports for external analysis or backup purposes.</p>
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>Team Management</h3>
-                    <p>Add team members with different access levels. Admins can manage data while staff can record sales.</p>
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-mobile-alt"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>Mobile Responsive</h3>
-                    <p>Access your sales data and record transactions from any device with our fully responsive web interface.</p>
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <div class="feature-icon-wrapper">
-                    <i class="fas fa-cloud"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>Cloud-Based</h3>
-                    <p>Your data is safely stored in the cloud with automatic backups and 99.9% uptime reliability.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Process Section -->
-<section class="process-section">
-    <div class="mission-container">
-        <div class="section-title">
-            <h2>Getting Started</h2>
-            <p>Start managing your sales data in just a few simple steps</p>
-        </div>
-        
-        <div class="process-steps">
-            <div class="process-step">
-                <div class="step-number">1</div>
-                <h3 class="step-title">Create Account</h3>
-                <p class="step-desc">Sign up for free and create your company profile. No credit card required to start.</p>
-            </div>
-            
-            <div class="process-step">
-                <div class="step-number">2</div>
-                <h3 class="step-title">Setup Your Business</h3>
-                <p class="step-desc">Add your stores, product categories, and products to customize the system for your business.</p>
-            </div>
-            
-            <div class="process-step">
-                <div class="step-number">3</div>
-                <h3 class="step-title">Import Data</h3>
-                <p class="step-desc">Import your existing sales data using our CSV import tool or start recording new sales.</p>
-            </div>
-            
-            <div class="process-step">
-                <div class="step-number">4</div>
-                <h3 class="step-title">Track & Analyze</h3>
-                <p class="step-desc">Monitor your sales performance and gain insights to grow your business.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="cta-section">
-    <div class="cta-container">
-        <h2 class="cta-title">Ready to Streamline Your Sales?</h2>
-        <p class="cta-text">Join businesses that are already using MoMetriX DataHub to manage their sales and grow their revenue.</p>
-        <a href="{{ url_for('auth.register') }}" class="cta-btn">Start Free Today</a>
-    </div>
-</section>
-{% endblock %} 

@@ -7,7 +7,7 @@ Congratulations! Your request to join {{ invite.company.company_name }} as a mod
 Your Role Details:
 - Company: {{ invite.company.company_name }}
 - Role: Moderator
-- Permissions: {% if invite.role_permissions == 'data_entry' %}Data Entry Only{% elif invite.role_permissions == 'daily_sales' %}Data Entry + Daily Sales View{% elif invite.role_permissions == 'full_view' %}Full Access (All Data){% endif %}
+- Permissions: {% if invite.role_permissions == 'data_entry' %}Data Entry Only{% elif invite.role_permissions == 'daily_sales' %}Data Entry + Daily Sales View{% elif invite.role_permissions == 'full_access' %}Full Access{% endif %}
 
 To complete your registration, please follow these steps:
 

@@ -33,7 +33,7 @@
                                             Data Entry Only
                                         {% elif invite.role_permissions == 'daily_sales' %}
                                             Data Entry + Daily Sales View
-                                        {% elif invite.role_permissions == 'full_view' %}
+                                        {% elif invite.role_permissions == 'full_access' %}
                                             Full Access (All Data)
                                         {% else %}
                                             {{ invite.role_permissions|title }}

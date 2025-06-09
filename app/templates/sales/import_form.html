@@ -4,46 +4,77 @@
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-upload mr-2"></i>
+        <div class="col-md-10">
+            <div class="import-card">
+                <div class="import-header">
+                    <h2 class="import-title">
+                        <i class="fas fa-upload mr-3"></i>
                         Import Sales Data
-                    </h3>
-                    <div class="card-tools">
-                        <a href="{{ url_for('sales.download_import_template') }}" class="btn btn-success btn-sm">
+                    </h2>
+                    <div class="import-actions">
+                        <a href="{{ url_for('sales.download_import_template') }}" class="btn btn-success">
                             <i class="fas fa-download"></i> Download Template
                         </a>
-                        <a href="{{ url_for('sales.index') }}" class="btn btn-secondary btn-sm">
+                        <a href="{{ url_for('sales.index') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Back to Sales
                         </a>
                     </div>
                 </div>
                 
-                <div class="card-body">
+                <div class="import-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <form action="{{ url_for('sales.import_sales') }}" method="POST" enctype="multipart/form-data" id="importForm">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                
-                                <div class="form-group">
-                                    <label for="csv_file">Select CSV File</label>
-                                    <input type="file" class="form-control-file" id="csv_file" name="csv_file" accept=".csv" required>
-                                    <small class="form-text text-muted">
-                                        Choose a CSV file with your sales data. Maximum file size: 10MB
-                                    </small>
+                            <!-- File Upload Method -->
+                            <div class="method-card">
+                                <div class="method-header">
+                                    <h4 class="method-title"><i class="fas fa-upload"></i> Method 1: Upload CSV File</h4>
                                 </div>
-                                
-                                <div class="form-group">
-                                    <button type="submit" name="action" value="preview" class="btn btn-primary btn-block">
-                                        <i class="fas fa-eye"></i> Preview Data
-                                    </button>
-                                    <small class="form-text text-muted">
-                                        Preview your data before importing to check for errors
-                                    </small>
+                                <div class="method-body">
+                                    <form action="{{ url_for('sales.import_sales') }}" method="POST" enctype="multipart/form-data" id="importForm">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        
+                                        <div class="form-group">
+                                            <label for="csv_file">Select CSV File</label>
+                                            <input type="file" class="form-control-file" id="csv_file" name="csv_file" accept=".csv">
+                                            <small class="form-text text-muted">
+                                                Choose a CSV file with your sales data. Maximum file size: 10MB
+                                            </small>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <button type="submit" name="action" value="preview" class="btn btn-primary btn-block">
+                                                <i class="fas fa-eye"></i> Preview Data
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
-                            </form>
+                            </div>
+                            
+                            <!-- Text Input Method -->
+                            <div class="method-card">
+                                <div class="method-header">
+                                    <h4 class="method-title"><i class="fas fa-paste"></i> Method 2: Paste CSV Content</h4>
+                                </div>
+                                <div class="method-body">
+                                    <form action="{{ url_for('sales.import_sales') }}" method="POST" id="pasteForm">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        
+                                        <div class="form-group">
+                                            <label for="csv_content">Paste CSV Content</label>
+                                            <textarea class="form-control" id="csv_content" name="csv_content" rows="8" placeholder="Paste your CSV content here...&#10;sale_date,store_name,product_category,product_name,quantity,total,card_amount,cash_amount,notes&#10;2025-01-01,Main Store,Electronics,Phone,1,100.00,100.00,0.00,"></textarea>
+                                            <small class="form-text text-muted">
+                                                Copy and paste your CSV content directly into this text area
+                                            </small>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <button type="submit" name="action" value="preview" class="btn btn-success btn-block">
+                                                <i class="fas fa-eye"></i> Preview Pasted Data
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="col-md-6">
@@ -88,54 +119,340 @@
     </div>
 </div>
 
+<style>
+.import-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: none;
+}
+
+.import-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.import-title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.import-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.import-body {
+    padding: 2rem;
+}
+
+.method-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.method-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+}
+
+.method-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.method-title {
+    margin: 0;
+    color: #495057;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.method-title i {
+    color: #667eea;
+    margin-right: 0.5rem;
+}
+
+.method-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control-file {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    background: white;
+    transition: all 0.3s ease;
+    color: #495057 !important;
+}
+
+.form-control-file::-webkit-input-placeholder {
+    color: #495057 !important;
+}
+
+/* Fix for file input "no file selected" text */
+input[type="file"] {
+    color: #495057 !important;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    margin-right: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+input[type="file"]::-moz-file-upload-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    margin-right: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.form-control-file:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn {
+    border-radius: 25px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+}
+
+.btn-block {
+    width: 100%;
+    justify-content: center;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+    padding: 1.5rem;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0c5460 !important;
+    border: 1px solid #b8daff;
+}
+
+.alert-info h5, .alert-info p, .alert-info ul, .alert-info li {
+    color: #0c5460 !important;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404 !important;
+    border: 1px solid #ffeaa7;
+}
+
+.alert-warning h5, .alert-warning p, .alert-warning ul, .alert-warning li {
+    color: #856404 !important;
+}
+
+.alert h5 {
+    color: inherit !important;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.alert ul {
+    margin-bottom: 1rem;
+}
+
+.alert li {
+    margin-bottom: 0.5rem;
+}
+
+.alert strong {
+    color: inherit !important;
+}
+
+.form-text {
+    font-size: 0.875rem;
+    color: #6c757d !important;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .import-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .import-actions {
+        justify-content: center;
+    }
+    
+    .import-body {
+        padding: 1rem;
+    }
+    
+    .method-body {
+        padding: 1rem;
+    }
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('csv_file');
-    const form = document.getElementById('importForm');
+    const fileForm = document.getElementById('importForm');
+    const pasteForm = document.getElementById('pasteForm');
+    const csvTextarea = document.getElementById('csv_content');
     
     // File validation
-    fileInput.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-            // Check file size (10MB limit)
-            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
-            if (file.size > maxSize) {
-                alert('File size must be less than 10MB');
-                this.value = '';
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                // Check file size (10MB limit)
+                const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+                if (file.size > maxSize) {
+                    alert('File size must be less than 10MB');
+                    this.value = '';
+                    return;
+                }
+                
+                // Check file extension
+                const fileName = file.name.toLowerCase();
+                if (!fileName.endsWith('.csv')) {
+                    alert('Please select a CSV file');
+                    this.value = '';
+                    return;
+                }
+            }
+        });
+    }
+    
+    // File form submission handling
+    if (fileForm) {
+        fileForm.addEventListener('submit', function(e) {
+            const file = fileInput.files[0];
+            if (!file) {
+                e.preventDefault();
+                alert('Please select a CSV file');
                 return;
             }
             
-            // Check file extension
-            const fileName = file.name.toLowerCase();
-            if (!fileName.endsWith('.csv')) {
-                alert('Please select a CSV file');
-                this.value = '';
+            // Show loading state
+            const submitBtn = fileForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            submitBtn.disabled = true;
+            
+            // Re-enable button after a delay (in case of validation errors)
+            setTimeout(function() {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 5000);
+        });
+    }
+    
+    // Paste form submission handling
+    if (pasteForm) {
+        pasteForm.addEventListener('submit', function(e) {
+            const csvContent = csvTextarea.value.trim();
+            if (!csvContent) {
+                e.preventDefault();
+                alert('Please paste CSV content into the text area');
                 return;
             }
-        }
-    });
-    
-    // Form submission handling
-    form.addEventListener('submit', function(e) {
-        const file = fileInput.files[0];
-        if (!file) {
-            e.preventDefault();
-            alert('Please select a CSV file');
-            return;
-        }
-        
-        // Show loading state
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        submitBtn.disabled = true;
-        
-        // Re-enable button after a delay (in case of validation errors)
-        setTimeout(function() {
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }, 5000);
-    });
+            
+            // Basic validation - check if it looks like CSV
+            const lines = csvContent.split('\n');
+            if (lines.length < 2) {
+                e.preventDefault();
+                alert('CSV content must have at least a header row and one data row');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = pasteForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            submitBtn.disabled = true;
+            
+            // Re-enable button after a delay (in case of validation errors)
+            setTimeout(function() {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 5000);
+        });
+    }
 });
 </script>
 {% endblock %} 

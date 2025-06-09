@@ -1,39 +1,87 @@
 {% extends "base.html" %}
 
-{% block title %}Data Analysis Hub - Support{% endblock %}
+{% block title %}MoMetriX DataHub - Support{% endblock %}
 
 {% block extra_css %}
 <style>
+    /* Mobile-First Design */
+    * {
+        box-sizing: border-box;
+    }
+
     .support-container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 4rem 2rem;
+        padding: 2rem 1rem;
+    }
+    
+    @media (min-width: 768px) {
+        .support-container {
+            padding: 4rem 2rem;
+        }
     }
     
     .support-header {
         text-align: center;
-        margin-bottom: 4rem;
+        margin-bottom: 3rem;
+    }
+    
+    @media (min-width: 768px) {
+        .support-header {
+            margin-bottom: 4rem;
+        }
     }
     
     .support-header h1 {
-        font-size: 3rem;
-        color: var(--primary-color);
+        font-size: 2.5rem;
+        color: var(--text-color);
         margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    @media (min-width: 768px) {
+        .support-header h1 {
+            font-size: 3rem;
+        }
     }
     
     .support-header p {
-        color: #cccccc;
         font-size: 1.2rem;
+        color: var(--text-color);
+        opacity: 0.8;
         max-width: 800px;
         margin: 0 auto;
-        line-height: 1.7;
+        line-height: 1.6;
+    }
+    
+    @media (min-width: 768px) {
+        .support-header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            line-height: 1.7;
+            padding: 0;
+        }
     }
     
     .support-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 3rem;
-        margin-bottom: 5rem;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    @media (min-width: 768px) {
+        .support-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+    }
+    
+    @media (min-width: 1200px) {
+        .support-grid {
+            gap: 3rem;
+        }
     }
     
     .support-card {
@@ -54,44 +102,92 @@
     
     .support-card-header {
         background-color: rgba(var(--primary-color-rgb), 0.1);
-        padding: 2rem;
+        padding: 1.5rem;
         text-align: center;
     }
     
+    @media (min-width: 768px) {
+        .support-card-header {
+            padding: 2rem;
+        }
+    }
+    
     .support-card-icon {
-        font-size: 3rem;
+        font-size: 2.5rem;
         color: var(--primary-color);
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    @media (min-width: 768px) {
+        .support-card-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
     }
     
     .support-card-title {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         color: #ffffff;
-        margin-bottom: 1rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    @media (min-width: 768px) {
+        .support-card-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
     }
     
     .support-card-description {
         color: #cccccc;
-        font-size: 1.1rem;
-        line-height: 1.7;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    @media (min-width: 768px) {
+        .support-card-description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
     }
     
     .support-card-body {
-        padding: 2rem;
+        padding: 1.5rem;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
     }
     
+    @media (min-width: 768px) {
+        .support-card-body {
+            padding: 2rem;
+        }
+    }
+    
     .support-card-content {
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         flex-grow: 1;
+    }
+    
+    @media (min-width: 768px) {
+        .support-card-content {
+            margin-bottom: 2rem;
+        }
     }
     
     .support-card-content p {
         color: #cccccc;
-        line-height: 1.7;
-        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+    
+    @media (min-width: 768px) {
+        .support-card-content p {
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
     }
     
     .support-card-action {
@@ -100,7 +196,7 @@
     
     .support-card-btn {
         display: inline-block;
-        padding: 0.8rem 1.5rem;
+        padding: 1rem 2rem;
         background-color: var(--primary-color);
         color: #000;
         font-weight: 600;
@@ -109,126 +205,276 @@
         transition: all 0.3s ease;
         border: none;
         cursor: pointer;
+        width: 100%;
+        max-width: 250px;
+        font-size: 1rem;
+        min-height: 44px;
+        text-align: center;
     }
     
-    .support-card-btn:hover {
-        background-color: var(--primary-color-light);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(var(--primary-color-rgb), 0.3);
+    @media (min-width: 768px) {
+        .support-card-btn {
+            padding: 0.8rem 1.5rem;
+            width: auto;
+        }
     }
     
     .faq-section {
-        margin-top: 6rem;
+        margin-bottom: 4rem;
     }
     
-    .faq-title {
-        font-size: 2.5rem;
-        color: var(--primary-color);
+    @media (min-width: 768px) {
+        .faq-section {
+            margin-top: 6rem;
+        }
+    }
+    
+    .faq-section h2 {
+        font-size: 2.2rem;
+        color: var(--text-color);
         text-align: center;
-        margin-bottom: 3rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
     }
     
-    .faq-list {
-        max-width: 900px;
-        margin: 0 auto;
+    .faq-section > p {
+        text-align: center;
+        color: var(--text-color);
+        opacity: 0.8;
+        margin-bottom: 3rem;
+        font-size: 1.1rem;
+    }
+    
+    .faq-categories {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .faq-category {
+        background: var(--card-bg);
+        border: 1px solid var(--primary-color);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .faq-category h3 {
+        background: var(--surface-color);
+        color: var(--text-color);
+        padding: 1.5rem;
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-bottom: 1px solid var(--primary-color);
+    }
+    
+    .faq-category h3 i {
+        color: var(--primary-color);
+    }
+    
+    .faq-items {
+        padding: 0;
     }
     
     .faq-item {
-        background-color: var(--card-bg);
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-        overflow: hidden;
+        border-bottom: 1px solid var(--primary-color);
+    }
+    
+    .faq-item:last-child {
+        border-bottom: none;
     }
     
     .faq-question {
         padding: 1.5rem;
         cursor: pointer;
-        font-size: 1.2rem;
-        color: #ffffff;
-        font-weight: 600;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: background-color 0.3s ease;
     }
     
     .faq-question:hover {
-        background-color: rgba(255, 255, 255, 0.05);
+        background: rgba(var(--primary-color-rgb), 0.1);
+    }
+    
+    .faq-question h4 {
+        color: var(--text-color);
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        flex: 1;
     }
     
     .faq-question i {
-        transition: transform 0.3s ease;
-    }
-    
-    .faq-answer {
-        padding: 0;
-        max-height: 0;
-        overflow: hidden;
-        transition: all 0.3s ease;
-    }
-    
-    .faq-answer-content {
-        padding: 1.5rem;
-        color: #cccccc;
-        line-height: 1.7;
-    }
-    
-    .faq-item.active .faq-question {
         color: var(--primary-color);
+        transition: transform 0.3s ease;
+        font-size: 0.9rem;
     }
     
     .faq-item.active .faq-question i {
         transform: rotate(180deg);
     }
     
+    .faq-answer {
+        padding: 0 1.5rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: var(--surface-color);
+    }
+    
     .faq-item.active .faq-answer {
-        max-height: 1000px;
+        padding: 1.5rem;
+        max-height: 200px;
+    }
+    
+    .faq-answer p {
+        color: var(--text-color);
+        opacity: 0.9;
+        line-height: 1.6;
+        margin: 0;
+    }
+    
+    .contact-section {
+        background: var(--surface-color);
+        border: 1px solid var(--primary-color);
+        border-radius: 12px;
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+    
+    .contact-section h2 {
+        font-size: 2rem;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+    
+    .contact-section > p {
+        color: var(--text-color);
+        opacity: 0.8;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+    
+    .contact-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+    
+    .contact-option {
+        background: var(--card-bg);
+        border: 1px solid var(--primary-color);
+        border-radius: 8px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .contact-option:hover {
+        transform: translateY(-3px);
+        border-color: var(--secondary-color);
+    }
+    
+    .contact-option i {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .contact-option h3 {
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    
+    .contact-option p {
+        color: var(--text-color);
+        opacity: 0.8;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+    
+    .contact-btn {
+        background: transparent;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+    
+    .contact-btn:hover {
+        background: var(--primary-color);
+        color: var(--bg-color);
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 767px) {
+        .support-container {
+            padding: 1rem 0.5rem;
+        }
+        
+        .support-header h1 {
+            font-size: 2rem;
+        }
+        
+        .faq-question {
+            padding: 1rem;
+        }
+        
+        .faq-question h4 {
+            font-size: 1rem;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 1rem;
+        }
+        
+        .contact-section {
+            padding: 2rem 1rem;
+        }
+        
+        .contact-options {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="support-container">
+    <!-- Header -->
     <div class="support-header">
-        <h1>Support Center</h1>
-        <p>We're here to help you get the most out of our platform. Choose from the options below or search for answers in our FAQ section.</p>
+        <h1>Support & Help Center</h1>
+        <p>Find answers to common questions and get the help you need to make the most of MoMetriX DataHub</p>
     </div>
-    
+
+    <!-- Support Options Grid -->
     <div class="support-grid">
-        <div class="support-card">
-            <div class="support-card-header">
-                <div class="support-card-icon">
-                    <i class="fas fa-life-ring"></i>
-                </div>
-                <h3 class="support-card-title">Technical Support</h3>
-                <p class="support-card-description">Get help with technical issues</p>
-            </div>
-            <div class="support-card-body">
-                <div class="support-card-content">
-                    <p>Experiencing technical difficulties with our platform? Our support team is ready to help you resolve any issues you encounter.</p>
-                    <p>Response time: 24-48 hours</p>
-                </div>
-                <div class="support-card-action">
-                    <a href="mailto:mmtxhelp@gmail.com" class="support-card-btn">Contact Technical Support</a>
-                </div>
-            </div>
-        </div>
-        
         <div class="support-card">
             <div class="support-card-header">
                 <div class="support-card-icon">
                     <i class="fas fa-book"></i>
                 </div>
                 <h3 class="support-card-title">Documentation</h3>
-                <p class="support-card-description">Learn how to use our platform</p>
+                <p class="support-card-description">Comprehensive guides and tutorials</p>
             </div>
             <div class="support-card-body">
                 <div class="support-card-content">
-                    <p>Our comprehensive documentation provides step-by-step guides, tutorials, and explanations for all features of our platform.</p>
-                    <p>Available 24/7</p>
+                    <p>Access detailed guides, step-by-step tutorials, and comprehensive documentation for all MoMetriX DataHub features.</p>
                 </div>
                 <div class="support-card-action">
-                    <a href="{{ url_for('documentation.index') }}" class="support-card-btn">Browse Documentation</a>
+                    <a href="{{ url_for('documentation.index') }}" class="support-card-btn">View Documentation</a>
                 </div>
             </div>
         </div>
@@ -236,107 +482,270 @@
         <div class="support-card">
             <div class="support-card-header">
                 <div class="support-card-icon">
-                    <i class="fas fa-comment-dots"></i>
+                    <i class="fas fa-headset"></i>
                 </div>
-                <h3 class="support-card-title">Community Forum</h3>
-                <p class="support-card-description">Connect with other users</p>
+                <h3 class="support-card-title">Contact Support</h3>
+                <p class="support-card-description">Get personalized assistance</p>
             </div>
             <div class="support-card-body">
                 <div class="support-card-content">
-                    <p>Join our community forum to connect with other users, share tips, and learn from their experiences with our platform.</p>
-                    <p>Peer-to-peer support</p>
+                    <p>Need help with your account, have questions, or need technical assistance? Our support team is here to help.</p>
                 </div>
                 <div class="support-card-action">
-                    <a href="{{ url_for('qa.index') }}" class="support-card-btn">Visit Forum</a>
+                    <a href="{{ url_for('contact.index') }}" class="support-card-btn">Contact Us</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="support-card">
+            <div class="support-card-header">
+                <div class="support-card-icon">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <h3 class="support-card-title">Feature Demo</h3>
+                <p class="support-card-description">See all features in action</p>
+            </div>
+            <div class="support-card-body">
+                <div class="support-card-content">
+                    <p>Watch our interactive demo to see how MoMetriX DataHub can streamline your business operations and analytics.</p>
+                </div>
+                <div class="support-card-action">
+                    <a href="{{ url_for('features.demo') }}" class="support-card-btn">Watch Demo</a>
                 </div>
             </div>
         </div>
     </div>
-    
+
+    <!-- FAQ Section -->
     <div class="faq-section">
-        <h2 class="faq-title">Frequently Asked Questions</h2>
+        <h2>Frequently Asked Questions</h2>
+        <p>Quick answers to the most common questions about MoMetriX DataHub</p>
         
-        <div class="faq-list">
-            <div class="faq-item">
-                <div class="faq-question">
-                    How do I reset my password? <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        To reset your password, click on the "Forgot Password" link on the login page. Enter your email address, and we'll send you instructions to create a new password.
+        <div class="faq-categories">
+            <div class="faq-category">
+                <h3><i class="fas fa-rocket"></i> Getting Started</h3>
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>How do I set up my company and first store?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>After creating your account, go to Company Settings to add your business information. Then navigate to Stores and click "Add New Store" to create your first location with address and contact details.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>What's the best way to organize my products?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Start by creating categories that match your business (e.g., Electronics, Clothing, Home & Garden). Then add products with unique SKUs, names, and base prices. This organization helps with analytics and reporting.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>Can I import my existing sales data?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes! You can import sales data via CSV files. The system will automatically create missing products during import. Make sure your CSV includes product names/SKUs, quantities, prices, and sale dates.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    How can I invite team members? <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        To invite team members, go to your account settings and select "Team Management." Click on "Invite User" and enter their email address along with their role. They'll receive an invitation email with instructions to join.
+
+            <div class="faq-category">
+                <h3><i class="fas fa-users"></i> Team Management</h3>
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>How does the permission system work?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Our simplified system has 3 settings: (1) Access Level - "Add & See Daily Sales" or "See Everything", (2) Date Range - "Current Day Only" or "All Time", (3) Store Access - specific stores or all locations.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>How do team members join my company?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Team members submit join requests which you can review and approve in the Team → Join Requests section. Once approved, you can set their permissions using our 3-level system.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>Can I limit which stores a team member can access?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes! In the permission settings, you can select specific stores for each team member or give them access to all locations. This is perfect for businesses with multiple locations.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    What payment methods do you accept? <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        We accept all major credit cards (Visa, MasterCard, American Express) and PayPal. For annual enterprise plans, we also offer invoice payment options.
+
+            <div class="faq-category">
+                <h3><i class="fas fa-chart-line"></i> Sales & Analytics</h3>
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>What analytics and reports are available?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>You can view sales trends, top-performing products, store comparisons, and custom date range analysis. All data can be filtered by store, category, or product and exported to CSV for further analysis.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>How do I add sales data quickly?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Use the Sales → Add Sale form for individual transactions, or import multiple sales at once using CSV files. The system automatically calculates totals and validates data for accuracy.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>Can I export my sales data and reports?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes! You can export sales data, analytics reports, and product information to CSV format. Use filters to export only the data you need for specific time periods or stores.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    How secure is my data? <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        We take data security seriously. All data is encrypted in transit and at rest. We use industry-standard security measures, regular security audits, and strict access controls to protect your information.
+
+            <div class="faq-category">
+                <h3><i class="fas fa-cogs"></i> Technical & Setup</h3>
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>Is MoMetriX DataHub mobile-friendly?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Absolutely! The platform is fully responsive and works perfectly on smartphones, tablets, and desktops. You can add sales, view analytics, and manage your business from any device.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>What file formats are supported for data import?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We support CSV (comma-separated values) files for importing sales data, products, and categories. The system includes validation to ensure data quality and will highlight any issues.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>Can I customize data fields for my business needs?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes! In Company Settings → Data Schema, you can configure custom fields, validation rules, and data types to match your specific business requirements.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>How secure is my business data?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We use enterprise-grade security with encrypted data transmission, secure user authentication, and role-based access controls. Your data is protected with automatic backups and privacy controls.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    Can I export my data? <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        Yes, you can export your data in various formats including CSV, Excel, and PDF. Go to the dashboard, select the data you want to export, and click on the "Export" button.
+
+            <div class="faq-category">
+                <h3><i class="fas fa-exclamation-triangle"></i> Troubleshooting</h3>
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>My CSV import is failing. What should I check?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Ensure your CSV has all required columns (product, quantity, price, date), check date formats match your system settings, verify product names exist in your catalog, and remove special characters from numeric fields.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>A team member can't see certain data. Why?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Check their permission settings: verify their access level, confirm date range permissions, and ensure they have access to the relevant stores. Contact an admin to update permissions if needed.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>Analytics charts are empty. What's wrong?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Check the selected date range, verify store and category filters are correct, ensure you have permission to view the data, and confirm sales data exists for the selected time period.</p>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Still Need Help Section -->
+    <div class="contact-section">
+        <h2>Still Need Help?</h2>
+        <p>Can't find what you're looking for? Our support team is ready to assist you personally.</p>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{{ url_for('contact.index') }}" class="support-card-btn" style="display: inline-block; margin: 0 1rem;">
+                <i class="fas fa-envelope" style="margin-right: 0.5rem;"></i>Contact Support Team
+            </a>
+            <a href="mailto:support@mometrix-datahub.com" class="support-card-btn" style="display: inline-block; margin: 0 1rem; background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color);">
+                <i class="fas fa-phone" style="margin-right: 0.5rem;"></i>Email Direct
+            </a>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // FAQ accordion functionality
-        const faqItems = document.querySelectorAll('.faq-item');
-        
-        faqItems.forEach(item => {
-            const question = item.querySelector('.faq-question');
+// FAQ Toggle Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', function() {
+            const faqItem = this.parentElement;
+            const isActive = faqItem.classList.contains('active');
             
-            question.addEventListener('click', function() {
-                // Toggle current item
-                item.classList.toggle('active');
-                
-                // Close other items
-                faqItems.forEach(otherItem => {
-                    if (otherItem !== item && otherItem.classList.contains('active')) {
-                        otherItem.classList.remove('active');
-                    }
-                });
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
             });
+            
+            // Toggle current item
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
         });
     });
+});
 </script>
 {% endblock %} 

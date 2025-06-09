@@ -22,10 +22,10 @@
                 <h2>Product Information</h2>
             </div>
             <div class="card-body">
-                <div class="detail-item">
-                    <div class="detail-label">Category</div>
-                    <div class="detail-value">{{ product.category.name }}</div>
-                </div>
+                            <div class="detail-item">
+                <div class="detail-label">Category</div>
+                <div class="detail-value">{{ product.category.name if product.category else 'No Category' }}</div>
+            </div>
                 
                 <div class="detail-item">
                     <div class="detail-label">Base Price</div>

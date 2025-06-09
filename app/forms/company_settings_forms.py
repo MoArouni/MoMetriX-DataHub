@@ -32,29 +32,23 @@ class CompanyDetailsForm(FlaskForm):
     submit = SubmitField('Update Company Details')
 
 class UserPermissionsForm(FlaskForm):
-    """Form for managing user permissions"""
+    """Form for managing user permissions - 3 simple settings"""
     user_id = HiddenField('User ID', validators=[DataRequired()])
     
-    # Store access permissions
-    allowed_stores = MultiCheckboxField('Store Access', coerce=int)
-    
-    # Data range permissions
-    data_range_access = SelectField('Sales Data Access Range', choices=[
-        ('current_day', 'Current Day Only'),
-        ('week', 'Past Week'),
-        ('month', 'Past Month'),
-        ('all_time', 'All Historical Data')
+    # 1. What can they do
+    access_level = SelectField('What can they do?', choices=[
+        ('daily_sales', 'Add & See Daily Sales'),
+        ('full_access', 'See Everything')
     ], validators=[DataRequired()])
     
-    # Permission checkboxes
-    can_view_sales = BooleanField('Can View Sales Data')
-    can_add_sales = BooleanField('Can Add Sales')
-    can_edit_sales = BooleanField('Can Edit Sales')
-    can_delete_sales = BooleanField('Can Delete Sales')
-    can_view_analytics = BooleanField('Can View Analytics & Reports')
-    can_export_data = BooleanField('Can Export Data')
-    can_manage_products = BooleanField('Can Manage Products')
-    can_manage_stores = BooleanField('Can Manage Stores')
+    # 2. Date range for seeing data
+    data_range = SelectField('Date range for seeing data', choices=[
+        ('current_day', 'Current Day Only'),
+        ('all_time', 'All Time')
+    ], validators=[DataRequired()])
+    
+    # 3. Store access permissions
+    allowed_stores = MultiCheckboxField('Which stores can they access?', coerce=int)
     
     submit = SubmitField('Update Permissions')
     

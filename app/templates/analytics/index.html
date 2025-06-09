@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard - MoMetriX DataHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .analytics-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .analytics-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .analytics-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+    
+    .analytics-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 0;
+    }
+    
+    .date-filter {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .date-filter form {
+        display: flex;
+        gap: 1rem;
+        align-items: end;
+        flex-wrap: wrap;
+    }
+    
+    .date-filter .form-group {
+        flex: 1;
+        min-width: 150px;
+    }
+    
+    .date-filter label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .date-filter input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid var(--primary-color);
+        border-radius: 8px;
+        background: var(--surface-color);
+        color: var(--text-color);
+    }
+    
+    .date-filter button {
+        padding: 0.75rem 1.5rem;
+        background: var(--primary-color);
+        color: var(--bg-color);
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .date-filter button:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+    
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .metric-card {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--primary-color);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .metric-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-label {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        opacity: 0.8;
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-change {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+    }
+    
+    .metric-change.positive {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+    }
+    
+    .metric-change.negative {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+    
+    .metric-change.neutral {
+        background: rgba(156, 163, 175, 0.2);
+        color: #9ca3af;
+    }
+    
+    .chart-section {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        border: 1px solid var(--primary-color);
+    }
+    
+    .chart-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .chart-container {
+        text-align: center;
+    }
+    
+    .chart-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .analytics-nav {
+        background: var(--surface-color);
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        border: 1px solid var(--primary-color);
+    }
+    
+    .analytics-nav-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .analytics-nav-item {
+        display: block;
+        padding: 1rem;
+        background: var(--card-bg);
+        color: var(--text-color);
+        text-decoration: none;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+    
+    .analytics-nav-item:hover {
+        border-color: var(--primary-color);
+        background: rgba(var(--primary-color-rgb), 0.1);
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: var(--text-color);
+    }
+    
+    .analytics-nav-item i {
+        display: block;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+    }
+    
+    .no-data {
+        text-align: center;
+        padding: 3rem;
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--primary-color);
+    }
+    
+    .no-data i {
+        font-size: 4rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .no-data h3 {
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+    
+    .no-data p {
+        color: var(--text-color);
+        opacity: 0.8;
+    }
+    
+    @media (max-width: 768px) {
+        .analytics-container {
+            padding: 1rem 0.5rem;
+        }
+        
+        .analytics-header h1 {
+            font-size: 2rem;
+        }
+        
+        .date-filter form {
+            flex-direction: column;
+        }
+        
+        .metrics-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .analytics-nav-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <!-- Header -->
+    <div class="analytics-header">
+        <h1><i class="fas fa-chart-line"></i> Analytics Dashboard</h1>
+        <p>Comprehensive insights into your business performance</p>
+    </div>
+
+    <!-- Date Filter -->
+    <div class="date-filter">
+        <form method="GET">
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">
+                    <i class="fas fa-search"></i> Update Data
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if no_data %}
+    <div class="no-data">
+        <i class="fas fa-chart-bar"></i>
+        <h3>No Data Available</h3>
+        <p>No sales data found for the selected period. Try adjusting your date range or add some sales data to see analytics.</p>
+        <a href="{{ url_for('sales.add') }}" class="btn btn-primary" style="margin-top: 1rem;">
+            <i class="fas fa-plus"></i> Add Sales Data
+        </a>
+    </div>
+    {% else %}
+
+    <!-- Key Metrics -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="metric-value">${{ "{:,.2f}".format(dashboard.total_revenue) }}</div>
+            <div class="metric-label">Total Revenue</div>
+            <div class="metric-change {{ 'positive' if dashboard.daily_change > 0 else 'negative' if dashboard.daily_change < 0 else 'neutral' }}">
+                {% if dashboard.daily_change > 0 %}
+                    <i class="fas fa-arrow-up"></i> +{{ dashboard.daily_change }}%
+                {% elif dashboard.daily_change < 0 %}
+                    <i class="fas fa-arrow-down"></i> {{ dashboard.daily_change }}%
+                {% else %}
+                    <i class="fas fa-minus"></i> 0%
+                {% endif %}
+                vs yesterday
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="metric-value">{{ dashboard.total_transactions }}</div>
+            <div class="metric-label">Total Transactions</div>
+            <div class="metric-change neutral">
+                <i class="fas fa-chart-bar"></i> All time
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <div class="metric-value">${{ "{:,.2f}".format(dashboard.avg_transaction) }}</div>
+            <div class="metric-label">Average Transaction</div>
+            <div class="metric-change neutral">
+                <i class="fas fa-calculator"></i> Average
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="metric-value">${{ "{:,.2f}".format(dashboard.today_sales) }}</div>
+            <div class="metric-label">Today's Sales</div>
+            <div class="metric-change {{ 'positive' if dashboard.daily_change > 0 else 'negative' if dashboard.daily_change < 0 else 'neutral' }}">
+                vs ${{ "{:,.2f}".format(dashboard.yesterday_sales) }} yesterday
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-calendar-week"></i>
+            </div>
+            <div class="metric-value">${{ "{:,.2f}".format(dashboard.this_week_sales) }}</div>
+            <div class="metric-label">This Week</div>
+            <div class="metric-change {{ 'positive' if dashboard.weekly_change > 0 else 'negative' if dashboard.weekly_change < 0 else 'neutral' }}">
+                {% if dashboard.weekly_change > 0 %}
+                    <i class="fas fa-arrow-up"></i> +{{ dashboard.weekly_change }}%
+                {% elif dashboard.weekly_change < 0 %}
+                    <i class="fas fa-arrow-down"></i> {{ dashboard.weekly_change }}%
+                {% else %}
+                    <i class="fas fa-minus"></i> 0%
+                {% endif %}
+                vs last week
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="metric-value">${{ "{:,.2f}".format(dashboard.this_month_sales) }}</div>
+            <div class="metric-label">This Month</div>
+            <div class="metric-change neutral">
+                <i class="fas fa-calendar"></i> Month to date
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Highlights -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="metric-value">{{ dashboard.top_product }}</div>
+            <div class="metric-label">Top Product</div>
+            <div class="metric-change positive">
+                <i class="fas fa-trophy"></i> Best seller
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-store"></i>
+            </div>
+            <div class="metric-value">{{ dashboard.top_store }}</div>
+            <div class="metric-label">Top Store</div>
+            <div class="metric-change positive">
+                <i class="fas fa-crown"></i> Highest revenue
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Chart -->
+    {% if dashboard.summary_chart %}
+    <div class="chart-section">
+        <h2 class="chart-title">Performance Overview</h2>
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ dashboard.summary_chart }}" alt="Performance Overview Chart">
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Analytics Navigation -->
+    <div class="analytics-nav">
+        <h3 style="text-align: center; color: var(--text-color); margin-bottom: 1.5rem;">
+            <i class="fas fa-chart-pie"></i> Detailed Analytics
+        </h3>
+        <div class="analytics-nav-grid">
+            <a href="{{ url_for('analytics.stores') }}" class="analytics-nav-item">
+                <i class="fas fa-store"></i>
+                <strong>Store Analytics</strong>
+                <small>Revenue and performance by location</small>
+            </a>
+            
+            <a href="{{ url_for('analytics.categories') }}" class="analytics-nav-item">
+                <i class="fas fa-tags"></i>
+                <strong>Category Analytics</strong>
+                <small>Product category performance</small>
+            </a>
+            
+            <a href="{{ url_for('analytics.products') }}" class="analytics-nav-item">
+                <i class="fas fa-box"></i>
+                <strong>Product Analytics</strong>
+                <small>Individual product insights</small>
+            </a>
+            
+            <a href="{{ url_for('analytics.payments') }}" class="analytics-nav-item">
+                <i class="fas fa-credit-card"></i>
+                <strong>Payment Analytics</strong>
+                <small>Cash vs card analysis</small>
+            </a>
+            
+            <a href="{{ url_for('analytics.embellishments') }}" class="analytics-nav-item">
+                <i class="fas fa-gem"></i>
+                <strong>Embellishments</strong>
+                <small>Customization performance</small>
+            </a>
+            
+            <a href="{{ url_for('analytics.time_analysis') }}" class="analytics-nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <strong>Time Analysis</strong>
+                <small>Daily and monthly trends</small>
+            </a>
+            
+            <a href="{{ url_for('analytics.reports') }}" class="analytics-nav-item">
+                <i class="fas fa-file-alt"></i>
+                <strong>Reports</strong>
+                <small>Best and worst performers</small>
+            </a>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %} 

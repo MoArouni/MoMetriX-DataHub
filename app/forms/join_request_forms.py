@@ -120,7 +120,7 @@ class AdminDirectInviteForm(FlaskForm):
         ('', 'Select permissions...'),
         ('data_entry', 'Data Entry Only'),
         ('daily_sales', 'Data Entry + Daily Sales View'),
-        ('full_view', 'Full Access (All Data)')
+        ('full_access', 'Full Access')
     ])
     message = TextAreaField('Welcome Message (Optional)', validators=[
         Length(max=500, message='Message cannot exceed 500 characters.')

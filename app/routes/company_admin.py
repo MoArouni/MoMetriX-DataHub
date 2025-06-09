@@ -334,20 +334,34 @@ def review_join_request(request_id):
                 join_request.reviewed_at = datetime.utcnow()
                 join_request.reviewed_by = current_user.id
                 
-                # Create moderator invite
-                invite = ModeratorInvite(
-                    join_request_id=join_request.id,
+                # Create user directly instead of invite
+                user = User(
                     email=join_request.email,
+                    username=join_request.username,
+                    first_name=join_request.first_name,
+                    last_name=join_request.last_name,
+                    role_website='viewer',
                     company_id=join_request.company_id,
-                    role_permissions=role_permissions
+                    role_company='moderator'
                 )
-                db.session.add(invite)
+                user.password = 'temp_password_123'  # They'll need to reset this
+                db.session.add(user)
+                db.session.flush()  # Get user ID
+                
+                # Create permissions with the selected level
+                permissions = UserPermissions(
+                    user_id=user.id,
+                    company_id=join_request.company_id
+                )
+                permissions.set_permission_level(role_permissions)
+                db.session.add(permissions)
                 db.session.commit()
                 
-                # Send invite email
-                send_moderator_invite_email(invite)
+                # Send welcome email with password reset link
+                from app.utils.email import send_password_reset_email
+                send_password_reset_email(user)
                 
-                flash(f'Join request approved! {join_request.full_name} will receive an invitation email.', 'success')
+                flash(f'Join request approved! {join_request.full_name} has been added to your team and will receive a password reset email.', 'success')
                 return redirect(url_for('company_admin.join_requests'))
                 
             except Exception as e:

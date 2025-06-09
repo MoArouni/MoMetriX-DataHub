@@ -145,7 +145,7 @@
                 <strong>Data Entry Only</strong> - You can add and edit data entries
             {% elif invite.role_permissions == 'daily_sales' %}
                 <strong>Data Entry + Daily Sales View</strong> - You can manage data and view daily sales reports
-            {% elif invite.role_permissions == 'full_view' %}
+                                    {% elif invite.role_permissions == 'full_access' %}
                 <strong>Full Access</strong> - You have complete access to all company data and reports
             {% else %}
                 <strong>{{ invite.role_permissions|title }}</strong>

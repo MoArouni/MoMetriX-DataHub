@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+
+{% block title %}Performance Reports - MoMetriX DataHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reports-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .reports-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .reports-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+    
+    .date-filter {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .date-filter form {
+        display: flex;
+        gap: 1rem;
+        align-items: end;
+        flex-wrap: wrap;
+    }
+    
+    .date-filter .form-group {
+        flex: 1;
+        min-width: 150px;
+    }
+    
+    .date-filter label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .date-filter input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid var(--primary-color);
+        border-radius: 8px;
+        background: var(--surface-color);
+        color: var(--text-color);
+    }
+    
+    .date-filter button {
+        padding: 0.75rem 1.5rem;
+        background: var(--primary-color);
+        color: var(--bg-color);
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .report-section {
+        background: var(--card-bg);
+        border: 1px solid var(--primary-color);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .report-header {
+        background: var(--surface-color);
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--primary-color);
+    }
+    
+    .report-header h3 {
+        color: var(--text-color);
+        margin: 0;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .report-content {
+        padding: 1.5rem;
+    }
+    
+    .performance-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    .performance-column {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .column-header {
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .best-header {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+        border: 2px solid #22c55e;
+    }
+    
+    .worst-header {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 2px solid #ef4444;
+    }
+    
+    .performance-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .performance-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        background: var(--surface-color);
+        border-radius: 8px;
+        border: 1px solid var(--primary-color);
+    }
+    
+    .item-name {
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .item-value {
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .nav-back {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: var(--secondary-color);
+        color: var(--bg-color);
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+    }
+    
+    .nav-back:hover {
+        background: var(--primary-color);
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: var(--bg-color);
+    }
+    
+    .no-data {
+        text-align: center;
+        padding: 3rem;
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--primary-color);
+    }
+    
+    .no-data i {
+        font-size: 4rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .reports-container {
+            padding: 1rem 0.5rem;
+        }
+        
+        .reports-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .performance-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .date-filter form {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reports-container">
+    <!-- Back Navigation -->
+    <a href="{{ url_for('analytics.index') }}" class="nav-back">
+        <i class="fas fa-arrow-left"></i> Back to Analytics Dashboard
+    </a>
+
+    <!-- Header -->
+    <div class="reports-header">
+        <h1><i class="fas fa-file-alt"></i> Performance Reports</h1>
+        <p>Best and worst performers across all categories</p>
+    </div>
+
+    <!-- Date Filter -->
+    <div class="date-filter">
+        <form method="GET">
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">
+                    <i class="fas fa-search"></i> Update Reports
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if no_data %}
+    <div class="no-data">
+        <i class="fas fa-chart-bar"></i>
+        <h3>No Data Available</h3>
+        <p>No sales data found for the selected period. Try adjusting your date range or add some sales data to generate reports.</p>
+    </div>
+    {% else %}
+
+    <!-- Reports Grid -->
+    <div class="reports-grid">
+        <!-- Products Performance -->
+        <div class="report-section">
+            <div class="report-header">
+                <h3><i class="fas fa-box"></i> Product Performance</h3>
+            </div>
+            <div class="report-content">
+                <div class="performance-grid">
+                    <div class="performance-column">
+                        <div class="column-header best-header">
+                            <i class="fas fa-trophy"></i> Top Products
+                        </div>
+                        <ul class="performance-list">
+                            {% for product, revenue in reports.best_products.items() %}
+                            <li class="performance-item">
+                                <span class="item-name">{{ product }}</span>
+                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="performance-column">
+                        <div class="column-header worst-header">
+                            <i class="fas fa-exclamation-triangle"></i> Lowest Products
+                        </div>
+                        <ul class="performance-list">
+                            {% for product, revenue in reports.worst_products.items() %}
+                            <li class="performance-item">
+                                <span class="item-name">{{ product }}</span>
+                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Performance -->
+        <div class="report-section">
+            <div class="report-header">
+                <h3><i class="fas fa-tags"></i> Category Performance</h3>
+            </div>
+            <div class="report-content">
+                <div class="performance-grid">
+                    <div class="performance-column">
+                        <div class="column-header best-header">
+                            <i class="fas fa-star"></i> Top Categories
+                        </div>
+                        <ul class="performance-list">
+                            {% for category, revenue in reports.best_categories.items() %}
+                            <li class="performance-item">
+                                <span class="item-name">{{ category }}</span>
+                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="performance-column">
+                        <div class="column-header worst-header">
+                            <i class="fas fa-arrow-down"></i> Lowest Categories
+                        </div>
+                        <ul class="performance-list">
+                            {% for category, revenue in reports.worst_categories.items() %}
+                            <li class="performance-item">
+                                <span class="item-name">{{ category }}</span>
+                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stores Performance -->
+        <div class="report-section">
+            <div class="report-header">
+                <h3><i class="fas fa-store"></i> Store Performance</h3>
+            </div>
+            <div class="report-content">
+                <div class="performance-grid">
+                    <div class="performance-column">
+                        <div class="column-header best-header">
+                            <i class="fas fa-crown"></i> Top Stores
+                        </div>
+                        <ul class="performance-list">
+                            {% for store, revenue in reports.best_stores.items() %}
+                            <li class="performance-item">
+                                <span class="item-name">{{ store }}</span>
+                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="performance-column">
+                        <div class="column-header worst-header">
+                            <i class="fas fa-warning"></i> Lowest Stores
+                        </div>
+                        <ul class="performance-list">
+                            {% for store, revenue in reports.worst_stores.items() %}
+                            <li class="performance-item">
+                                <span class="item-name">{{ store }}</span>
+                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Embellishments Performance -->
+        {% if reports.best_embellishments %}
+        <div class="report-section">
+            <div class="report-header">
+                <h3><i class="fas fa-gem"></i> Embellishment Performance</h3>
+            </div>
+            <div class="report-content">
+                <div class="performance-grid">
+                    <div class="performance-column">
+                        <div class="column-header best-header">
+                            <i class="fas fa-sparkles"></i> Top Embellishments
+                        </div>
+                        <ul class="performance-list">
+                            {% for embellishment, revenue in reports.best_embellishments.items() %}
+                            <li class="performance-item">
+                                <span class="item-name">{{ embellishment }}</span>
+                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="performance-column">
+                        <div class="column-header worst-header">
+                            <i class="fas fa-minus-circle"></i> Lowest Embellishments
+                        </div>
+                        <ul class="performance-list">
+                            {% for embellishment, revenue in reports.worst_embellishments.items() %}
+                            <li class="performance-item">
+                                <span class="item-name">{{ embellishment }}</span>
+                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Day Performance -->
+        <div class="report-section">
+            <div class="report-header">
+                <h3><i class="fas fa-calendar-day"></i> Day Performance</h3>
+            </div>
+            <div class="report-content">
+                <div class="performance-grid">
+                    <div class="performance-column">
+                        <div class="column-header best-header">
+                            <i class="fas fa-sun"></i> Best Days
+                        </div>
+                        <ul class="performance-list">
+                            {% for day, revenue in reports.best_days.items() %}
+                            <li class="performance-item">
+                                <span class="item-name">{{ day }}</span>
+                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="performance-column">
+                        <div class="column-header worst-header">
+                            <i class="fas fa-cloud"></i> Slowest Days
+                        </div>
+                        <ul class="performance-list">
+                            {% for day, revenue in reports.worst_days.items() %}
+                            <li class="performance-item">
+                                <span class="item-name">{{ day }}</span>
+                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %}

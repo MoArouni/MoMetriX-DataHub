@@ -1,0 +1,1111 @@
+{% extends "base.html" %}
+
+{% block title %}Demo - See MoMetriX DataHub in Action{% endblock %}
+
+{% block content %}
+<div class="demo-container">
+    <!-- Hero Section -->
+    <div class="demo-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1><i class="fas fa-play-circle"></i> See MoMetriX DataHub in Action</h1>
+                <p>Experience the complete workflow from setup to insights in this interactive demo</p>
+                <div class="demo-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">5</span>
+                        <span class="stat-label">Main Features</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">Minutes</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Free Demo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline Demo -->
+    <div class="demo-timeline">
+        <div class="container">
+            <div class="timeline-header">
+                <h2>Your Journey with MoMetriX DataHub</h2>
+                <p>Follow this step-by-step journey to see how easy it is to transform your business data</p>
+            </div>
+
+            <!-- Step 1: Setup -->
+            <div class="timeline-step" data-step="1">
+                <div class="step-marker">
+                    <div class="step-number">1</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-rocket"></i> Quick Setup</h3>
+                        <p>Get started in minutes with our intuitive setup process. Add your stores, create product categories, and invite your team members.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-store"></i>
+                                <span>Add multiple stores</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-tags"></i>
+                                <span>Organize products by categories</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-users"></i>
+                                <span>Invite team members</span>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-primary" onclick="showDemo('setup')">
+                                <i class="fas fa-eye"></i> See Setup Demo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen" id="setup-demo">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Store Setup</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="setup-form">
+                                    <div class="form-group">
+                                        <label>Store Name</label>
+                                        <input type="text" value="Downtown Electronics" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Location</label>
+                                        <input type="text" value="123 Main Street" readonly>
+                                    </div>
+                                    <div class="categories-grid">
+                                        <div class="category-card">
+                                            <i class="fas fa-laptop"></i>
+                                            <span>Electronics</span>
+                                        </div>
+                                        <div class="category-card">
+                                            <i class="fas fa-tshirt"></i>
+                                            <span>Clothing</span>
+                                        </div>
+                                        <div class="category-card">
+                                            <i class="fas fa-home"></i>
+                                            <span>Home & Garden</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Data Entry -->
+            <div class="timeline-step" data-step="2">
+                <div class="step-marker">
+                    <div class="step-number">2</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-plus-circle"></i> Easy Data Entry</h3>
+                        <p>Add sales data quickly with our streamlined interface. Import from CSV or enter manually - whatever works best for your workflow.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-keyboard"></i>
+                                <span>Quick manual entry</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-file-csv"></i>
+                                <span>Bulk CSV import</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-mobile-alt"></i>
+                                <span>Mobile-friendly interface</span>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-primary" onclick="showDemo('entry')">
+                                <i class="fas fa-eye"></i> See Data Entry Demo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen" id="entry-demo">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Add Sale</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="entry-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Product</label>
+                                            <select>
+                                                <option>iPhone 15 Pro</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Quantity</label>
+                                            <input type="number" value="2" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Unit Price</label>
+                                            <input type="text" value="$999.00" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Total</label>
+                                            <input type="text" value="$1,998.00" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="quick-actions">
+                                        <button class="btn-quick">Save & Add Another</button>
+                                        <button class="btn-quick">Import CSV</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Team Management -->
+            <div class="timeline-step" data-step="3">
+                <div class="step-marker">
+                    <div class="step-number">3</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-users-cog"></i> Smart Team Management</h3>
+                        <p>Control who sees what with our simplified 3-level permission system. Perfect for businesses of any size.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>3 simple permission levels</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Date range controls</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-store"></i>
+                                <span>Store-specific access</span>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-primary" onclick="showDemo('team')">
+                                <i class="fas fa-eye"></i> See Team Management Demo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen" id="team-demo">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Team Permissions</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="team-management">
+                                    <div class="permission-setting">
+                                        <h4>1. What can they do?</h4>
+                                        <div class="permission-options">
+                                            <div class="option selected">
+                                                <i class="fas fa-calendar-day"></i>
+                                                <span>Add & See Daily Sales</span>
+                                            </div>
+                                            <div class="option">
+                                                <i class="fas fa-crown"></i>
+                                                <span>See Everything</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-setting">
+                                        <h4>2. Date range for seeing data</h4>
+                                        <div class="permission-options">
+                                            <div class="option selected">
+                                                <span>Current Day Only</span>
+                                            </div>
+                                            <div class="option">
+                                                <span>All Time</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-setting">
+                                        <h4>3. Which stores can they access?</h4>
+                                        <div class="stores-list">
+                                            <div class="store-item checked">
+                                                <i class="fas fa-check"></i>
+                                                <span>Downtown Store</span>
+                                            </div>
+                                            <div class="store-item">
+                                                <i class="fas fa-times"></i>
+                                                <span>Mall Location</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Analytics -->
+            <div class="timeline-step" data-step="4">
+                <div class="step-marker">
+                    <div class="step-number">4</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-chart-line"></i> Powerful Analytics</h3>
+                        <p>Transform your data into actionable insights with beautiful charts and comprehensive reports.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Interactive charts</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-filter"></i>
+                                <span>Advanced filtering</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-download"></i>
+                                <span>Export reports</span>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-primary" onclick="showDemo('analytics')">
+                                <i class="fas fa-eye"></i> See Analytics Demo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen" id="analytics-demo">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Sales Analytics</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="analytics-dashboard">
+                                    <div class="stats-row">
+                                        <div class="stat-card">
+                                            <div class="stat-value">$24,580</div>
+                                            <div class="stat-label">Total Sales</div>
+                                            <div class="stat-change positive">+12.5%</div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="stat-value">156</div>
+                                            <div class="stat-label">Orders</div>
+                                            <div class="stat-change positive">+8.3%</div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="stat-value">$157.69</div>
+                                            <div class="stat-label">Avg Order</div>
+                                            <div class="stat-change negative">-2.1%</div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-area">
+                                        <div class="chart-placeholder">
+                                            <div class="chart-bars">
+                                                <div class="bar" style="height: 60%"></div>
+                                                <div class="bar" style="height: 80%"></div>
+                                                <div class="bar" style="height: 45%"></div>
+                                                <div class="bar" style="height: 90%"></div>
+                                                <div class="bar" style="height: 70%"></div>
+                                                <div class="bar" style="height: 85%"></div>
+                                                <div class="bar" style="height: 95%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Growth -->
+            <div class="timeline-step" data-step="5">
+                <div class="step-marker">
+                    <div class="step-number">5</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-info">
+                        <h3><i class="fas fa-rocket"></i> Scale Your Business</h3>
+                        <p>Use insights to make data-driven decisions and grow your business. Export reports, track trends, and optimize performance.</p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-trending-up"></i>
+                                <span>Identify growth opportunities</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-bullseye"></i>
+                                <span>Optimize product performance</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span>Scale across multiple stores</span>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn btn-primary" onclick="showDemo('growth')">
+                                <i class="fas fa-eye"></i> See Growth Demo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="step-visual">
+                        <div class="demo-screen" id="growth-demo">
+                            <div class="screen-header">
+                                <div class="screen-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="screen-title">Business Insights</div>
+                            </div>
+                            <div class="screen-content">
+                                <div class="growth-dashboard">
+                                    <div class="insight-card">
+                                        <div class="insight-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="insight-content">
+                                            <h4>Top Performing Product</h4>
+                                            <p>iPhone 15 Pro generated 35% of total revenue this month</p>
+                                        </div>
+                                    </div>
+                                    <div class="insight-card">
+                                        <div class="insight-icon">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="insight-content">
+                                            <h4>Peak Sales Hours</h4>
+                                            <p>Most sales occur between 2-4 PM on weekdays</p>
+                                        </div>
+                                    </div>
+                                    <div class="insight-card">
+                                        <div class="insight-icon">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                        <div class="insight-content">
+                                            <h4>Growth Trend</h4>
+                                            <p>Revenue increased 23% compared to last quarter</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="demo-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Transform Your Business?</h2>
+                <p>Join thousands of businesses already using MoMetriX DataHub to make data-driven decisions</p>
+                <div class="cta-actions">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket"></i> Start Your Free Trial
+                    </a>
+                    <a href="{{ url_for('contact.index') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-comments"></i> Talk to Sales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Demo Page Styles */
+.demo-container {
+    min-height: 100vh;
+    background: var(--bg-color);
+}
+
+.demo-hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--text-color);
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.demo-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 0.5rem;
+}
+
+.demo-timeline {
+    padding: 4rem 0;
+}
+
+.timeline-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.timeline-header h2 {
+    font-size: 2.2rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.timeline-header p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.timeline-step {
+    display: flex;
+    margin-bottom: 4rem;
+    position: relative;
+}
+
+.timeline-step:nth-child(even) .step-content {
+    flex-direction: row-reverse;
+}
+
+.step-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 2rem;
+    position: relative;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.step-line {
+    width: 3px;
+    height: 200px;
+    background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+    margin-top: 1rem;
+}
+
+.timeline-step:last-child .step-line {
+    display: none;
+}
+
+.step-content {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    flex: 1;
+}
+
+.step-info {
+    flex: 1;
+    max-width: 500px;
+}
+
+.step-info h3 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.step-info p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.step-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.feature-item i {
+    color: var(--secondary-color);
+    width: 20px;
+}
+
+.step-visual {
+    flex: 1;
+    max-width: 500px;
+}
+
+.demo-screen {
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.demo-screen:hover {
+    transform: translateY(-5px);
+}
+
+.screen-header {
+    background: var(--surface-color);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.screen-dots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.screen-dots span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+}
+
+.screen-title {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.screen-content {
+    padding: 1.5rem;
+    background: var(--surface-color);
+}
+
+/* Setup Demo Styles */
+.setup-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.setup-form label {
+    display: block;
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.setup-form input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.category-card {
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-color);
+    font-size: 0.85rem;
+}
+
+.category-card i {
+    display: block;
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Entry Demo Styles */
+.entry-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.entry-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.entry-form label {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.entry-form input,
+.entry-form select {
+    padding: 0.75rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.btn-quick {
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Team Demo Styles */
+.team-management .permission-setting {
+    margin-bottom: 1.5rem;
+}
+
+.team-management h4 {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.permission-options {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.permission-options .option {
+    padding: 0.75rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.6;
+}
+
+.permission-options .option.selected {
+    border-color: var(--secondary-color);
+    background: rgba(3, 218, 198, 0.1);
+    opacity: 1;
+}
+
+.stores-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.store-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    color: var(--text-color);
+    font-size: 0.85rem;
+}
+
+.store-item.checked i {
+    color: var(--secondary-color);
+}
+
+.store-item:not(.checked) i {
+    color: var(--error-color);
+}
+
+/* Analytics Demo Styles */
+.analytics-dashboard .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 0.5rem;
+}
+
+.stat-change {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.stat-change.positive {
+    color: var(--secondary-color);
+}
+
+.stat-change.negative {
+    color: var(--error-color);
+}
+
+.chart-area {
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 1rem;
+    height: 150px;
+}
+
+.chart-placeholder {
+    height: 100%;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: end;
+    gap: 0.5rem;
+    height: 100%;
+}
+
+.bar {
+    width: 20px;
+    background: linear-gradient(to top, var(--primary-color), var(--secondary-color));
+    border-radius: 2px 2px 0 0;
+    animation: growBar 1s ease-out;
+}
+
+@keyframes growBar {
+    from { height: 0; }
+    to { height: var(--height); }
+}
+
+/* Growth Demo Styles */
+.growth-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.insight-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+}
+
+.insight-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.insight-content h4 {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.insight-content p {
+    color: var(--text-color);
+    opacity: 0.8;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* CTA Section */
+.demo-cta {
+    background: linear-gradient(135deg, var(--surface-color) 0%, var(--card-bg) 100%);
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 2.2rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.cta-content p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--bg-color);
+}
+
+.btn-outline-light {
+    background: transparent;
+    color: var(--text-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-light:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+.btn-lg {
+    font-size: 1.1rem;
+    padding: 1.25rem 2.5rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .demo-stats {
+        gap: 2rem;
+    }
+    
+    .timeline-step {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .timeline-step:nth-child(even) .step-content {
+        flex-direction: column;
+    }
+    
+    .step-marker {
+        margin: 0 0 2rem 0;
+    }
+    
+    .step-line {
+        height: 100px;
+    }
+    
+    .step-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .step-info {
+        max-width: none;
+    }
+    
+    .step-visual {
+        max-width: none;
+        width: 100%;
+    }
+    
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .entry-form .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .permission-options {
+        flex-direction: column;
+    }
+    
+    .analytics-dashboard .stats-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .cta-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+</style>
+
+<script>
+function showDemo(type) {
+    // Add animation or interaction for demo screens
+    const demoScreen = document.getElementById(type + '-demo');
+    if (demoScreen) {
+        demoScreen.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            demoScreen.style.transform = 'scale(1)';
+        }, 200);
+    }
+}
+
+// Animate bars when they come into view
+const observerOptions = {
+    threshold: 0.5,
+    rootMargin: '0px 0px -100px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const bars = entry.target.querySelectorAll('.bar');
+            bars.forEach((bar, index) => {
+                setTimeout(() => {
+                    bar.style.animation = 'growBar 1s ease-out';
+                }, index * 100);
+            });
+        }
+    });
+}, observerOptions);
+
+document.addEventListener('DOMContentLoaded', () => {
+    const chartAreas = document.querySelectorAll('.chart-area');
+    chartAreas.forEach(chart => observer.observe(chart));
+});
+</script>
+{% endblock %} 

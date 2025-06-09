@@ -122,7 +122,7 @@ class ModeratorInvite(db.Model):
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), nullable=False)
     invite_token = db.Column(db.String(64), unique=True, nullable=False, index=True)
     passcode = db.Column(db.String(6), nullable=False)
-    role_permissions = db.Column(db.String(50), nullable=False)  # data_entry, daily_sales, full_view
+    role_permissions = db.Column(db.String(50), nullable=False)  # data_entry, daily_sales, full_access
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     expires_at = db.Column(db.DateTime, nullable=False)
     passcode_expires_at = db.Column(db.DateTime, nullable=False)

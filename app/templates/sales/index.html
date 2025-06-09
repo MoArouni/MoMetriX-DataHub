@@ -130,27 +130,29 @@
                         <th>ID</th>
                         <th>Date</th>
                         <th>Store</th>
+                        <th>Category</th>
                         <th>Product</th>
                         <th>Quantity</th>
                         <th>Total</th>
-                        <th>Payment</th>
+                        <th>Card</th>
+                        <th>Cash</th>
+                        <th>Notes</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="sales-table-body">
                     {% for sale in recent_sales %}
-                    <tr data-store-id="{{ sale.store_id }}" data-product-id="{{ sale.product_id }}">
+                    <tr>
                         <td>{{ sale.id }}</td>
                         <td>{{ sale.sale_date.strftime('%Y-%m-%d') }}</td>
-                        <td>{{ sale.store.name }}</td>
-                        <td>{{ sale.product.name }}</td>
+                        <td>{{ sale.store_name or (sale.store.name if sale.store else 'Unknown Store') }}</td>
+                        <td>{{ sale.product_category or (sale.product.category.name if sale.product and sale.product.category else 'Unknown Category') }}</td>
+                        <td>{{ sale.product_name or (sale.product.name if sale.product else 'Unknown Product') }}</td>
                         <td>{{ sale.quantity }}</td>
-                        <td>£{{ (sale.cash_amount + sale.card_amount)|round(2) }}</td>
-                        <td>
-                            <span class="payment-badge {{ sale.payment_method|lower|replace(' ', '-')|replace('(', '')|replace(')', '') }}">
-                                {{ sale.payment_method }}
-                            </span>
-                        </td>
+                        <td>£{{ (sale.total or sale.total_amount or 0)|round(2) }}</td>
+                        <td>£{{ (sale.card_amount or 0)|round(2) }}</td>
+                        <td>£{{ (sale.cash_amount or 0)|round(2) }}</td>
+                        <td>{{ (sale.notes or '')[:50] }}{% if sale.notes and sale.notes|length > 50 %}...{% endif %}</td>
                         <td class="action-buttons">
                             <a href="{{ url_for('sales.view_sale', sale_id=sale.id) }}" class="btn-action" title="View">
                                 <i class="fas fa-eye"></i>

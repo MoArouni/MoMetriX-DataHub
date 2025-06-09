@@ -18,7 +18,7 @@ class Config:
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     
     # Server configuration for URL generation
-    SERVER_NAME = os.environ.get('SERVER_NAME', 'localhost:5000')
+    SERVER_NAME = os.environ.get('SERVER_NAME')
     PREFERRED_URL_SCHEME = os.environ.get('PREFERRED_URL_SCHEME', 'http')
     
     # Environment-specific settings

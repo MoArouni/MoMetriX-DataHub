@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% block title %}Import Progress{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-upload mr-2"></i>
+                        Import Progress
+                    </h3>
+                </div>
+                
+                <div class="card-body text-center">
+                    <div id="import-status">
+                        <div class="mb-4">
+                            <i class="fas fa-spinner fa-spin fa-3x text-primary mb-3"></i>
+                            <h4>Preparing Import...</h4>
+                            <p class="text-muted">Please wait while we process your sales data.</p>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="progress mb-4" style="height: 30px;">
+                            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                                 role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                <span id="progress-text">0%</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Messages -->
+                        <div id="status-messages">
+                            <p id="current-status" class="mb-2">Initializing...</p>
+                            <small id="detailed-status" class="text-muted">Starting import process</small>
+                        </div>
+                        
+                        <!-- Results (hidden initially) -->
+                        <div id="import-results" style="display: none;">
+                            <div class="alert alert-success">
+                                <h5><i class="fas fa-check-circle"></i> Import Complete!</h5>
+                                <div id="results-summary"></div>
+                            </div>
+                            
+                            <div id="error-details" style="display: none;">
+                                <div class="alert alert-warning">
+                                    <h6><i class="fas fa-exclamation-triangle"></i> Some Issues Occurred</h6>
+                                    <ul id="error-list" class="mb-0"></ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <a href="{{ url_for('sales.index') }}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-chart-line"></i> View Sales Dashboard
+                                </a>
+                                <a href="{{ url_for('sales.import_sales') }}" class="btn btn-secondary btn-lg ml-2">
+                                    <i class="fas fa-upload"></i> Import More Data
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Error State (hidden initially) -->
+                        <div id="import-error" style="display: none;">
+                            <div class="alert alert-danger">
+                                <h5><i class="fas fa-exclamation-circle"></i> Import Failed</h5>
+                                <p id="error-message"></p>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <a href="{{ url_for('sales.import_sales') }}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-arrow-left"></i> Try Again
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.progress {
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 30px;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom: none;
+}
+
+.btn {
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.alert h5, .alert p, .alert ul, .alert li, .alert strong {
+    color: inherit !important;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724 !important;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404 !important;
+    border: 1px solid #ffeaa7;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24 !important;
+    border: 1px solid #f5c6cb;
+}
+
+#status-messages {
+    min-height: 60px;
+}
+
+#current-status {
+    color: #495057 !important;
+    font-weight: 600;
+}
+
+#detailed-status {
+    color: #6c757d !important;
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let importStarted = false;
+    
+    function startImport() {
+        if (importStarted) return;
+        importStarted = true;
+        
+        updateStatus(5, 'Starting import...', 'Validating data and preparing database');
+        
+        // Start the actual import
+        fetch('{{ url_for("sales.execute_import") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showResults(data.successful, data.failed, data.errors);
+            } else {
+                showError(data.error || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Import error:', error);
+            showError('Network error: ' + error.message);
+        });
+        
+        // Start real-time progress updates
+        startProgressPolling();
+    }
+    
+    function startProgressPolling() {
+        const pollInterval = setInterval(() => {
+            fetch('{{ url_for("sales.import_status") }}', {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateStatus(data.progress, data.status, data.detail);
+                
+                // Check if import is complete
+                if (data.results) {
+                    clearInterval(pollInterval);
+                    showResults(data.results.successful, data.results.failed, data.results.errors);
+                } else if (data.progress >= 100) {
+                    clearInterval(pollInterval);
+                }
+            })
+            .catch(error => {
+                console.error('Progress polling error:', error);
+                clearInterval(pollInterval);
+                showError('Failed to get import progress: ' + error.message);
+            });
+        }, 1000); // Poll every second
+        
+        // Clear interval after 5 minutes (fallback)
+        setTimeout(() => clearInterval(pollInterval), 300000);
+    }
+    
+    function updateStatus(progress, status, detail) {
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const currentStatus = document.getElementById('current-status');
+        const detailedStatus = document.getElementById('detailed-status');
+        
+        progressBar.style.width = progress + '%';
+        progressBar.setAttribute('aria-valuenow', progress);
+        progressText.textContent = Math.floor(progress) + '%';
+        currentStatus.textContent = status;
+        detailedStatus.textContent = detail;
+    }
+    
+    function showResults(successful, failed, errors) {
+        updateStatus(100, 'Import Complete!', 'All data has been processed successfully');
+        
+        setTimeout(() => {
+            document.getElementById('import-status').style.display = 'none';
+            
+            const resultsDiv = document.getElementById('import-results');
+            const summaryDiv = document.getElementById('results-summary');
+            
+            let summaryHTML = `<p><strong>${successful}</strong> records imported successfully`;
+            if (failed > 0) {
+                summaryHTML += `, <strong>${failed}</strong> records failed`;
+            }
+            summaryHTML += '.</p>';
+            
+            summaryDiv.innerHTML = summaryHTML;
+            
+            if (errors && errors.length > 0) {
+                const errorDetails = document.getElementById('error-details');
+                const errorList = document.getElementById('error-list');
+                
+                errorList.innerHTML = '';
+                errors.forEach(error => {
+                    const li = document.createElement('li');
+                    li.textContent = error;
+                    errorList.appendChild(li);
+                });
+                
+                errorDetails.style.display = 'block';
+            }
+            
+            resultsDiv.style.display = 'block';
+        }, 1000);
+    }
+    
+    function showError(errorMessage) {
+        document.getElementById('import-status').style.display = 'none';
+        
+        const errorDiv = document.getElementById('import-error');
+        const errorMessageDiv = document.getElementById('error-message');
+        
+        errorMessageDiv.textContent = errorMessage;
+        errorDiv.style.display = 'block';
+    }
+    
+    // Start import automatically when page loads
+    setTimeout(startImport, 1000);
+});
+</script>
+{% endblock %} 

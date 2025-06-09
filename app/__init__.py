@@ -77,6 +77,8 @@ def create_app(config_name='default'):
     from app.routes.join_request import join_request_bp
     from app.routes.company_admin import company_admin_bp
     from app.routes.policies import policies_bp
+    from app.routes.team import team_bp
+    from app.routes.analytics import analytics_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -102,6 +104,8 @@ def create_app(config_name='default'):
     app.register_blueprint(join_request_bp)
     app.register_blueprint(company_admin_bp)
     app.register_blueprint(policies_bp)
+    app.register_blueprint(team_bp)
+    app.register_blueprint(analytics_bp)
     
     # Register error handlers
     register_error_handlers(app)

@@ -1,0 +1,990 @@
+{% extends "base.html" %}
+
+{% block title %}{{ member.first_name }} {{ member.last_name }} - Team Member Details{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <!-- Header Section -->
+            <div class="member-header">
+                <div class="member-header-content">
+                    <div class="member-info-section">
+                        <div class="member-avatar-large">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="member-details">
+                            <h1 class="member-name">{{ member.first_name }} {{ member.last_name }}</h1>
+                            <p class="member-email">{{ member.email }}</p>
+                            <span class="member-role badge badge-{{ 'primary' if member.role_company == 'admin' else 'secondary' }}">
+                                {{ member.role_company|title }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="member-actions">
+                        <a href="{{ url_for('team.index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Team
+                        </a>
+                        <a href="{{ url_for('team.edit_permissions', user_id=member.id) }}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit Permissions
+                        </a>
+                        <button type="button" class="btn btn-danger" onclick="confirmRemoveMember()">
+                            <i class="fas fa-user-minus"></i> Remove Member
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Member Information Card -->
+                <div class="col-lg-4">
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-info-circle"></i> Member Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-item">
+                                <label>Full Name</label>
+                                <span>{{ member.first_name }} {{ member.last_name }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Email Address</label>
+                                <span>{{ member.email }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Username</label>
+                                <span>{{ member.username }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Company Role</label>
+                                <span class="badge badge-{{ 'primary' if member.role_company == 'admin' else 'secondary' }}">
+                                    {{ member.role_company|title }}
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <label>Member Since</label>
+                                <span>{{ activity_stats.member_since.strftime('%B %d, %Y') }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Last Login</label>
+                                <span>
+                                    {% if activity_stats.last_login %}
+                                        {{ activity_stats.last_login.strftime('%B %d, %Y at %I:%M %p') }}
+                                    {% else %}
+                                        <span class="text-muted">Never logged in</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions Card -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-actions">
+                                <button type="button" class="quick-action-btn" onclick="changeRole()">
+                                    <i class="fas fa-user-tag"></i>
+                                    <span>Change Role</span>
+                                </button>
+                                <a href="{{ url_for('team.edit_permissions', user_id=member.id) }}" class="quick-action-btn">
+                                    <i class="fas fa-key"></i>
+                                    <span>Edit Permissions</span>
+                                </a>
+                                <button type="button" class="quick-action-btn text-danger" onclick="confirmRemoveMember()">
+                                    <i class="fas fa-user-minus"></i>
+                                    <span>Remove Member</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permissions Details Card -->
+                <div class="col-lg-8">
+                    <div class="permissions-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-shield-alt"></i> Permissions & Access</h3>
+                        </div>
+                        <div class="card-body">
+                            {% if permissions %}
+                                <!-- Permission Level -->
+                                <div class="permission-section">
+                                    <h4>Permission Level</h4>
+                                    <div class="permission-level-display">
+                                        <div class="permission-level-card {{ 'active' if permissions.permission_level == 'data_entry' else '' }}">
+                                            <i class="fas fa-keyboard"></i>
+                                            <h5>Data Entry Only</h5>
+                                            <p>Can add and edit sales data and products. View current day data only.</p>
+                                        </div>
+                                        <div class="permission-level-card {{ 'active' if permissions.permission_level == 'daily_sales' else '' }}">
+                                            <i class="fas fa-chart-line"></i>
+                                            <h5>Data Entry + Daily Sales</h5>
+                                            <p>Can do data entry plus view daily sales analytics and reports.</p>
+                                        </div>
+                                        <div class="permission-level-card {{ 'active' if permissions.permission_level == 'full_access' else '' }}">
+                                            <i class="fas fa-crown"></i>
+                                            <h5>Full Access</h5>
+                                            <p>Complete access to all company data, analytics, and management features.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sales Permissions -->
+                                <div class="permission-section">
+                                    <h4>Sales Management</h4>
+                                    <div class="permissions-grid">
+                                        <div class="permission-item {{ 'enabled' if permissions.can_view_sales else 'disabled' }}">
+                                            <i class="fas fa-eye"></i>
+                                            <div class="permission-content">
+                                                <span class="permission-name">View Sales</span>
+                                                <small class="permission-desc">Can view sales data and records</small>
+                                            </div>
+                                            <div class="permission-status">
+                                                {% if permissions.can_view_sales %}
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="permission-item {{ 'enabled' if permissions.can_add_sales else 'disabled' }}">
+                                            <i class="fas fa-plus"></i>
+                                            <div class="permission-content">
+                                                <span class="permission-name">Add Sales</span>
+                                                <small class="permission-desc">Can create new sales records</small>
+                                            </div>
+                                            <div class="permission-status">
+                                                {% if permissions.can_add_sales %}
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="permission-item {{ 'enabled' if permissions.can_edit_sales else 'disabled' }}">
+                                            <i class="fas fa-edit"></i>
+                                            <div class="permission-content">
+                                                <span class="permission-name">Edit Sales</span>
+                                                <small class="permission-desc">Can modify existing sales records</small>
+                                            </div>
+                                            <div class="permission-status">
+                                                {% if permissions.can_edit_sales %}
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="permission-item {{ 'enabled' if permissions.can_delete_sales else 'disabled' }}">
+                                            <i class="fas fa-trash"></i>
+                                            <div class="permission-content">
+                                                <span class="permission-name">Delete Sales</span>
+                                                <small class="permission-desc">Can remove sales records</small>
+                                            </div>
+                                            <div class="permission-status">
+                                                {% if permissions.can_delete_sales %}
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Analytics & Reports -->
+                                <div class="permission-section">
+                                    <h4>Analytics & Reports</h4>
+                                    <div class="permissions-grid">
+                                        <div class="permission-item {{ 'enabled' if permissions.can_view_analytics else 'disabled' }}">
+                                            <i class="fas fa-chart-bar"></i>
+                                            <div class="permission-content">
+                                                <span class="permission-name">View Analytics</span>
+                                                <small class="permission-desc">Can access analytics dashboard and reports</small>
+                                            </div>
+                                            <div class="permission-status">
+                                                {% if permissions.can_view_analytics %}
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="permission-item {{ 'enabled' if permissions.can_export_data else 'disabled' }}">
+                                            <i class="fas fa-download"></i>
+                                            <div class="permission-content">
+                                                <span class="permission-name">Export Data</span>
+                                                <small class="permission-desc">Can export data to CSV/Excel files</small>
+                                            </div>
+                                            <div class="permission-status">
+                                                {% if permissions.can_export_data %}
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Management Permissions -->
+                                <div class="permission-section">
+                                    <h4>Management</h4>
+                                    <div class="permissions-grid">
+                                        <div class="permission-item {{ 'enabled' if permissions.can_manage_products else 'disabled' }}">
+                                            <i class="fas fa-box"></i>
+                                            <div class="permission-content">
+                                                <span class="permission-name">Manage Products</span>
+                                                <small class="permission-desc">Can add, edit, and organize products</small>
+                                            </div>
+                                            <div class="permission-status">
+                                                {% if permissions.can_manage_products %}
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="permission-item {{ 'enabled' if permissions.can_manage_stores else 'disabled' }}">
+                                            <i class="fas fa-store"></i>
+                                            <div class="permission-content">
+                                                <span class="permission-name">Manage Stores</span>
+                                                <small class="permission-desc">Can add, edit, and manage store locations</small>
+                                            </div>
+                                            <div class="permission-status">
+                                                {% if permissions.can_manage_stores %}
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Store Access -->
+                                {% if stores %}
+                                    <div class="permission-section">
+                                        <h4>Store Access</h4>
+                                        <div class="store-access-grid">
+                                            {% set allowed_store_ids = permissions.allowed_store_ids %}
+                                            {% for store in stores %}
+                                                <div class="store-access-item {{ 'allowed' if not allowed_store_ids or store.id in allowed_store_ids else 'restricted' }}">
+                                                    <i class="fas fa-store"></i>
+                                                    <span class="store-name">{{ store.store_name }}</span>
+                                                    <div class="access-indicator">
+                                                        {% if not allowed_store_ids or store.id in allowed_store_ids %}
+                                                            <i class="fas fa-check-circle text-success"></i>
+                                                        {% else %}
+                                                            <i class="fas fa-times-circle text-danger"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        {% if not allowed_store_ids %}
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle"></i>
+                                                This member has access to all stores.
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="no-permissions">
+                                    <div class="no-permissions-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <h4>No Permissions Set</h4>
+                                    <p>This team member doesn't have any specific permissions configured yet.</p>
+                                    <a href="{{ url_for('team.edit_permissions', user_id=member.id) }}" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i> Set Permissions
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Role Modal -->
+<div class="modal fade" id="changeRoleModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Change Member Role</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="{{ url_for('team.change_member_role', user_id=member.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="new_role">Select New Role</label>
+                        <select name="new_role" id="new_role" class="form-control" required>
+                            <option value="">Choose a role...</option>
+                            <option value="moderator" {{ 'selected' if member.role_company == 'moderator' else '' }}>
+                                Moderator - Limited management permissions
+                            </option>
+                        </select>
+                        <small class="form-text text-muted">
+                            Note: Only one admin per company is allowed. Admin role changes must be done through company settings.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Role</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Remove Member Modal -->
+<div class="modal fade" id="removeMemberModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Remove Team Member</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Warning:</strong> This action cannot be undone.
+                </div>
+                <p>Are you sure you want to remove <strong>{{ member.first_name }} {{ member.last_name }}</strong> from your team?</p>
+                <p class="text-muted">This will:</p>
+                <ul class="text-muted">
+                    <li>Remove their access to your company data</li>
+                    <li>Delete their permissions and settings</li>
+                    <li>Remove them from all company-related activities</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form method="POST" action="{{ url_for('team.remove_member', user_id=member.id) }}" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-user-minus"></i> Remove Member
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Member Details Styles - Mobile First */
+.member-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--text-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+@media (min-width: 768px) {
+    .member-header {
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+}
+
+.member-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .member-header-content {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+}
+
+.member-info-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+@media (min-width: 576px) {
+    .member-info-section {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+}
+
+.member-avatar-large {
+    font-size: 3rem;
+    color: var(--text-color);
+    opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+    .member-avatar-large {
+        font-size: 4rem;
+    }
+}
+
+.member-name {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+@media (min-width: 768px) {
+    .member-name {
+        font-size: 2rem;
+    }
+}
+
+.member-email {
+    margin: 0.5rem 0;
+    opacity: 0.9;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+@media (min-width: 768px) {
+    .member-email {
+        font-size: 1.1rem;
+    }
+}
+
+.member-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+@media (min-width: 576px) {
+    .member-actions {
+        flex-direction: row;
+        width: auto;
+        gap: 1rem;
+    }
+}
+
+.member-actions .btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-color);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    font-weight: 500;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.member-actions .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.info-card, .permissions-card {
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .info-card, .permissions-card {
+        margin-bottom: 2rem;
+    }
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--surface-color) 0%, var(--card-bg) 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.card-header h3 {
+    margin: 0;
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+@media (min-width: 768px) {
+    .card-header h3 {
+        font-size: 1.2rem;
+    }
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+@media (min-width: 576px) {
+    .info-item {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.info-item span {
+    color: var(--text-color);
+    opacity: 0.8;
+    word-wrap: break-word;
+}
+
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--surface-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    min-height: 44px;
+}
+
+.quick-action-btn:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    text-decoration: none;
+    transform: translateX(5px);
+}
+
+.quick-action-btn.text-danger {
+    border-color: var(--error-color);
+    color: var(--error-color);
+}
+
+.quick-action-btn.text-danger:hover {
+    background: var(--error-color);
+    color: var(--text-color);
+}
+
+.permission-section {
+    margin-bottom: 2rem;
+}
+
+.permission-section h4 {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.permission-level-display {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .permission-level-display {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+.permission-level-card {
+    padding: 1.5rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: var(--surface-color);
+    color: var(--text-color);
+    opacity: 0.6;
+    text-align: center;
+}
+
+.permission-level-card.active {
+    border-color: var(--secondary-color);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--text-color);
+    opacity: 1;
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(3, 218, 198, 0.3);
+}
+
+.permission-level-card i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.permission-level-card h5 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: inherit;
+}
+
+.permission-level-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+.permissions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .permissions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+.permission-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background: var(--surface-color);
+}
+
+.permission-item.enabled {
+    border-color: var(--secondary-color);
+    background: rgba(3, 218, 198, 0.1);
+}
+
+.permission-item.disabled {
+    border-color: var(--error-color);
+    background: rgba(207, 102, 121, 0.1);
+}
+
+.permission-item i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .permission-item i {
+        font-size: 1.2rem;
+    }
+}
+
+.permission-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.permission-name {
+    font-weight: 600;
+    color: var(--text-color);
+    display: block;
+    font-size: 0.95rem;
+    word-wrap: break-word;
+}
+
+.permission-desc {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.8rem;
+    word-wrap: break-word;
+}
+
+@media (min-width: 768px) {
+    .permission-desc {
+        font-size: 0.85rem;
+    }
+}
+
+.permission-status {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .permission-status {
+        font-size: 1.2rem;
+    }
+}
+
+.store-access-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .store-access-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+.store-access-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background: var(--surface-color);
+}
+
+.store-access-item.allowed {
+    border-color: var(--secondary-color);
+    background: rgba(3, 218, 198, 0.1);
+}
+
+.store-access-item.restricted {
+    border-color: var(--error-color);
+    background: rgba(207, 102, 121, 0.1);
+}
+
+.store-name {
+    flex: 1;
+    font-weight: 500;
+    color: var(--text-color);
+    word-wrap: break-word;
+    min-width: 0;
+}
+
+.access-indicator {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .access-indicator {
+        font-size: 1.2rem;
+    }
+}
+
+.no-permissions {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-color);
+}
+
+@media (min-width: 768px) {
+    .no-permissions {
+        padding: 3rem 1rem;
+    }
+}
+
+.no-permissions-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    opacity: 0.6;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .no-permissions-icon {
+        font-size: 4rem;
+    }
+}
+
+.no-permissions h4 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.no-permissions p {
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 2rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-height: 44px;
+    padding: 0.75rem 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.btn-outline-secondary {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline-secondary:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+.btn-warning {
+    background: #ffc107;
+    border: 2px solid #ffc107;
+    color: var(--bg-color);
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+    border-color: #e0a800;
+    color: var(--bg-color);
+}
+
+.btn-danger {
+    background: var(--error-color);
+    border: 2px solid var(--error-color);
+    color: var(--text-color);
+}
+
+.btn-danger:hover {
+    background: #b85450;
+    border-color: #b85450;
+    color: var(--text-color);
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.badge-primary {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+.badge-secondary {
+    background: var(--secondary-color);
+    color: var(--bg-color);
+}
+
+/* Responsive Improvements */
+@media (max-width: 767px) {
+    .container-fluid {
+        padding: 0.5rem;
+    }
+    
+    .member-header {
+        margin-bottom: 1rem;
+    }
+    
+    .row {
+        margin: 0;
+    }
+    
+    .col-lg-4, .col-lg-8 {
+        padding: 0.5rem;
+    }
+    
+    .member-actions .btn {
+        width: 100%;
+    }
+    
+    .quick-actions {
+        gap: 0.75rem;
+    }
+}
+
+/* Focus States for Accessibility */
+.btn:focus,
+.quick-action-btn:focus {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .member-header {
+        border: 2px solid var(--text-color);
+    }
+    
+    .info-card, .permissions-card {
+        border-width: 2px;
+    }
+    
+    .permission-item, .access-level-item, .store-access-item {
+        border-width: 3px;
+    }
+}
+</style>
+
+<script>
+function changeRole() {
+    $('#changeRoleModal').modal('show');
+}
+
+function confirmRemoveMember() {
+    $('#removeMemberModal').modal('show');
+}
+</script>
+{% endblock %} 

@@ -14,6 +14,9 @@ from app.services.sales_import_export import SalesImportExportService
 from datetime import datetime, date
 import json
 import io
+import tempfile
+import os
+import uuid
 
 # Create blueprint
 sales_bp = Blueprint('sales', __name__, url_prefix='/sales')
@@ -254,11 +257,12 @@ def edit_sale(sale_id):
         }
     
     # Set the product's category for the form
-    product = Product.query.get(sale.product_id)
-    if product:
-        category_id = product.category_id
-    else:
-        category_id = None
+    product = None
+    category_id = None
+    if sale.product_id:
+        product = Product.query.get(sale.product_id)
+        if product:
+            category_id = product.category_id
     
     # Set choices for the store dropdown
     form.store_id.choices = [(store.id, store.name) for store in stores]
@@ -439,79 +443,95 @@ def import_sales():
     if request.method == 'GET':
         return render_template('sales/import_form.html')
     
-    # Handle POST request - Add comprehensive debugging
-    print(f"DEBUG: Request method = {request.method}")
-    print(f"DEBUG: Request files = {list(request.files.keys())}")
-    print(f"DEBUG: Request form = {dict(request.form)}")
-    print(f"DEBUG: Content type = {request.content_type}")
-    
+    # Handle POST request
     action = request.form.get('action', 'preview')
-    print(f"DEBUG: Action = {action}")
     
     # Handle confirmed import (from preview page)
     if action == 'import':
         csv_content = request.form.get('csv_content', '')
-        print(f"DEBUG: CSV content length = {len(csv_content)}")
-        print(f"DEBUG: CSV content preview = {csv_content[:100]}...")
         
         if not csv_content:
             flash('No CSV data found for import. Please try uploading the file again.', 'error')
             return render_template('sales/import_form.html')
         
+        # Store CSV content in temporary file instead of session
+        import_id = str(uuid.uuid4())
+        temp_dir = tempfile.gettempdir()
+        temp_file_path = os.path.join(temp_dir, f'import_{import_id}.csv')
+        
         try:
-            # Create import service
-            import_service = SalesImportExportService(company_id)
+            with open(temp_file_path, 'w', encoding='utf-8') as f:
+                f.write(csv_content)
             
-            # Perform the import
-            successful, failed, errors = import_service.import_sales_from_csv(csv_content, current_user.id)
+            # Store only the import ID and metadata in session
+            session['import_id'] = import_id
+            session['import_user_id'] = current_user.id
+            session['import_company_id'] = company_id
+            session['import_temp_file'] = temp_file_path
             
-            # Show results
-            if successful > 0:
-                flash(f'Successfully imported {successful} sales records.', 'success')
+            # Redirect to progress page
+            return redirect(url_for('sales.import_progress'))
             
-            if failed > 0:
-                flash(f'Failed to import {failed} records:', 'warning')
-                for error in errors[:10]:  # Show first 10 errors
-                    flash(f'• {error}', 'warning')
-                if len(errors) > 10:
-                    flash(f'... and {len(errors) - 10} more errors.', 'warning')
-            
-            if successful > 0:
-                return redirect(url_for('sales.index'))
-            else:
-                return render_template('sales/import_form.html')
-                
         except Exception as e:
-            flash(f'Error importing data: {str(e)}', 'error')
+            flash(f'Error preparing import: {str(e)}', 'error')
             return render_template('sales/import_form.html')
     
     # Handle file upload for preview
     elif action == 'preview':
-        print(f"DEBUG: Files in request: {list(request.files.keys())}")
+        # Check if we have csv_content in form data (alternative upload method)
+        csv_content_from_form = request.form.get('csv_content', '').strip()
+        if csv_content_from_form:
+            try:
+                # Create import service
+                import_service = SalesImportExportService(company_id)
+                
+                # Validate CSV format first
+                is_valid, validation_errors = import_service.validate_csv_format(csv_content_from_form)
+                
+                if not is_valid:
+                    flash('CSV validation failed:', 'error')
+                    for error in validation_errors:
+                        flash(f'• {error}', 'error')
+                    return render_template('sales/import_form.html')
+                
+                # Show preview of first few rows
+                import csv
+                import io as csv_io
+                csv_reader = csv.DictReader(csv_io.StringIO(csv_content_from_form))
+                preview_rows = []
+                total_rows = 0
+                for i, row in enumerate(csv_reader):
+                    total_rows += 1
+                    if i < 5:  # Show first 5 rows
+                        preview_rows.append(row)
+                
+                return render_template('sales/import_preview.html', 
+                                     preview_rows=preview_rows,
+                                     headers=import_service.CSV_HEADERS,
+                                     csv_content=csv_content_from_form,
+                                     total_rows=total_rows)
+                
+            except Exception as e:
+                flash(f'Error processing CSV data: {str(e)}', 'error')
+                return render_template('sales/import_form.html')
         
         if 'csv_file' not in request.files:
-            print("DEBUG: csv_file not in request.files")
             flash('No file selected. Please choose a CSV file to upload.', 'error')
             return render_template('sales/import_form.html')
         
         file = request.files['csv_file']
-        print(f"DEBUG: File object = {file}")
-        print(f"DEBUG: File filename = {file.filename}")
         
         if file.filename == '':
-            print("DEBUG: File filename is empty")
             flash('No file selected. Please choose a CSV file to upload.', 'error')
             return render_template('sales/import_form.html')
         
         if not file.filename.lower().endswith('.csv'):
-            print(f"DEBUG: File doesn't end with .csv: {file.filename}")
             flash('Please upload a CSV file.', 'error')
             return render_template('sales/import_form.html')
         
         try:
             # Read file content
             csv_content = file.read().decode('utf-8')
-            print(f"DEBUG: Successfully read {len(csv_content)} characters from file")
             
             # Create import service
             import_service = SalesImportExportService(company_id)
@@ -530,27 +550,168 @@ def import_sales():
             import io as csv_io
             csv_reader = csv.DictReader(csv_io.StringIO(csv_content))
             preview_rows = []
+            total_rows = 0
             for i, row in enumerate(csv_reader):
-                if i >= 5:  # Show first 5 rows
-                    break
-                preview_rows.append(row)
-            
-            print(f"DEBUG: Generated {len(preview_rows)} preview rows")
+                total_rows += 1
+                if i < 5:  # Show first 5 rows
+                    preview_rows.append(row)
             
             return render_template('sales/import_preview.html', 
                                  preview_rows=preview_rows,
                                  headers=import_service.CSV_HEADERS,
-                                 csv_content=csv_content)
+                                 csv_content=csv_content,
+                                 total_rows=total_rows)
             
         except Exception as e:
-            print(f"DEBUG: Exception during file processing: {str(e)}")
             flash(f'Error processing file: {str(e)}', 'error')
             return render_template('sales/import_form.html')
     
     # If we get here, something unexpected happened
-    print("DEBUG: Reached unexpected fallback")
     flash('Invalid request. Please try again.', 'error')
     return render_template('sales/import_form.html')
+
+@sales_bp.route('/import/progress')
+@login_required
+@company_required
+def import_progress():
+    """Show import progress page"""
+    if current_user.role_company != 'admin':
+        flash('Only company administrators can import sales data.', 'error')
+        return redirect(url_for('sales.index'))
+    
+    # Check if we have import data in session
+    if 'import_id' not in session:
+        flash('No import data found. Please start the import process again.', 'error')
+        return redirect(url_for('sales.import_sales'))
+    
+    return render_template('sales/import_progress.html')
+
+@sales_bp.route('/import/execute', methods=['POST'])
+@login_required
+@company_required
+def execute_import():
+    """Execute the actual import with progress updates"""
+    if current_user.role_company != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    # Get import data from session
+    import_id = session.get('import_id')
+    temp_file_path = session.get('import_temp_file')
+    user_id = session.get('import_user_id')
+    company_id = session.get('import_company_id')
+    
+    if not import_id or not temp_file_path or not user_id or not company_id:
+        return jsonify({'error': 'No import data found'}), 400
+    
+    # Read CSV content from temporary file
+    try:
+        with open(temp_file_path, 'r', encoding='utf-8') as f:
+            csv_content = f.read()
+    except Exception as e:
+        return jsonify({'error': f'Error reading import file: {str(e)}'}), 400
+    
+    try:
+        # Initialize progress tracking
+        session['import_progress'] = 0
+        session['import_status'] = 'Starting import...'
+        session['import_detail'] = 'Preparing to process data'
+        
+        # Create import service
+        import_service = SalesImportExportService(company_id)
+        
+        # Count total rows for progress calculation
+        import csv
+        import io as csv_io
+        csv_reader = csv.DictReader(csv_io.StringIO(csv_content))
+        total_rows = sum(1 for _ in csv_reader)
+        session['import_total_rows'] = total_rows
+        
+        # Execute import with progress tracking
+        successful, failed, errors = import_service.import_sales_with_progress(
+            csv_content, user_id, progress_callback=update_import_progress
+        )
+        
+        # Final progress update
+        session['import_progress'] = 100
+        session['import_status'] = 'Import Complete!'
+        session['import_detail'] = f'Processed {successful + failed} records'
+        
+        # Store results in session
+        session['import_results'] = {
+            'successful': successful,
+            'failed': failed,
+            'errors': errors[:10]
+        }
+        
+        return jsonify({
+            'success': True,
+            'successful': successful,
+            'failed': failed,
+            'errors': errors[:10]  # Limit errors shown
+        })
+        
+    except Exception as e:
+        session['import_progress'] = 0
+        session['import_status'] = 'Import Failed'
+        session['import_detail'] = str(e)
+        return jsonify({'error': str(e)}), 500
+    finally:
+        # Clean up temporary file
+        try:
+            if temp_file_path and os.path.exists(temp_file_path):
+                os.remove(temp_file_path)
+        except Exception:
+            pass  # Ignore cleanup errors
+
+def update_import_progress(progress, status, detail=None):
+    """Callback function to update import progress in session"""
+    session['import_progress'] = progress
+    session['import_status'] = status
+    if detail:
+        session['import_detail'] = detail
+
+@sales_bp.route('/import/status')
+@login_required
+@company_required
+def import_status():
+    """Get import progress status"""
+    if current_user.role_company != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    # Get real progress from session
+    progress = session.get('import_progress', 0)
+    status = session.get('import_status', 'Initializing...')
+    detail = session.get('import_detail', 'Starting import process')
+    results = session.get('import_results')
+    
+    response = {
+        'progress': progress,
+        'status': status,
+        'detail': detail
+    }
+    
+    # Include results if import is complete
+    if results:
+        response['results'] = results
+        # Clear session data after sending results
+        temp_file_path = session.pop('import_temp_file', None)
+        session.pop('import_id', None)
+        session.pop('import_user_id', None)
+        session.pop('import_company_id', None)
+        session.pop('import_progress', None)
+        session.pop('import_status', None)
+        session.pop('import_detail', None)
+        session.pop('import_results', None)
+        session.pop('import_total_rows', None)
+        
+        # Clean up temporary file
+        try:
+            if temp_file_path and os.path.exists(temp_file_path):
+                os.remove(temp_file_path)
+        except Exception:
+            pass  # Ignore cleanup errors
+    
+    return jsonify(response)
 
 @sales_bp.route('/import/template')
 @login_required

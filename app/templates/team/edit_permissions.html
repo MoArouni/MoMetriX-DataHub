@@ -1,0 +1,538 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Permissions - {{ member.first_name }} {{ member.last_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-8">
+            <!-- Header -->
+            <div class="permissions-header">
+                <div class="header-content">
+                    <div class="member-info">
+                        <div class="member-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="member-details">
+                            <h1>Edit Permissions</h1>
+                            <p>{{ member.first_name }} {{ member.last_name }} ({{ member.email }})</p>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <a href="{{ url_for('team.member_details', user_id=member.id) }}" class="btn btn-outline-light">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permissions Form -->
+            <div class="permissions-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-shield-alt"></i> Permission Settings</h3>
+                    <p>Configure what this team member can do</p>
+                </div>
+                
+                <form method="POST" id="permissionsForm">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="card-body">
+                        <!-- Setting 1: What can they do -->
+                        <div class="permission-setting">
+                            <div class="setting-header">
+                                <h4><span class="setting-number">1</span> What can they do?</h4>
+                            </div>
+                            <div class="setting-options">
+                                <div class="option-card {{ 'selected' if form.access_level.data == 'daily_sales' else '' }}" data-value="daily_sales">
+                                    <input type="radio" name="access_level" value="daily_sales" id="access_daily" {{ 'checked' if form.access_level.data == 'daily_sales' else '' }}>
+                                    <label for="access_daily">
+                                        <i class="fas fa-calendar-day"></i>
+                                        <h5>Add & See Daily Sales</h5>
+                                        <p>Can add sales and view daily reports</p>
+                                    </label>
+                                </div>
+                                <div class="option-card {{ 'selected' if form.access_level.data == 'full_access' else '' }}" data-value="full_access">
+                                    <input type="radio" name="access_level" value="full_access" id="access_full" {{ 'checked' if form.access_level.data == 'full_access' else '' }}>
+                                    <label for="access_full">
+                                        <i class="fas fa-crown"></i>
+                                        <h5>See Everything</h5>
+                                        <p>Full access to all data and features</p>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Setting 2: Date range -->
+                        <div class="permission-setting">
+                            <div class="setting-header">
+                                <h4><span class="setting-number">2</span> Date range for seeing data</h4>
+                            </div>
+                            <div class="setting-options">
+                                <div class="option-card {{ 'selected' if form.data_range.data == 'current_day' else '' }}" data-value="current_day">
+                                    <input type="radio" name="data_range" value="current_day" id="range_day" {{ 'checked' if form.data_range.data == 'current_day' else '' }}>
+                                    <label for="range_day">
+                                        <i class="fas fa-calendar-day"></i>
+                                        <h5>Current Day Only</h5>
+                                        <p>Can only see today's data</p>
+                                    </label>
+                                </div>
+                                <div class="option-card {{ 'selected' if form.data_range.data == 'all_time' else '' }}" data-value="all_time">
+                                    <input type="radio" name="data_range" value="all_time" id="range_all" {{ 'checked' if form.data_range.data == 'all_time' else '' }}>
+                                    <label for="range_all">
+                                        <i class="fas fa-infinity"></i>
+                                        <h5>All Time</h5>
+                                        <p>Can see all historical data</p>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Setting 3: Store access -->
+                        <div class="permission-setting">
+                            <div class="setting-header">
+                                <h4><span class="setting-number">3</span> Which stores can they access?</h4>
+                            </div>
+                            <div class="stores-grid">
+                                {% for store_id, store_name in form.allowed_stores.choices %}
+                                <div class="store-option">
+                                    <input type="checkbox" name="allowed_stores" value="{{ store_id }}" id="store_{{ store_id }}" 
+                                           {{ 'checked' if store_id in form.allowed_stores.data else '' }}>
+                                    <label for="store_{{ store_id }}">
+                                        <i class="fas fa-store"></i>
+                                        <span>{{ store_name }}</span>
+                                    </label>
+                                </div>
+                                {% endfor %}
+                                {% if not form.allowed_stores.choices %}
+                                <p class="no-stores">No stores available. <a href="{{ url_for('stores.index') }}">Add stores first</a>.</p>
+                                {% endif %}
+                            </div>
+                            <small class="help-text">Leave all unchecked to give access to all stores</small>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="card-footer">
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Save Permissions
+                            </button>
+                            <a href="{{ url_for('team.member_details', user_id=member.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Clean, Simple Team Permissions Styles */
+.permissions-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--text-color);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.member-avatar {
+    font-size: 3rem;
+    color: var(--text-color);
+    opacity: 0.9;
+}
+
+.member-details h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.member-details p {
+    margin: 0.5rem 0 0 0;
+    opacity: 0.9;
+}
+
+.header-actions .btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-color);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    font-weight: 500;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-actions .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.permissions-card {
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.card-header {
+    background: var(--surface-color);
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.card-header h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.card-header p {
+    margin: 0;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.permission-setting {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.permission-setting:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.setting-header h4 {
+    margin: 0 0 1.5rem 0;
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.setting-number {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.setting-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .setting-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.option-card {
+    position: relative;
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: var(--surface-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.option-card:hover {
+    border-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(3, 218, 198, 0.2);
+}
+
+.option-card.selected {
+    border-color: var(--secondary-color);
+    background: rgba(3, 218, 198, 0.1);
+    box-shadow: 0 4px 15px rgba(3, 218, 198, 0.3);
+}
+
+.option-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.option-card label {
+    display: block;
+    cursor: pointer;
+    margin: 0;
+    text-align: center;
+}
+
+.option-card label i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.option-card.selected label i {
+    color: var(--secondary-color);
+}
+
+.option-card label h5 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.option-card label p {
+    margin: 0;
+    color: var(--text-color);
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.stores-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+@media (min-width: 576px) {
+    .stores-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .stores-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.store-option {
+    position: relative;
+}
+
+.store-option input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.store-option label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    background: var(--surface-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 44px;
+}
+
+.store-option input:checked + label {
+    border-color: var(--secondary-color);
+    background: rgba(3, 218, 198, 0.1);
+}
+
+.store-option label:hover {
+    border-color: var(--secondary-color);
+    transform: translateY(-1px);
+}
+
+.store-option label i {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.store-option input:checked + label i {
+    color: var(--secondary-color);
+}
+
+.store-option label span {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.help-text {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+    display: block;
+}
+
+.no-stores {
+    color: var(--text-color);
+    opacity: 0.8;
+    text-align: center;
+    padding: 2rem;
+    font-style: italic;
+}
+
+.no-stores a {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+.no-stores a:hover {
+    text-decoration: underline;
+}
+
+.card-footer {
+    background: var(--surface-color);
+    padding: 1.5rem;
+    border-top: 1px solid var(--primary-color);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-height: 44px;
+    padding: 0.75rem 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.btn-success {
+    background: var(--secondary-color);
+    color: var(--bg-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-success:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+.btn-secondary {
+    background: var(--surface-color);
+    color: var(--text-color);
+    border-color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+/* Mobile Responsive */
+@media (max-width: 767px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .member-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle option card clicks
+    document.querySelectorAll('.option-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                
+                // Update visual state
+                const name = radio.name;
+                document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                    r.closest('.option-card').classList.remove('selected');
+                });
+                this.classList.add('selected');
+            }
+        });
+    });
+    
+    // Form submission
+    document.getElementById('permissionsForm').addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        submitBtn.disabled = true;
+        
+        // Re-enable after delay in case of errors
+        setTimeout(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }, 5000);
+    });
+});
+</script>
+{% endblock %} 
