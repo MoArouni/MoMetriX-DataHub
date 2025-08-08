@@ -1,262 +1,354 @@
 {% extends "base.html" %}
 
-{% block title %}Product Categories{% endblock %}
+{% block title %}Manage Categories{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="section-header">
-        <h1>Product Categories</h1>
+        <h1>Manage Categories</h1>
+        <div class="header-actions">
+            <a href="{{ url_for('products.new_category') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Category
+            </a>
+        </div>
+    </div>
+    
+    <!-- Filter form -->
+    <div class="filter-card">
+        <form id="filterForm" method="GET" action="{{ url_for('products.categories') }}" class="filter-form">
+            <div class="form-group">
+                <label for="search">Search Categories:</label>
+                <input type="text" id="search" name="search" class="form-control" value="{{ request.args.get('search', '') }}" placeholder="Search by name...">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                {% if request.args.get('search') %}
+                <a href="{{ url_for('products.categories') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Clear
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    
+    {% if categories %}
+    <div class="categories-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th>Products Count</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td class="category-name">{{ category.name }}</td>
+                    <td class="product-count">{{ category.product_count }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('products.edit_category', category_id=category.id) }}" class="btn btn-edit">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-delete" 
+                                data-category-id="{{ category.id }}" 
+                                data-category-name="{{ category.name }}">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        {% if request.args.get('search') %}
+        <i class="fas fa-search"></i>
+        <h3>No categories found</h3>
+        <p>No categories match your search criteria.</p>
+        {% else %}
+        <i class="fas fa-tags"></i>
+        <h3>No categories yet</h3>
+        <p>Get started by creating your first category.</p>
         <a href="{{ url_for('products.new_category') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Add Category
         </a>
+        {% endif %}
     </div>
-    
-    <div class="card">
-        <div class="card-header">
-            <h2>Your Categories</h2>
-            <p>Organize your products into categories for better management.</p>
-        </div>
-        
-        <div class="card-body">
-            {% if categories %}
-            <div class="categories-grid">
-                {% for category in categories %}
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-tags"></i>
-                    </div>
-                    <h3>{{ category.name }}</h3>
-                    
-                    <div class="category-stats">
-                        <span><i class="fas fa-box"></i> {{ category.products.count() }} Products</span>
-                        
-                        {% if category.field_count is defined %}
-                        <span><i class="fas fa-list"></i> {{ category.field_count }} Custom Fields</span>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="category-actions">
-                        <a href="{{ url_for('products.category_products', category_id=category.id) }}" class="category-btn">
-                            <i class="fas fa-box"></i> Products
-                        </a>
-                        <a href="{{ url_for('products.edit_category', category_id=category.id) }}" class="category-btn">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <i class="fas fa-tags"></i>
-                </div>
-                <h3>No Categories Yet</h3>
-                <p>Start by creating your first product category.</p>
-                <a href="{{ url_for('products.new_category') }}" class="btn btn-primary">
-                    Create First Category
-                </a>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    
-    <div class="section-info">
-        <h3>About Categories</h3>
-        <p>Categories help you organize your products for easier management and reporting. Each category can have its own set of custom fields for products.</p>
-    </div>
+    {% endif %}
 </div>
+{% endblock %}
 
+{% block styles %}
+{{ super() }}
 <style>
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem 1rem;
-    }
-    
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.section-header h1 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.header-actions .btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.filter-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-form {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid rgba(var(--primary-color-rgb), 0.2);
+    border-radius: 8px;
+    background: var(--surface-color);
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.categories-table {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background: var(--surface-color);
+}
+
+.table th {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-color);
+    border-bottom: 2px solid rgba(var(--primary-color-rgb), 0.1);
+}
+
+.table td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.1);
+    color: var(--text-color);
+}
+
+.table tbody tr:hover {
+    background: rgba(var(--primary-color-rgb), 0.05);
+}
+
+.category-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.product-count {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-edit {
+    background: #28a745;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-edit:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: white;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+    font-size: 1.5rem;
+}
+
+.empty-state p {
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
     .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
-    
-    .section-header h1 {
-        color: var(--primary-color);
-        font-size: 2rem;
-        margin: 0;
-    }
-    
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.75rem 1.5rem;
-        border-radius: 4px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-    }
-    
-    .btn-primary {
-        background-color: var(--primary-color);
-        color: #000;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    }
-    
-    .btn i {
-        margin-right: 0.5rem;
-    }
-    
-    .card {
-        background-color: var(--card-bg);
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        margin-bottom: 2rem;
-        overflow: hidden;
-    }
-    
-    .card-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .card-header h2 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.5rem;
-    }
-    
-    .card-header p {
-        margin: 0;
-        color: #999;
-    }
-    
-    .card-body {
-        padding: 1.5rem;
-    }
-    
-    .categories-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.5rem;
-    }
-    
-    .category-card {
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
-        padding: 1.5rem;
-        text-align: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .category-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        border-color: var(--primary-color);
-    }
-    
-    .category-icon {
-        font-size: 2.5rem;
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-    }
-    
-    .category-card h3 {
-        margin: 0 0 1rem 0;
-        font-size: 1.2rem;
-    }
-    
-    .category-stats {
-        color: #999;
-        font-size: 0.9rem;
-        display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-        margin-bottom: 1.5rem;
+        gap: 1rem;
+        text-align: center;
     }
     
-    .category-stats i {
-        margin-right: 0.25rem;
+    .filter-form {
+        flex-direction: column;
     }
     
-    .category-actions {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
+    .actions {
+        flex-direction: column;
     }
     
-    .category-btn {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        background-color: rgba(255, 255, 255, 0.05);
-        color: #fff;
-        text-decoration: none;
-        transition: all 0.3s ease;
+    .table {
         font-size: 0.9rem;
     }
     
-    .category-btn:hover {
-        background-color: var(--primary-color);
-        color: #000;
+    .table th,
+    .table td {
+        padding: 0.75rem;
     }
-    
-    .category-btn i {
-        margin-right: 0.25rem;
-    }
-    
-    .empty-state {
-        text-align: center;
-        padding: 3rem 0;
-    }
-    
-    .empty-icon {
-        font-size: 4rem;
-        color: rgba(255, 255, 255, 0.1);
-        margin-bottom: 1.5rem;
-    }
-    
-    .empty-state h3 {
-        margin-bottom: 0.5rem;
-    }
-    
-    .empty-state p {
-        color: #999;
-        margin-bottom: 1.5rem;
-    }
-    
-    .section-info {
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
-        padding: 1.5rem;
-    }
-    
-    .section-info h3 {
-        color: var(--primary-color);
-        margin-top: 0;
-    }
-    
-    .section-info p:last-child {
-        margin-bottom: 0;
-    }
-    
-    @media (max-width: 768px) {
-        .section-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-        
-        .category-actions {
-            flex-direction: column;
-        }
-    }
+}
 </style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to delete buttons
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function() {
+            const categoryId = this.dataset.categoryId;
+            const categoryName = this.dataset.categoryName;
+            
+            if (confirm(`Are you sure you want to delete "${categoryName}"?\n\nNote: Categories used by products or sales cannot be deleted.`)) {
+                // Create a form and submit it
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/products/category/delete/${categoryId}`;
+                
+                // Add CSRF token
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = 'csrf_token';
+                csrfToken.value = '{{ csrf_token() }}';
+                form.appendChild(csrfToken);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    });
+});
+</script>
 {% endblock %} 

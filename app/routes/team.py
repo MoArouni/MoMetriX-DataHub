@@ -4,7 +4,7 @@ from app.models.user import User
 from app.models.company import Company
 from app.models.store import Store
 from app.models.user_permissions import UserPermissions
-from app.models.join_request import JoinRequest, ModeratorInvite, DirectModeratorInvite
+from app.models.join_request import JoinRequest, ModeratorInvite
 from app.forms.company_settings_forms import UserPermissionsForm
 from app.utils.decorators import company_required
 from app import db
@@ -68,11 +68,8 @@ def index():
         status='pending'
     ).count()
     
-    # Get pending invites
-    pending_invites = DirectModeratorInvite.query.filter_by(
-        company_id=company.id,
-        is_used=False
-    ).filter(DirectModeratorInvite.expires_at > datetime.utcnow()).count()
+    # Get pending invites (removed direct invites - only join requests now)
+    pending_invites = 0
     
     return render_template('team/index.html',
                          company=company,
@@ -154,10 +151,9 @@ def edit_permissions(user_id):
     
     if form.validate_on_submit():
         try:
-            # Update permissions using the 3 simple settings
+            # Update permissions using the 2 simple settings
             permissions.set_permissions(
                 access_level=form.access_level.data,
-                data_range=form.data_range.data,
                 allowed_store_ids=form.allowed_stores.data
             )
             permissions.updated_at = datetime.utcnow()
@@ -174,7 +170,6 @@ def edit_permissions(user_id):
         # Pre-populate form
         form.user_id.data = member.id
         form.access_level.data = permissions.access_level
-        form.data_range.data = permissions.data_range
         form.allowed_stores.data = permissions.allowed_store_ids
     
     stores = Store.query.filter_by(company_id=company.id).all()
@@ -328,7 +323,7 @@ def bulk_actions():
                     db.session.add(permissions)
                 
                 if data_range:
-                    permissions.data_range_access = data_range
+                    permissions.data_range = data_range
                     permissions.updated_at = datetime.utcnow()
             
             db.session.commit()

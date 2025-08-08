@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Join Request Approved</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #eee;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .message-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .permissions-box {
+            background: #e8f4ff;
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 2px solid #eee;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Join Request Approved!</h1>
+        <p>{{ company.company_name }}</p>
+    </div>
+    
+    <div class="content">
+        <h2>Hello {{ user.first_name }},</h2>
+        
+        <div class="message-box">
+            <h3>Welcome to the Team!</h3>
+            <p>Your request to join <strong>{{ company.company_name }}</strong> has been approved. You are now a member of the team!</p>
+        </div>
+        
+        <div class="permissions-box">
+            <h3>Your Role & Permissions</h3>
+            <p><strong>Access Level:</strong> {{ role_permissions }}</p>
+            {% if role_permissions == 'data_entry' %}
+                <p>You have access to:</p>
+                <ul>
+                    <li>Add and edit data entries for the company</li>
+                    <li>View your own entries</li>
+                </ul>
+            {% elif role_permissions == 'daily_sales' %}
+                <p>You have access to:</p>
+                <ul>
+                    <li>Add and edit data entries for the company</li>
+                    <li>View daily sales reports</li>
+                    <li>Access to all active stores</li>
+                </ul>
+            {% elif role_permissions == 'full_access' %}
+                <p>You have access to:</p>
+                <ul>
+                    <li>All company data and reports</li>
+                    <li>Management features</li>
+                    <li>Complete access to all stores</li>
+                </ul>
+            {% endif %}
+        </div>
+        
+        <p><strong>Next Steps:</strong></p>
+        <ol>
+            <li>Log in to your account at <a href="{{ url_for('auth.login', _external=True) }}">MoMetriX DataHub</a></li>
+            {% if not user.password_hash %}
+            <li>Set up your password using the password reset link sent in a separate email</li>
+            {% endif %}
+            <li>Review your assigned stores and permissions</li>
+            <li>Start managing your company's data!</li>
+        </ol>
+        
+        <p>If you have any questions about your role or need assistance, please contact your company administrator.</p>
+        
+        <p>Best regards,<br>
+        <strong>{{ company.company_name }} Team</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from MoMetriX DataHub.</p>
+        <p>&copy; 2024 MoMetriX DataHub. All rights reserved.</p>
+    </div>
+</body>
+</html> 

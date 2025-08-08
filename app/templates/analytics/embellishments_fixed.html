@@ -1,0 +1,158 @@
+{% extends "analytics/stores.html" %}
+
+{% block title %}Embellishment Analytics - MoMetriX DataHub{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <a href="{{ url_for('analytics.index') }}" class="nav-back">
+        <i class="fas fa-arrow-left"></i> Back to Analytics Dashboard
+    </a>
+
+    <div class="analytics-header">
+        <h1><i class="fas fa-gem"></i> Embellishment Analytics</h1>
+        <p>Product customization and embellishment insights</p>
+    </div>
+
+    <div class="date-filter">
+        <form method="GET">
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}" {% if not view_all %}required{% endif %}>
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}" {% if not view_all %}required{% endif %}>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="view_all" value="1" {% if view_all %}checked{% endif %} onchange="toggleDateInputs(this)">
+                    View All Data
+                </label>
+            </div>
+            <div class="form-group">
+                <button type="submit">
+                    <i class="fas fa-search"></i> Update Data
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+    function toggleDateInputs(checkbox) {
+        const startDate = document.getElementById('start_date');
+        const endDate = document.getElementById('end_date');
+        
+        if (checkbox.checked) {
+            startDate.required = false;
+            endDate.required = false;
+            startDate.disabled = true;
+            endDate.disabled = true;
+            startDate.value = '';
+            endDate.value = '';
+        } else {
+            startDate.required = true;
+            endDate.required = true;
+            startDate.disabled = false;
+            endDate.disabled = false;
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewAllCheckbox = document.querySelector('input[name="view_all"]');
+        if (viewAllCheckbox && viewAllCheckbox.checked) {
+            toggleDateInputs(viewAllCheckbox);
+        }
+    });
+    </script>
+
+    {% if no_data %}
+    <div class="no-data">
+        <i class="fas fa-gem"></i>
+        <h3>No Embellishment Data Available</h3>
+        <p>No embellishment data found for the selected period.</p>
+    </div>
+    {% else %}
+
+    <div class="insights-grid">
+        <div class="insight-card">
+            <div class="insight-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="insight-value">{{ analytics.peak_embellishment if analytics.peak_embellishment else "No embellishments used" }}</div>
+            <div class="insight-label">Most Popular Embellishment</div>
+        </div>
+        
+        <div class="insight-card">
+            <div class="insight-icon">
+                <i class="fas fa-percentage"></i>
+            </div>
+            <div class="insight-value">{% if analytics.embellishment_usage_rate is not none %}{{ "{:.1f}%".format(analytics.embellishment_usage_rate) }}{% else %}0.0%{% endif %}</div>
+            <div class="insight-label">Embellishment Usage Rate</div>
+        </div>
+        
+        <div class="insight-card">
+            <div class="insight-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="insight-value">{% if analytics.avg_embellishment_revenue is not none %}${{ "{:,.2f}".format(analytics.avg_embellishment_revenue) }}{% else %}$0.00{% endif %}</div>
+            <div class="insight-label">Avg Revenue per Embellishment</div>
+        </div>
+    </div>
+
+    {% if analytics.charts.embellishment_usage %}
+    <div class="chart-section">
+        <h2 class="chart-title">Embellishment Usage Frequency</h2>
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ analytics.charts.embellishment_usage }}" alt="Embellishment Usage">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if analytics.charts.embellishment_revenue %}
+    <div class="chart-section">
+        <h2 class="chart-title">Revenue by Embellishment Type</h2>
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ analytics.charts.embellishment_revenue }}" alt="Embellishment Revenue">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if analytics.charts.embellishment_scatter %}
+    <div class="chart-section">
+        <h2 class="chart-title">Embellishment Performance: Usage vs Revenue</h2>
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ analytics.charts.embellishment_scatter }}" alt="Embellishment Performance">
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="chart-section">
+        <h2 class="chart-title">Embellishment Performance Summary</h2>
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>Embellishment Type</th>
+                    <th>Usage Count</th>
+                    <th>Total Revenue</th>
+                    <th>Avg Revenue</th>
+                    <th>Usage Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for embellishment in analytics.stats %}
+                <tr>
+                    <td>{{ embellishment.embellishment or embellishment.embellishment_type }}</td>
+                    <td>{{ embellishment.usage_count }}</td>
+                    <td>${{ "{:,.2f}".format(embellishment.total_revenue) }}</td>
+                    <td>${{ "{:,.2f}".format(embellishment.avg_revenue if embellishment.avg_revenue is not none else (embellishment.avg_sale if embellishment.avg_sale is not none else 0)) }}</td>
+                    <td>{{ "{:.1f}%".format(embellishment.usage_rate if embellishment.usage_rate is not none else 0) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %} 

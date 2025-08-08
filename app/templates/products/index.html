@@ -6,8 +6,11 @@
 <div class="container">
     <div class="section-header">
         <h1>Products</h1>
-        <div class="button-group">
-            <a href="{{ url_for('products.select_category') }}" class="btn btn-primary">
+        <div class="header-actions">
+            <button id="autoCreateBtn" class="btn btn-primary">
+                <i class="fas fa-magic"></i> Auto-Create from Sales
+            </button>
+            <a href="{{ url_for('products.new_product') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add Product
             </a>
             <a href="{{ url_for('products.categories') }}" class="btn btn-secondary">
@@ -70,9 +73,16 @@
                                 </div>
                             </td>
                             <td class="actions">
-                                <a href="{{ url_for('products.edit_product', product_id=product.id) }}" class="action-btn edit-btn">
-                                    <i class="fas fa-edit"></i>
-                                </a>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('products.edit_product', product_id=product.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger delete-product" 
+                                            data-id="{{ product.id }}" 
+                                            data-name="{{ product.name }}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -115,8 +125,9 @@
         margin: 0;
     }
     
-    .button-group {
+    .header-actions {
         display: flex;
+        justify-content: flex-end;
         gap: 1rem;
     }
     
@@ -310,25 +321,110 @@
         color: #999;
         margin-bottom: 1.5rem;
     }
+
+    .btn-group {
+        gap: 0.5rem;
+    }
 </style>
 
+{% block scripts %}
+{{ super() }}
 <script>
-    $(document).ready(function() {
-        // Filter by category
-        $('#category-filter').change(function() {
-            let category = $(this).val();
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter by category
+    const categoryFilter = document.getElementById('category-filter');
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', function() {
+            const category = this.value;
+            const rows = document.querySelectorAll('.product-table tbody tr');
             
             if (category === 'all') {
                 // Show all products
-                $('.product-table tbody tr').show();
+                rows.forEach(row => row.style.display = '');
             } else {
-                // Hide all products first
-                $('.product-table tbody tr').hide();
+                // Hide all products first, then show selected category
+                rows.forEach(row => {
+                    if (row.dataset.category === category) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        });
+    }
+
+    // Auto-create button handler
+    const autoCreateBtn = document.getElementById('autoCreateBtn');
+    if (autoCreateBtn) {
+        autoCreateBtn.addEventListener('click', function() {
+            if (confirm('This will analyze your sales data and automatically create products. Continue?')) {
+                autoCreateBtn.disabled = true;
+                autoCreateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
                 
-                // Show only products with selected category
-                $(`.product-table tbody tr[data-category="${category}"]`).show();
+                fetch('/products/auto-create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show detailed success message
+                        let message = data.message;
+                        if (data.stats) {
+                            message += `\n\nDetails:\n• Products created: ${data.stats.products_created}\n• Products skipped (duplicates): ${data.stats.products_skipped}`;
+                            if (data.stats.categories_created > 0) {
+                                message += `\n• Categories created: ${data.stats.categories_created}`;
+                            }
+                        }
+                        alert(message);
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error processing request. Please try again.');
+                })
+                .finally(() => {
+                    autoCreateBtn.disabled = false;
+                    autoCreateBtn.innerHTML = '<i class="fas fa-magic"></i> Auto-Create from Sales';
+                });
+            }
+        });
+    }
+    
+    // Delete product handler
+    const deleteButtons = document.querySelectorAll('.delete-product');
+    
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.id;
+            const productName = this.dataset.name;
+            
+            if (confirm(`Are you sure you want to delete "${productName}"?\n\nNote: Products used in sales records cannot be deleted.`)) {
+                // Create and submit form
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ url_for('products.delete_product', product_id=0) }}".replace('0', productId);
+                
+                // Add CSRF token
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = 'csrf_token';
+                csrfToken.value = '{{ csrf_token() }}';
+                form.appendChild(csrfToken);
+                
+                document.body.appendChild(form);
+                form.submit();
             }
         });
     });
+});
 </script>
+{% endblock %}
 {% endblock %} 

@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+
+{% block title %}Subscribe to Our Newsletter{% endblock %}
+
+{% block content %}
+<div class="newsletter-subscribe-page">
+    <div class="subscribe-container">
+        <div class="subscribe-header">
+            <div class="header-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <h1>Stay Updated with MoMetriX DataHub</h1>
+            <p class="header-subtitle">Get the latest news, updates, and insights delivered straight to your inbox</p>
+        </div>
+
+        <div class="subscribe-benefits">
+            <div class="benefit-item">
+                <i class="fas fa-chart-line"></i>
+                <h3>Business Insights</h3>
+                <p>Get valuable analytics and business intelligence tips</p>
+            </div>
+            <div class="benefit-item">
+                <i class="fas fa-rocket"></i>
+                <h3>Product Updates</h3>
+                <p>Be the first to know about new features and improvements</p>
+            </div>
+            <div class="benefit-item">
+                <i class="fas fa-lightbulb"></i>
+                <h3>Expert Tips</h3>
+                <p>Learn best practices from industry experts</p>
+            </div>
+        </div>
+
+        <div class="subscribe-form-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'info-circle' }}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="subscribe-form">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form.first_name.label(class="form-label") }}
+                        {{ form.first_name(class="form-control", placeholder="Enter your first name") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.last_name.label(class="form-label") }}
+                        {{ form.last_name(class="form-control", placeholder="Enter your last name") }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form.email.label(class="form-label") }}
+                    {{ form.email(class="form-control", placeholder="Enter your email address") }}
+                    {% if form.email.errors %}
+                        <div class="error-message">
+                            {% for error in form.email.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+                    {{ form.submit(class="btn btn-primary btn-lg subscribe-btn") }}
+                </div>
+
+                <div class="privacy-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <p>We respect your privacy. Unsubscribe at any time. No spam, ever.</p>
+                </div>
+            </form>
+        </div>
+
+        <div class="newsletter-preview">
+            <h3>What to Expect</h3>
+            <div class="preview-items">
+                <div class="preview-item">
+                    <span class="preview-frequency">Weekly</span>
+                    <span class="preview-content">Industry insights and trends</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-frequency">Monthly</span>
+                    <span class="preview-content">Product updates and new features</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-frequency">Quarterly</span>
+                    <span class="preview-content">Comprehensive business reports</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.newsletter-subscribe-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.subscribe-container {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.subscribe-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.header-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem auto;
+    font-size: 2rem;
+    color: white;
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+}
+
+.subscribe-header h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.header-subtitle {
+    color: #ccc;
+    font-size: 1.2rem;
+    margin-bottom: 0;
+    line-height: 1.6;
+}
+
+.subscribe-benefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.benefit-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.benefit-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.benefit-item i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.benefit-item h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.benefit-item p {
+    color: #ccc;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.subscribe-form-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 3rem;
+    margin-bottom: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.alert-success {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.alert-info {
+    background: rgba(23, 162, 184, 0.2);
+    color: #17a2b8;
+    border: 1px solid rgba(23, 162, 184, 0.3);
+}
+
+.subscribe-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.form-control {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.form-control::placeholder {
+    color: #999;
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.form-actions {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.subscribe-btn {
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+}
+
+.subscribe-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+.privacy-notice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #ccc;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.privacy-notice i {
+    color: var(--primary-color);
+}
+
+.newsletter-preview {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.newsletter-preview h3 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.preview-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.preview-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.preview-frequency {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 80px;
+    text-align: center;
+}
+
+.preview-content {
+    color: #ccc;
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .subscribe-header h1 {
+        font-size: 2rem;
+    }
+
+    .header-subtitle {
+        font-size: 1rem;
+    }
+
+    .subscribe-benefits {
+        grid-template-columns: 1fr;
+    }
+
+    .subscribe-form-container {
+        padding: 2rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .subscribe-btn {
+        width: 100%;
+    }
+
+    .preview-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}
+</style>
+
+<script>
+// Add some interactive effects
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate benefits on scroll
+    const benefits = document.querySelectorAll('.benefit-item');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 200);
+            }
+        });
+    });
+
+    benefits.forEach(benefit => {
+        benefit.style.opacity = '0';
+        benefit.style.transform = 'translateY(20px)';
+        benefit.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(benefit);
+    });
+
+    // Form validation feedback
+    const emailInput = document.querySelector('input[type="email"]');
+    if (emailInput) {
+        emailInput.addEventListener('blur', function() {
+            const email = this.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email && !emailRegex.test(email)) {
+                this.style.borderColor = '#ff6b6b';
+            } else if (email) {
+                this.style.borderColor = '#28a745';
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

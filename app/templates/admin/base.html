@@ -428,7 +428,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ url_for('admin.blogs') }}" {% if request.endpoint == 'admin.blogs' or request.endpoint == 'admin.create_blog' or request.endpoint == 'admin.edit_blog' %}class="active"{% endif %}>
+                <a href="{{ url_for('blog.index') }}" {% if 'blog' in request.endpoint %}class="active"{% endif %}>
                     <i class="fas fa-newspaper"></i> Blog Posts
                 </a>
             </li>
@@ -438,7 +438,17 @@
                 </a>
             </li>
             <li>
-                <a href="{{ url_for('admin.logout') }}">
+                <a href="{{ url_for('admin.companies') }}" {% if request.endpoint == 'admin.companies' %}class="active"{% endif %}>
+                    <i class="fas fa-building"></i> Companies
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('newsletter.admin_dashboard') }}" {% if request.endpoint == 'newsletter.admin_dashboard' or 'newsletter' in request.endpoint %}class="active"{% endif %}>
+                    <i class="fas fa-envelope"></i> Newsletter
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('auth.logout') }}">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </li>

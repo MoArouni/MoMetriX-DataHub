@@ -79,6 +79,8 @@ def create_app(config_name='default'):
     from app.routes.policies import policies_bp
     from app.routes.team import team_bp
     from app.routes.analytics import analytics_bp
+    from app.routes.stock_adjustment import stock_adjustment_bp
+    from app.routes.newsletter import newsletter_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -106,6 +108,8 @@ def create_app(config_name='default'):
     app.register_blueprint(policies_bp)
     app.register_blueprint(team_bp)
     app.register_blueprint(analytics_bp)
+    app.register_blueprint(stock_adjustment_bp)
+    app.register_blueprint(newsletter_bp)
     
     # Register error handlers
     register_error_handlers(app)
@@ -146,6 +150,13 @@ def create_app(config_name='default'):
                 app.logger.error(f"Error initializing database: {str(e)}")
         else:
             app.logger.info("Database already exists. Skipping initialization.")
+    
+    # Template context processor for permissions
+    @app.context_processor
+    def inject_permission_utils():
+        """Inject permission utility functions into all templates"""
+        from app.utils.permission_utils import has_analytics_access
+        return dict(has_analytics_access=has_analytics_access)
     
     # Register CLI commands
     from app.cli import register_commands

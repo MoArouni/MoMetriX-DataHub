@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+
+{% block title %}Store Analytics - MoMetriX DataHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .analytics-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .analytics-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .nav-back {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: var(--secondary-color);
+        color: var(--bg-color);
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+    }
+    
+    .nav-back:hover {
+        background: var(--primary-color);
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: var(--bg-color);
+    }
+    
+    .date-filter {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .date-filter form {
+        display: flex;
+        gap: 1rem;
+        align-items: end;
+        flex-wrap: wrap;
+    }
+    
+    .date-filter .form-group {
+        flex: 1;
+        min-width: 150px;
+    }
+    
+    .date-filter label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .date-filter input, .date-filter button {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid var(--primary-color);
+        border-radius: 8px;
+        background: var(--surface-color);
+        color: var(--text-color);
+    }
+    
+    .date-filter button {
+        background: var(--primary-color);
+        color: var(--bg-color);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .insights-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .insight-card {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--primary-color);
+        text-align: center;
+    }
+    
+    .insight-icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .insight-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .insight-label {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        opacity: 0.8;
+    }
+    
+    .chart-section {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        border: 1px solid var(--primary-color);
+    }
+    
+    .chart-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .chart-container {
+        text-align: center;
+    }
+    
+    .chart-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stats-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+    
+    .stats-table th, .stats-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--primary-color);
+    }
+    
+    .stats-table th {
+        background: var(--surface-color);
+        color: var(--text-color);
+        font-weight: 600;
+    }
+    
+    .stats-table td {
+        color: var(--text-color);
+    }
+    
+    .no-data {
+        text-align: center;
+        padding: 3rem;
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--primary-color);
+    }
+    
+    .no-data i {
+        font-size: 4rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    /* View Full Data Button Styling */
+    .view-full-data-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 0.875rem 1.75rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+    
+    .view-full-data-btn:hover {
+        background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
+        border-color: rgba(255,255,255,0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+        color: white;
+    }
+    
+    .view-full-data-btn i {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+    
+    .view-full-data-btn:hover i {
+        opacity: 1;
+    }
+    
+    /* Custom Checkbox Styling */
+    .view-all-group {
+        margin: 1rem 0 1.5rem 0;
+    }
+
+    .custom-checkbox {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .custom-checkbox input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        background: linear-gradient(45deg, rgba(0, 123, 255, 0.1), rgba(108, 117, 125, 0.05));
+        border: 1px solid rgba(0, 123, 255, 0.2);
+        transition: all 0.3s ease;
+        gap: 0.75rem;
+        font-weight: 500;
+        color: var(--text-color);
+        margin: 0;
+    }
+
+    .checkbox-label:hover {
+        background: linear-gradient(45deg, rgba(0, 123, 255, 0.15), rgba(108, 117, 125, 0.1));
+        border-color: rgba(0, 123, 255, 0.4);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+    }
+
+    .checkbox-custom {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(0, 123, 255, 0.3);
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .checkbox-custom::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        width: 6px;
+        height: 10px;
+        border: solid #007bff;
+        border-width: 0 2px 2px 0;
+        transform-origin: center;
+        transition: all 0.2s ease;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked + .checkbox-label .checkbox-custom {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked + .checkbox-label .checkbox-custom::after {
+        transform: translate(-50%, -60%) rotate(45deg) scale(1);
+        border-color: white;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked + .checkbox-label {
+        background: linear-gradient(45deg, rgba(0, 123, 255, 0.2), rgba(0, 86, 179, 0.1));
+        border-color: #007bff;
+        color: #007bff;
+    }
+
+    .checkbox-text {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .checkbox-text i {
+        font-size: 1rem;
+        opacity: 0.8;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked + .checkbox-label .checkbox-text i {
+        opacity: 1;
+        color: #007bff;
+    }
+
+    @media (max-width: 768px) {
+        .analytics-container {
+            padding: 1rem 0.5rem;
+        }
+        
+        .date-filter form {
+            flex-direction: column;
+        }
+        
+        .insights-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <a href="{{ url_for('analytics.index') }}" class="nav-back">
+        <i class="fas fa-arrow-left"></i> Back to Analytics Dashboard
+    </a>
+
+    <div class="analytics-header">
+        <h1><i class="fas fa-store"></i> Store Analytics</h1>
+        <p>Performance insights for all your store locations</p>
+        
+        <!-- View Full Data Button -->
+        <div style="margin-top: 1.5rem;">
+            <a href="{{ url_for('analytics.reports') }}" class="view-full-data-btn">
+                <i class="fas fa-table"></i> View Full Data Report
+            </a>
+        </div>
+    </div>
+
+    <div class="date-filter">
+        <form method="GET">
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}" {% if not view_all %}required{% endif %}>
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}" {% if not view_all %}required{% endif %}>
+            </div>
+            <div class="form-group view-all-group">
+                <div class="custom-checkbox">
+                    <input type="checkbox" id="view_all_checkbox" name="view_all" value="1" {% if view_all %}checked{% endif %} onchange="toggleDateInputs(this)">
+                    <label for="view_all_checkbox" class="checkbox-label">
+                        <span class="checkbox-custom"></span>
+                        <span class="checkbox-text">
+                            <i class="fas fa-chart-line"></i>
+                            View All Data
+                        </span>
+                    </label>
+                </div>
+                <small class="form-text text-muted">Show analytics for all available data periods</small>
+            </div>
+            <div class="form-group">
+                <button type="submit">
+                    <i class="fas fa-search"></i> Update Data
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+    function toggleDateInputs(checkbox) {
+        const startDate = document.getElementById('start_date');
+        const endDate = document.getElementById('end_date');
+        
+        if (checkbox.checked) {
+            startDate.required = false;
+            endDate.required = false;
+            startDate.disabled = true;
+            endDate.disabled = true;
+            startDate.value = '';
+            endDate.value = '';
+        } else {
+            startDate.required = true;
+            endDate.required = true;
+            startDate.disabled = false;
+            endDate.disabled = false;
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewAllCheckbox = document.getElementById('view_all_checkbox');
+        if (viewAllCheckbox && viewAllCheckbox.checked) {
+            toggleDateInputs(viewAllCheckbox);
+        }
+    });
+    </script>
+
+    {% include 'analytics/includes/percentage_toggle.html' %}
+
+    {% if no_data %}
+    <div class="no-data">
+        <i class="fas fa-store"></i>
+        <h3>No Store Data Available</h3>
+        <p>No sales data found for stores in the selected period.</p>
+    </div>
+    {% else %}
+
+    <div class="insights-grid">
+        <div class="insight-card">
+            <div class="insight-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <div class="insight-value">{{ analytics.peak_store }}</div>
+            <div class="insight-label">Top Performing Store</div>
+        </div>
+        
+        <div class="insight-card">
+            <div class="insight-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="insight-value">{{ analytics.worst_store }}</div>
+            <div class="insight-label">Lowest Performing Store</div>
+        </div>
+    </div>
+
+    {% if analytics.charts.revenue_bar %}
+    <div class="chart-section">
+        <h2 class="chart-title">Revenue by Store</h2>
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ analytics.charts.revenue_bar }}" alt="Revenue by Store">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if analytics.charts.store_heatmap %}
+    <div class="chart-section">
+        <h2 class="chart-title">Store Performance Heatmap</h2>
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ analytics.charts.store_heatmap }}" alt="Store Performance Heatmap">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if analytics.charts.revenue_pie %}
+    <div class="chart-section">
+        <h2 class="chart-title">Revenue Distribution</h2>
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ analytics.charts.revenue_pie }}" alt="Revenue Distribution">
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="chart-section">
+        <h2 class="chart-title">Store Statistics</h2>
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>Store Name</th>
+                    <th>Total Revenue</th>
+                    <th>Revenue %</th>
+                    <th>Avg Sale</th>
+                    <th>Transactions</th>
+                    <th>Transaction %</th>
+                    <th>Total Quantity</th>
+                    <th>Quantity %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for store in analytics.stats %}
+                <tr>
+                    <td>{{ store.store_name }}</td>
+                    <td>${{ "{:,.2f}".format(store.total_revenue) }}</td>
+                    <td><strong>{{ "{:.1f}%".format(store.revenue_percentage) }}</strong></td>
+                    <td>${{ "{:,.2f}".format(store.avg_sale) }}</td>
+                    <td>{{ store.total_transactions }}</td>
+                    <td><strong>{{ "{:.1f}%".format(store.transaction_percentage) }}</strong></td>
+                    <td>{{ store.total_quantity }}</td>
+                    <td><strong>{{ "{:.1f}%".format(store.quantity_percentage) }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %} 

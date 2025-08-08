@@ -1,0 +1,86 @@
+<!-- Percentage Toggle Component -->
+<div class="view-toggle">
+    <div class="toggle-group">
+        <label class="toggle-label">
+            <input type="radio" name="view_mode" value="numbers" checked onchange="toggleViewMode(this.value)">
+            <span class="toggle-option">
+                <i class="fas fa-calculator"></i> Numbers
+            </span>
+        </label>
+        <label class="toggle-label">
+            <input type="radio" name="view_mode" value="percentages" onchange="toggleViewMode(this.value)">
+            <span class="toggle-option">
+                <i class="fas fa-percentage"></i> Percentages
+            </span>
+        </label>
+    </div>
+</div>
+
+<style>
+.view-toggle {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid var(--primary-color);
+}
+
+.toggle-group {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.toggle-label {
+    display: block;
+    cursor: pointer;
+}
+
+.toggle-label input[type="radio"] {
+    display: none;
+}
+
+.toggle-option {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--surface-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 6px;
+    color: var(--text-color);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.toggle-label input[type="radio"]:checked + .toggle-option {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-option:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.percentage-view .number-value {
+    display: none;
+}
+
+.number-view .percentage-value {
+    display: none;
+}
+</style>
+
+<script>
+function toggleViewMode(mode) {
+    const container = document.querySelector('.analytics-container');
+    container.className = container.className.replace(/\b(number-view|percentage-view)\b/g, '');
+    container.classList.add(mode === 'percentages' ? 'percentage-view' : 'number-view');
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    toggleViewMode('numbers');
+});
+</script> 

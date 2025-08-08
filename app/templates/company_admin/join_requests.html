@@ -116,11 +116,10 @@
     
     /* Filter Section */
     .filter-section {
-        background: rgba(255, 255, 255, 0.05);
+        background: #f8f9fa;
         border-radius: 8px;
         padding: 1.5rem;
         margin-bottom: 2rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
     
     .filter-header {
@@ -131,7 +130,7 @@
     
     .filter-header h3 {
         margin: 0;
-        color: var(--primary-color);
+        color: #495057;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -139,11 +138,18 @@
     
     .filter-buttons {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 1rem;
     }
     
-    .filter-btn {
+    .btn-filter.active {
+        background: var(--primary-color-dark, var(--primary-color));
+        color: #000;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-filter {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -156,51 +162,7 @@
         text-align: center;
     }
     
-    .filter-btn.warning {
-        background: rgba(255, 193, 7, 0.1);
-        color: #ffc107;
-        border: 1px solid rgba(255, 193, 7, 0.3);
-    }
-    
-    .filter-btn.warning.active {
-        background: #ffc107;
-        color: #000;
-    }
-    
-    .filter-btn.success {
-        background: rgba(40, 167, 69, 0.1);
-        color: #28a745;
-        border: 1px solid rgba(40, 167, 69, 0.3);
-    }
-    
-    .filter-btn.success.active {
-        background: #28a745;
-        color: #fff;
-    }
-    
-    .filter-btn.danger {
-        background: rgba(220, 53, 69, 0.1);
-        color: #dc3545;
-        border: 1px solid rgba(220, 53, 69, 0.3);
-    }
-    
-    .filter-btn.danger.active {
-        background: #dc3545;
-        color: #fff;
-    }
-    
-    .filter-btn.secondary {
-        background: rgba(108, 117, 125, 0.1);
-        color: #6c757d;
-        border: 1px solid rgba(108, 117, 125, 0.3);
-    }
-    
-    .filter-btn.secondary.active {
-        background: #6c757d;
-        color: #fff;
-    }
-    
-    .filter-btn:hover {
+    .btn-filter:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
@@ -479,14 +441,6 @@
     <div class="welcome-section">
         <h1><i class="fas fa-user-plus me-2"></i>Join Requests</h1>
         <p>Manage moderator requests for {{ company.company_name }}. Review and approve new team members.</p>
-        <div class="mt-3">
-            <a href="{{ url_for('company_admin.invite_moderator') }}" class="btn btn-light me-2">
-                <i class="fas fa-paper-plane me-2"></i>Send Direct Invitation
-            </a>
-            <a href="{{ url_for('company_admin.direct_invites') }}" class="btn btn-outline-light">
-                <i class="fas fa-list me-2"></i>View Direct Invites
-            </a>
-        </div>
     </div>
     
     <!-- Statistics Cards -->
@@ -527,26 +481,26 @@
     <!-- Filter Section -->
     <div class="filter-section">
         <div class="filter-header">
-            <h3><i class="fas fa-filter"></i>Filter by Status</h3>
+            <h3><i class="fas fa-filter"></i> Filter by Status</h3>
         </div>
         <div class="filter-buttons">
             <a href="{{ url_for('company_admin.join_requests', status='pending') }}" 
-               class="filter-btn warning {{ 'active' if current_status == 'pending' else '' }}">
+               class="btn-filter {{ 'active' if current_status == 'pending' else '' }}">
                 <i class="fas fa-clock"></i>
                 Pending
             </a>
             <a href="{{ url_for('company_admin.join_requests', status='approved') }}" 
-               class="filter-btn success {{ 'active' if current_status == 'approved' else '' }}">
+               class="btn-filter {{ 'active' if current_status == 'approved' else '' }}">
                 <i class="fas fa-check"></i>
                 Approved
             </a>
             <a href="{{ url_for('company_admin.join_requests', status='declined') }}" 
-               class="filter-btn danger {{ 'active' if current_status == 'declined' else '' }}">
+               class="btn-filter {{ 'active' if current_status == 'declined' else '' }}">
                 <i class="fas fa-times"></i>
                 Declined
             </a>
             <a href="{{ url_for('company_admin.join_requests', status='all') }}" 
-               class="filter-btn secondary {{ 'active' if current_status == 'all' else '' }}">
+               class="btn-filter {{ 'active' if current_status == 'all' else '' }}">
                 <i class="fas fa-list"></i>
                 All
             </a>

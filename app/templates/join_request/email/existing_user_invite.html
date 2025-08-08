@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitation to Join {{ company.company_name }} - MoMetriX DataHub</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .invite-box {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #007bff;
+        }
+        .invite-box h2 {
+            margin: 0 0 15px 0;
+            color: #007bff;
+            font-size: 22px;
+        }
+        .invite-box p {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .details-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .details-box h3 {
+            margin: 0 0 15px 0;
+            color: #495057;
+            font-size: 18px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .info-item {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            color: #333;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+        }
+        .alert {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .alert strong {
+            color: #856404;
+        }
+        .alert ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        @media (max-width: 600px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 You're Invited!</h1>
+            <p>Join {{ company.company_name }} as a Moderator</p>
+        </div>
+        
+        <div class="content">
+            <div class="invite-box">
+                <h2>Hello {{ user.first_name }}!</h2>
+                <p><strong>{{ inviter.first_name }} {{ inviter.last_name }}</strong> has invited you to join <strong>{{ company.company_name }}</strong> as a moderator. Since you already have an account with us, you can accept this invitation with just one click!</p>
+            </div>
+            
+            <div class="details-box">
+                <h3>📋 Invitation Details:</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Company</div>
+                        <div class="info-value">{{ company.company_name }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Invited By</div>
+                        <div class="info-value">{{ inviter.first_name }} {{ inviter.last_name }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Your Role</div>
+                        <div class="info-value">
+                            {% if invite.role_permissions == 'data_entry' %}
+                                Data Entry Moderator
+                            {% elif invite.role_permissions == 'daily_sales' %}
+                                Data & Sales Moderator
+                            {% elif invite.role_permissions == 'full_access' %}
+                                Full Access Moderator
+                            {% else %}
+                                {{ invite.role_permissions|title }} Moderator
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Expires</div>
+                        <div class="info-value">{{ invite.expires_at.strftime('%B %d, %Y at %I:%M %p') }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if invite.message %}
+            <div class="details-box">
+                <h3>💬 Personal Message:</h3>
+                <p style="font-style: italic; padding: 15px; background: #e9ecef; border-radius: 5px;">
+                    "{{ invite.message }}"
+                </p>
+            </div>
+            {% endif %}
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{{ invite_url }}" class="btn">Accept or Decline Invitation</a>
+            </div>
+            
+            <div class="details-box">
+                <h3>🔐 Your Permissions:</h3>
+                {% if invite.role_permissions == 'data_entry' %}
+                    <p><strong>Data Entry Only:</strong> You can add and edit data entries for the company.</p>
+                {% elif invite.role_permissions == 'daily_sales' %}
+                    <p><strong>Data Entry + Daily Sales:</strong> You can manage data entries and view daily sales reports.</p>
+                {% elif invite.role_permissions == 'full_access' %}
+                    <p><strong>Full Access:</strong> You have complete access to all company data, reports, and management features.</p>
+                {% endif %}
+            </div>
+            
+            <div class="alert">
+                <strong>⚠️ Important:</strong>
+                <ul>
+                    <li>This invitation expires in <strong>7 days</strong></li>
+                    <li>You can accept or decline immediately without admin approval</li>
+                    <li>If you accept, you'll become a team member instantly</li>
+                    {% if user.company_id %}
+                    <li><strong>Note:</strong> You're currently part of another company. Accepting this invitation will move you to {{ company.company_name }}.</li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <p>We're excited to potentially have you join our team!</p>
+            
+            <p>Best regards,<br>
+            <strong>{{ inviter.first_name }} {{ inviter.last_name }}</strong><br>
+            <strong>{{ company.company_name }}</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated invitation from MoMetriX DataHub.</p>
+            <p>If you did not expect this invitation, please ignore this email.</p>
+        </div>
+    </div>
+</body>
+</html> 

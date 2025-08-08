@@ -100,8 +100,39 @@ class InviteAcceptanceForm(FlaskForm):
         Length(min=6, max=6, message='Passcode must be 6 digits.')
     ])
 
-class AdminDirectInviteForm(FlaskForm):
-    """Form for admin to directly invite moderators"""
+class AuthenticatedUserJoinForm(FlaskForm):
+    """Form for authenticated users to join companies"""
+    email = HiddenField()
+    first_name = StringField('First Name', validators=[
+        DataRequired(message='First name is required.'),
+        Length(min=2, max=64, message='First name must be between 2 and 64 characters.')
+    ])
+    last_name = StringField('Last Name', validators=[
+        DataRequired(message='Last name is required.'),
+        Length(min=2, max=64, message='Last name must be between 2 and 64 characters.')
+    ])
+    company_id = SelectField('Select Company', validators=[
+        DataRequired(message='Please select a company.')
+    ], coerce=int)
+    message = TextAreaField('Message (Optional)', validators=[
+        Length(max=500, message='Message cannot exceed 500 characters.')
+    ])
+    
+    def __init__(self, *args, **kwargs):
+        super(AuthenticatedUserJoinForm, self).__init__(*args, **kwargs)
+        # Populate company choices
+        companies = Company.query.order_by(Company.company_name).all()
+        self.company_id.choices = [(0, 'Select a company...')] + [
+            (company.id, company.company_name) for company in companies
+        ]
+
+class AdminJoinRequestForm(FlaskForm):
+    """Form for admin to approve/decline join requests"""
+    # No validation needed since we handle it manually in the template and backend
+    pass 
+
+class DirectModeratorInviteForm(FlaskForm):
+    """Form for direct moderator invites from company admins"""
     email = StringField('Email Address', validators=[
         DataRequired(message='Email is required.'),
         Email(message='Please enter a valid email address.')
@@ -114,25 +145,18 @@ class AdminDirectInviteForm(FlaskForm):
         DataRequired(message='Last name is required.'),
         Length(min=2, max=64, message='Last name must be between 2 and 64 characters.')
     ])
-    role_permissions = SelectField('Role Permissions', validators=[
-        DataRequired(message='Please select role permissions.')
+    role_permissions = SelectField('Permission Level', validators=[
+        DataRequired(message='Please select a permission level.')
     ], choices=[
-        ('', 'Select permissions...'),
         ('data_entry', 'Data Entry Only'),
         ('daily_sales', 'Data Entry + Daily Sales View'),
-        ('full_access', 'Full Access')
+        ('full_access', 'Full Access (All Data)')
     ])
-    message = TextAreaField('Welcome Message (Optional)', validators=[
+    message = TextAreaField('Personal Message (Optional)', validators=[
         Length(max=500, message='Message cannot exceed 500 characters.')
     ])
     
     def validate_email(self, field):
-        """Check if email is already registered"""
-        user = User.query.filter_by(email=field.data.lower()).first()
-        if user:
-            raise ValidationError('This email is already registered. Please use a different email.')
-
-class AdminJoinRequestForm(FlaskForm):
-    """Form for admin to approve/decline join requests"""
-    # No validation needed since we handle it manually in the template and backend
-    pass 
+        """Check if email is already registered - but we'll handle this in the backend"""
+        # We'll handle existing users in the backend by sending them a different type of invitation
+        pass 

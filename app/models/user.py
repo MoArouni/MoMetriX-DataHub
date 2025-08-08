@@ -169,6 +169,56 @@ class User(UserMixin, db.Model):
         self.email_verification_token = None
         db.session.commit()
 
+    @property
+    def full_name(self):
+        """Get user's full name"""
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        elif self.first_name:
+            return self.first_name
+        elif self.last_name:
+            return self.last_name
+        return self.username  # Fallback to username if no name is set
+
+    def has_permission(self, perm):
+        """Check if user has a specific permission"""
+        # Site admins have all permissions
+        if self.is_admin:
+            return True
+        
+        # Company admins have all permissions within their company
+        if self.company_id and self.company and self.company.admin_id == self.id:
+            return True
+        
+        # For other users, check their specific permissions
+        if not self.company_id:
+            return False
+        
+        # Import here to avoid circular imports
+        from app.models.user_permissions import UserPermissions
+        
+        permissions = UserPermissions.query.filter_by(
+            user_id=self.id,
+            company_id=self.company_id
+        ).first()
+        
+        if not permissions:
+            return False
+        
+        # Map permission names to UserPermissions attributes
+        permission_map = {
+            'analytics': permissions.can_view_analytics,
+            'manage_products': permissions.can_manage_products,
+            'manage_stores': permissions.can_manage_stores,
+            'view_sales': permissions.can_view_sales,
+            'add_sales': permissions.can_add_sales,
+            'edit_sales': permissions.can_edit_sales,
+            'delete_sales': permissions.can_delete_sales,
+            'export_data': permissions.can_export_data,
+        }
+        
+        return permission_map.get(perm, False)
+
 @login_manager.user_loader
 def load_user(user_id):
     """User loader function for Flask-Login"""

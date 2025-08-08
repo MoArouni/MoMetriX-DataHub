@@ -16,106 +16,164 @@
     <div class="sale-form-container">
         <form method="POST" action="{{ url_for('sales.new_sale') }}" id="saleForm">
             {{ form.hidden_tag() }}
+            <!-- Hidden field to store selected category ID for sets -->
+            <input type="hidden" id="selected_category_id" name="selected_category_id" value="">
+            
+            <!-- Quick Entry Bar -->
+            <div class="quick-entry-bar">
+                <div class="quick-actions">
+                    <button type="button" class="quick-btn" onclick="setTodayDate()">
+                        <i class="fas fa-calendar-day"></i> Today's Sale
+                    </button>
+                    <button type="button" class="quick-btn" onclick="clearForm()">
+                        <i class="fas fa-broom"></i> Clear All
+                    </button>
+                    <button type="button" class="quick-btn" onclick="duplicateLastSale()">
+                        <i class="fas fa-copy"></i> Duplicate Last
+                    </button>
+                </div>
+            </div>
             
             <div class="form-grid">
-                <!-- Left Column - Basic Info -->
+                <!-- Left Column - Product & Basic Info -->
                 <div class="form-section">
                     <div class="section-header">
-                        <h3><i class="fas fa-info-circle"></i> Sale Information</h3>
-                        <span class="section-hint">Enter the basic details of this sale</span>
+                        <h3><i class="fas fa-shopping-bag"></i> Product Details</h3>
+                        <span class="section-hint">Select the product and quantity</span>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
                             {{ form.store_id.label }} <span class="required-star">*</span>
-                            <select id="store_id" name="store_id" class="form-control" required>
-                                <option value="">-- Select Store --</option>
-                                {% for store in stores %}
-                                <option value="{{ store.id }}">{{ store.name }}</option>
-                                {% endfor %}
-                            </select>
+                            <div class="select-wrapper">
+                                <select id="store_id" name="store_id" class="form-control enhanced-select" required>
+                                    <option value="">Choose store location...</option>
+                                    {% for store in stores %}
+                                    <option value="{{ store.id }}">{{ store.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <i class="fas fa-store select-icon"></i>
+                            </div>
                             {% if form.store_id.errors %}
-                                <div class="invalid-feedback">
+                                <div class="error-feedback">
                                     {% for error in form.store_id.errors %}
-                                        {{ error }}
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
                                     {% endfor %}
                                 </div>
                             {% endif %}
-                            <small class="form-text text-muted">
-                                {% if stores|length > 0 %}
-                                    Select the store where this sale occurred
-                                {% else %}
-                                    No stores available. Please create a store first.
-                                {% endif %}
-                            </small>
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
                             <label for="category_id">Product Category <span class="required-star">*</span></label>
-                            <select id="category_id" class="form-control" required>
-                                <option value="">-- Select Category --</option>
-                                {% for category_id, data in product_choices.items() %}
-                                    <option value="{{ category_id }}">{{ data.name }}</option>
-                                {% endfor %}
-                            </select>
+                            <div class="select-wrapper">
+                                <select id="category_id" class="form-control enhanced-select" required>
+                                    <option value="">Choose category...</option>
+                                    {% for category_id, data in product_choices.items() %}
+                                        <option value="{{ category_id }}">{{ data.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <i class="fas fa-tags select-icon"></i>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
                             {{ form.product_id.label }} <span class="required-star">*</span>
-                            <select id="product_id" name="product_id" class="form-control" required disabled>
-                                <option value="">-- Select Product --</option>
-                            </select>
+                            <div class="select-wrapper">
+                                <select id="product_id" name="product_id" class="form-control enhanced-select" required disabled>
+                                    <option value="">Choose product...</option>
+                                </select>
+                                <i class="fas fa-box select-icon"></i>
+                            </div>
+                            <div class="product-preview" id="product-preview" style="display: none;">
+                                <div class="preview-info">
+                                    <span class="preview-label">Selected:</span>
+                                    <span class="preview-value" id="selected-product-name"></span>
+                                </div>
+                            </div>
                             {% if form.product_id.errors %}
-                                <div class="invalid-feedback">
+                                <div class="error-feedback">
                                     {% for error in form.product_id.errors %}
-                                        {{ error }}
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
                                     {% endfor %}
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                     
-                    <div class="form-row">
+                    <!-- Set Items Count (only shown when "Set" is selected) -->
+                    <div class="form-row" id="set-items-row" style="display: none;">
                         <div class="form-group">
-                            <label for="embellishment_ids">Embellishments</label>
-                            <select id="embellishment_ids" name="embellishment_ids" class="form-control" multiple disabled>
-                                <option value="">-- Select Embellishments --</option>
-                            </select>
+                            <label for="set_items_count">Items in Set <span class="required-star">*</span></label>
+                            <div class="quantity-input">
+                                <button type="button" class="qty-btn minus" onclick="adjustSetItems(-1)">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" id="set_items_count" name="set_items_count" class="form-control qty-field" min="1" value="1">
+                                <button type="button" class="qty-btn plus" onclick="adjustSetItems(1)">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
                             <small class="form-text text-muted">
-                                Select any embellishments applied to this product
+                                <i class="fas fa-info-circle"></i> How many individual items are in this set?
                             </small>
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
+                            <label for="embellishment_ids">Embellishments <span class="optional-label">(Optional)</span></label>
+                            <div class="embellishments-container">
+                                <div class="select-wrapper">
+                                    <select id="embellishment_ids" name="embellishment_ids" class="form-control enhanced-select" multiple disabled>
+                                        <!-- Options will be populated by JavaScript -->
+                                    </select>
+                                    <i class="fas fa-sparkles select-icon"></i>
+                                </div>
+                                <div class="embellishments-tags" id="embellishments-tags" style="display: none;">
+                                    <!-- Selected embellishments will appear here as tags -->
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> Select any customizations for this product
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row-group">
+                        <div class="form-group">
                             {{ form.quantity.label }} <span class="required-star">*</span>
-                            {{ form.quantity(class="form-control no-spinner", min=1) }}
+                            <div class="quantity-input">
+                                <button type="button" class="qty-btn minus" onclick="adjustQuantity(-1)">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {{ form.quantity(class="form-control qty-field", min=1, value=1) }}
+                                <button type="button" class="qty-btn plus" onclick="adjustQuantity(1)">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
                             {% if form.quantity.errors %}
-                                <div class="invalid-feedback">
+                                <div class="error-feedback">
                                     {% for error in form.quantity.errors %}
-                                        {{ error }}
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
                                     {% endfor %}
                                 </div>
                             {% endif %}
                         </div>
-                    </div>
-                    
-                    <div class="form-row">
+                        
                         <div class="form-group">
                             {{ form.total_price.label }} <span class="required-star">*</span>
-                            <div class="input-group">
-                                <div class="input-group-text">£</div>
-                                {{ form.total_price(class="form-control", placeholder="0.00", id="total_price") }}
+                            <div class="price-input">
+                                <span class="currency-symbol">£</span>
+                                {{ form.total_price(class="form-control price-field", placeholder="0.00", id="total_price") }}
                             </div>
                             {% if form.total_price.errors %}
-                                <div class="invalid-feedback">
+                                <div class="error-feedback">
                                     {% for error in form.total_price.errors %}
-                                        {{ error }}
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
                                     {% endfor %}
                                 </div>
                             {% endif %}
@@ -124,12 +182,12 @@
                     
                     <div class="form-row">
                         <div class="form-group">
-                            {{ form.notes.label }}
-                            {{ form.notes(class="form-control", rows=3, placeholder="Optional notes about this sale") }}
+                            {{ form.notes.label }} <span class="optional-label">(Optional)</span>
+                            {{ form.notes(class="form-control notes-field", rows=3, placeholder="Add any notes about this sale...") }}
                             {% if form.notes.errors %}
-                                <div class="invalid-feedback">
+                                <div class="error-feedback">
                                     {% for error in form.notes.errors %}
-                                        {{ error }}
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
                                     {% endfor %}
                                 </div>
                             {% endif %}
@@ -137,25 +195,41 @@
                     </div>
                 </div>
                 
-                <!-- Right Column - Payment & Features -->
+                <!-- Right Column - Payment Details -->
                 <div class="form-section">
                     <div class="section-header">
-                        <h3><i class="fas fa-money-bill-wave"></i> Payment Details</h3>
-                        <span class="section-hint">Enter the payment method and amount</span>
+                        <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
+                        <span class="section-hint">How was this sale paid for?</span>
                     </div>
                     
-                    <div class="payment-info">
-                        <div class="form-row payment-split">
+                    <!-- Quick Payment Buttons -->
+                    <div class="payment-quick-actions">
+                        <button type="button" class="payment-quick-btn" onclick="setPaymentMethod('card')">
+                            <i class="fas fa-credit-card"></i> 
+                            <span>Card Only</span>
+                        </button>
+                        <button type="button" class="payment-quick-btn" onclick="setPaymentMethod('cash')">
+                            <i class="fas fa-money-bill-wave"></i> 
+                            <span>Cash Only</span>
+                        </button>
+                        <button type="button" class="payment-quick-btn" onclick="setPaymentMethod('split')">
+                            <i class="fas fa-exchange-alt"></i> 
+                            <span>Split Payment</span>
+                        </button>
+                    </div>
+                    
+                    <div class="payment-details">
+                        <div class="payment-split">
                             <div class="form-group">
                                 {{ form.cash_amount.label }}
-                                <div class="input-group">
-                                    <div class="input-group-text">£</div>
-                                    {{ form.cash_amount(class="form-control payment-amount no-spinner", min=0, placeholder="0.00", id="cash_amount") }}
+                                <div class="payment-input">
+                                    <span class="currency-symbol">£</span>
+                                    {{ form.cash_amount(class="form-control payment-amount", min=0, placeholder="0.00", id="cash_amount") }}
                                 </div>
                                 {% if form.cash_amount.errors %}
-                                    <div class="invalid-feedback">
+                                    <div class="error-feedback">
                                         {% for error in form.cash_amount.errors %}
-                                            {{ error }}
+                                            <i class="fas fa-exclamation-circle"></i> {{ error }}
                                         {% endfor %}
                                     </div>
                                 {% endif %}
@@ -163,50 +237,69 @@
                             
                             <div class="form-group">
                                 {{ form.card_amount.label }}
-                                <div class="input-group">
-                                    <div class="input-group-text">£</div>
-                                    {{ form.card_amount(class="form-control payment-amount no-spinner", min=0, placeholder="0.00", id="card_amount") }}
+                                <div class="payment-input">
+                                    <span class="currency-symbol">£</span>
+                                    {{ form.card_amount(class="form-control payment-amount", min=0, placeholder="0.00", id="card_amount") }}
                                 </div>
                                 {% if form.card_amount.errors %}
-                                    <div class="invalid-feedback">
+                                    <div class="error-feedback">
                                         {% for error in form.card_amount.errors %}
-                                            {{ error }}
+                                            <i class="fas fa-exclamation-circle"></i> {{ error }}
                                         {% endfor %}
                                     </div>
                                 {% endif %}
                             </div>
                         </div>
                         
-                        <div class="summary-box">
-                            <div class="total-amount">
-                                <div class="label">Payment Total:</div>
-                                <div class="value">£<span id="payment-total">0.00</span></div>
+                        <div class="payment-summary">
+                            <div class="summary-item">
+                                <span class="summary-label">Total Sale:</span>
+                                <span class="summary-value" id="sale-total">£0.00</span>
                             </div>
-                            <div class="payment-method-display">
-                                <div class="payment-method" id="payment-method">No Payment Entered</div>
+                            <div class="summary-item">
+                                <span class="summary-label">Payment Total:</span>
+                                <span class="summary-value" id="payment-total">£0.00</span>
                             </div>
-                            <div class="balance-display" id="balance-container">
-                                <div class="balance" id="balance">Balance: £0.00</div>
+                            <div class="summary-item balance-summary" id="balance-summary">
+                                <span class="summary-label">Balance:</span>
+                                <span class="summary-value" id="balance-value">£0.00</span>
+                            </div>
+                            
+                            <div class="payment-status" id="payment-status">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Enter payment amounts</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
+            <!-- Form Actions -->
             <div class="form-actions">
                 <a href="{{ url_for('sales.index') }}" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cancel
                 </a>
-                {{ form.submit(class="btn btn-primary") }}
+                <button type="button" class="btn btn-outline" onclick="previewSale()">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                {{ form.submit(class="btn btn-primary", id="submit-btn") }}
             </div>
         </form>
     </div>
 </div>
 
 <style>
+    :root {
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
+        --info-color: #3b82f6;
+    }
+
     .sale-container {
         max-width: 1200px;
-        margin: 2rem auto;
+        margin: 1rem auto;
+        padding: 0 1rem;
     }
     
     .sale-header {
@@ -214,6 +307,8 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid rgba(var(--primary-color-rgb), 0.1);
     }
     
     .sale-header h2 {
@@ -222,6 +317,7 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        font-size: 1.8rem;
     }
     
     .breadcrumb {
@@ -238,7 +334,7 @@
     }
     
     .breadcrumb a:hover {
-        color: var(--primary-color-light);
+        color: var(--secondary-color);
     }
     
     .separator {
@@ -249,18 +345,54 @@
     .current {
         color: #ccc;
     }
+
+    /* Quick Entry Bar */
+    .quick-entry-bar {
+        background: var(--surface-color);
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+    }
+
+    .quick-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .quick-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: var(--primary-color);
+        color: var(--bg-color);
+        border: none;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .quick-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-1px);
+    }
     
     .sale-form-container {
-        background-color: var(--card-bg);
-        border-radius: 8px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         padding: 2rem;
+        border: 1px solid rgba(var(--primary-color-rgb), 0.1);
     }
     
     .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 2rem;
+        gap: 2.5rem;
     }
     
     .form-section {
@@ -270,15 +402,18 @@
     
     .section-header {
         margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.15);
     }
     
     .section-header h3 {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         color: var(--primary-color);
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        font-weight: 600;
     }
     
     .section-hint {
@@ -289,6 +424,13 @@
     .form-row {
         margin-bottom: 1.5rem;
     }
+
+    .form-row-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
     
     .form-group {
         margin-bottom: 0;
@@ -297,113 +439,316 @@
     .form-group label {
         display: block;
         margin-bottom: 0.5rem;
-        color: #ddd;
+        color: var(--text-color);
         font-weight: 500;
+        font-size: 0.9rem;
     }
     
     .required-star {
-        color: var(--primary-color);
+        color: var(--error-color);
         margin-left: 0.25rem;
+        font-weight: 600;
     }
-    
-    .form-text {
-        display: block;
+
+    .optional-label {
+        color: #888;
+        font-weight: 400;
         font-size: 0.8rem;
-        color: #999;
-        margin-top: 0.5rem;
     }
-    
-    .payment-info {
-        background-color: rgba(255, 255, 255, 0.03);
+
+    /* Enhanced Select Styling */
+    .select-wrapper {
+        position: relative;
+    }
+
+    .enhanced-select {
+        appearance: none;
+        padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+        border: 2px solid rgba(var(--primary-color-rgb), 0.2);
         border-radius: 8px;
-        padding: 1.5rem;
+        background: var(--surface-color);
+        color: var(--text-color);
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .enhanced-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+        outline: none;
+    }
+
+    .enhanced-select:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: rgba(var(--surface-color), 0.5);
+    }
+
+    .select-icon {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    .product-preview {
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background: var(--success-color);
+        color: white;
+        border-radius: 6px;
+        font-size: 0.85rem;
+    }
+
+    .preview-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .preview-label {
+        font-weight: 600;
+    }
+
+    /* Embellishments */
+    .embellishments-container {
+        position: relative;
+    }
+
+    .embellishments-tags {
+        margin-top: 0.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .embellishment-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background: var(--primary-color);
+        color: var(--bg-color);
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .embellishment-tag .remove-btn {
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 0.25rem;
+        opacity: 0.8;
+    }
+
+    .embellishment-tag .remove-btn:hover {
+        opacity: 1;
+    }
+
+    /* Quantity Input */
+    .quantity-input {
+        display: flex;
+        align-items: center;
+        background: var(--surface-color);
+        border: 2px solid rgba(var(--primary-color-rgb), 0.2);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .qty-btn {
+        background: var(--primary-color);
+        color: var(--bg-color);
+        border: none;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .qty-btn:hover {
+        background: var(--secondary-color);
+    }
+
+    .qty-field {
+        border: none;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1rem;
+        width: 60px;
+        background: transparent;
+        color: var(--text-color);
+    }
+
+    .qty-field:focus {
+        outline: none;
+    }
+
+    /* Price Input */
+    .price-input, .payment-input {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .currency-symbol {
+        position: absolute;
+        left: 0.75rem;
+        color: var(--primary-color);
+        font-weight: 600;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .price-field, .payment-amount {
+        padding-left: 2rem;
+        border: 2px solid rgba(var(--primary-color-rgb), 0.2);
+        border-radius: 8px;
+        background: var(--surface-color);
+        color: var(--text-color);
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        width: 100%;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .price-field:focus, .payment-amount:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+        outline: none;
+    }
+
+    /* Payment Section */
+    .payment-quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.75rem;
         margin-bottom: 1.5rem;
     }
-    
+
+    .payment-quick-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 0.5rem;
+        background: var(--surface-color);
+        border: 2px solid rgba(var(--primary-color-rgb), 0.2);
+        border-radius: 8px;
+        color: var(--text-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.85rem;
+    }
+
+    .payment-quick-btn:hover {
+        border-color: var(--primary-color);
+        background: rgba(var(--primary-color-rgb), 0.1);
+    }
+
+    .payment-quick-btn.active {
+        background: var(--primary-color);
+        color: var(--bg-color);
+        border-color: var(--primary-color);
+    }
+
     .payment-split {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
+        margin-bottom: 1.5rem;
     }
-    
-    .input-group {
-        display: flex;
-        align-items: stretch;
+
+    .payment-summary {
+        background: var(--surface-color);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(var(--primary-color-rgb), 0.1);
     }
-    
-    .input-group-text {
-        display: flex;
-        align-items: center;
-        padding: 0.5rem 0.75rem;
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 4px 0 0 4px;
-        border-right: none;
-        color: #ccc;
-        font-weight: 500;
-    }
-    
-    .input-group .form-control {
-        border-radius: 0 4px 4px 0;
-    }
-    
-    .summary-box {
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
-        padding: 1.2rem;
-        margin-top: 1.5rem;
-    }
-    
-    .total-amount {
+
+    .summary-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 1.2rem;
-        font-weight: 700;
+        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .summary-item:last-of-type {
         margin-bottom: 1rem;
     }
-    
-    .payment-method-display {
+
+    .summary-label {
+        color: var(--text-color);
+        opacity: 0.8;
+    }
+
+    .summary-value {
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .balance-summary {
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(var(--primary-color-rgb), 0.2);
+        font-size: 1rem;
+    }
+
+    .payment-status {
         display: flex;
-        justify-content: center;
-        margin-bottom: 1rem;
-    }
-    
-    .payment-method {
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        border-radius: 6px;
         font-size: 0.85rem;
-        background-color: rgba(255, 255, 255, 0.1);
+        font-weight: 500;
         text-align: center;
-        min-width: 120px;
+        justify-content: center;
     }
-    
-    .balance-display {
+
+    .payment-status.balanced {
+        background: rgba(var(--success-color), 0.1);
+        color: var(--success-color);
+        border: 1px solid rgba(var(--success-color), 0.3);
+    }
+
+    .payment-status.overpaid {
+        background: rgba(var(--warning-color), 0.1);
+        color: var(--warning-color);
+        border: 1px solid rgba(var(--warning-color), 0.3);
+    }
+
+    .payment-status.underpaid {
+        background: rgba(var(--error-color), 0.1);
+        color: var(--error-color);
+        border: 1px solid rgba(var(--error-color), 0.3);
+    }
+
+    .form-text {
+        display: block;
+        font-size: 0.8rem;
+        color: #888;
+        margin-top: 0.5rem;
+    }
+
+    .error-feedback {
+        color: var(--error-color);
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
         display: flex;
-        justify-content: center;
-    }
-    
-    .balance {
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        text-align: center;
-        min-width: 120px;
-    }
-    
-    .balance.positive {
-        background-color: rgba(46, 204, 113, 0.2);
-        color: #2ecc71;
-    }
-    
-    .balance.negative {
-        background-color: rgba(231, 76, 60, 0.2);
-        color: #e74c3c;
-    }
-    
-    .balance.balanced {
-        background-color: rgba(52, 152, 219, 0.2);
-        color: #3498db;
+        align-items: center;
+        gap: 0.25rem;
     }
     
     .form-actions {
@@ -412,7 +757,7 @@
         gap: 1rem;
         margin-top: 2rem;
         padding-top: 1.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(var(--primary-color-rgb), 0.1);
     }
     
     .btn {
@@ -420,56 +765,89 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.75rem 1.5rem;
-        border-radius: 4px;
+        border-radius: 8px;
         font-weight: 600;
         border: none;
         cursor: pointer;
         transition: all 0.3s ease;
         text-decoration: none;
+        font-size: 0.9rem;
     }
     
     .btn-primary {
-        background-color: var(--primary-color);
-        color: #000;
+        background: var(--primary-color);
+        color: var(--bg-color);
+    }
+
+    .btn-primary:disabled {
+        background: #ccc;
+        cursor: not-allowed;
     }
     
     .btn-secondary {
-        background-color: #444;
+        background: #666;
         color: #fff;
     }
-    
-    .btn-primary:hover, .btn-secondary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+
+    .btn-outline {
+        background: transparent;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
     }
     
-    .filter-select option,
-    select.form-control option {
-        background-color: #2c3e50;
-        color: #fff;
+    .btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        background: var(--secondary-color);
+    }
+
+    .btn-outline:hover {
+        background: var(--primary-color);
+        color: var(--bg-color);
+    }
+
+    .notes-field {
+        border: 2px solid rgba(var(--primary-color-rgb), 0.2);
+        border-radius: 8px;
+        background: var(--surface-color);
+        color: var(--text-color);
+        padding: 0.75rem;
+        resize: vertical;
+        min-height: 80px;
+        transition: all 0.3s ease;
+    }
+
+    .notes-field:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+        outline: none;
     }
     
-    .no-spinner::-webkit-inner-spin-button, 
-    .no-spinner::-webkit-outer-spin-button { 
+    /* Remove number input spinners */
+    .qty-field::-webkit-inner-spin-button, 
+    .qty-field::-webkit-outer-spin-button,
+    .price-field::-webkit-inner-spin-button, 
+    .price-field::-webkit-outer-spin-button,
+    .payment-amount::-webkit-inner-spin-button, 
+    .payment-amount::-webkit-outer-spin-button { 
         -webkit-appearance: none; 
         margin: 0; 
     }
     
-    .no-spinner {
+    .qty-field, .price-field, .payment-amount {
         -webkit-appearance: none;
-        -moz-appearance: none;
+        -moz-appearance: textfield;
         appearance: none;
     }
     
-    .mt-4 {
-        margin-top: 2rem;
-    }
-    
-    /* Responsive adjustments */
+    /* Responsive Design */
     @media (max-width: 992px) {
         .form-grid {
             grid-template-columns: 1fr;
-            gap: 1rem;
+            gap: 1.5rem;
         }
         
         .sale-header {
@@ -477,9 +855,13 @@
             align-items: flex-start;
             gap: 1rem;
         }
+
+        .form-row-group {
+            grid-template-columns: 1fr;
+        }
     }
     
-    @media (max-width: 767px) {
+    @media (max-width: 768px) {
         .payment-split {
             grid-template-columns: 1fr;
         }
@@ -487,9 +869,28 @@
         .sale-form-container {
             padding: 1.5rem;
         }
-        
-        .payment-info {
-            padding: 1rem;
+
+        .quick-actions {
+            flex-direction: column;
+        }
+
+        .payment-quick-actions {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .sale-container {
+            margin: 0.5rem;
+            padding: 0;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            justify-content: center;
         }
     }
 </style>
@@ -503,10 +904,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalPriceInput = document.getElementById('total_price');
     const cashAmountInput = document.getElementById('cash_amount');
     const cardAmountInput = document.getElementById('card_amount');
-    const paymentTotalElement = document.getElementById('payment-total');
-    const paymentMethodElement = document.getElementById('payment-method');
-    const balanceElement = document.getElementById('balance');
-    const balanceContainer = document.getElementById('balance-container');
+    const submitBtn = document.getElementById('submit-btn');
     
     // Product choices from Jinja
     const productChoices = JSON.parse('{{ product_choices|tojson }}');
@@ -514,13 +912,34 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update product dropdown when category changes
     categorySelect.addEventListener('change', function() {
         const categoryId = this.value;
-        productSelect.innerHTML = '<option value="">-- Select Product --</option>';
-        embellishmentSelect.innerHTML = '<option value="">-- Select Embellishments --</option>';
+        productSelect.innerHTML = '<option value="">Choose product...</option>';
+        embellishmentSelect.innerHTML = '';
         embellishmentSelect.disabled = true;
+        clearEmbellishmentTags();
+        hideSetItemsRow();
+        
+        // Store the selected category ID for sets
+        const hiddenCategoryField = document.getElementById('selected_category_id');
+        if (hiddenCategoryField) {
+            hiddenCategoryField.value = categoryId;
+        }
         
         if (categoryId) {
             productSelect.disabled = false;
             
+            // Add "Set" option first
+            const setOption = document.createElement('option');
+            setOption.value = 'set';
+            setOption.textContent = 'Set (multiple items)';
+            productSelect.appendChild(setOption);
+            
+            // Add separator
+            const separatorOption = document.createElement('option');
+            separatorOption.disabled = true;
+            separatorOption.textContent = '── Individual Products ──';
+            productSelect.appendChild(separatorOption);
+            
+            // Add individual products
             if (productChoices[categoryId] && productChoices[categoryId].products) {
                 productChoices[categoryId].products.forEach(function(product) {
                     const option = document.createElement('option');
@@ -535,54 +954,122 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             productSelect.disabled = true;
         }
+        
+        hideProductPreview();
     });
     
     // Load embellishments when product is selected
     productSelect.addEventListener('change', function() {
         const productId = this.value;
-        embellishmentSelect.innerHTML = '<option value="">-- Select Embellishments --</option>';
+        const productName = this.options[this.selectedIndex].text;
+        
+        embellishmentSelect.innerHTML = '';
+        clearEmbellishmentTags();
         
         if (productId) {
-            // Enable embellishment select
-            embellishmentSelect.disabled = false;
+            showProductPreview(productName);
             
-            // Fetch embellishments for this product
-            fetch(`/products/api/product-embellishments/${productId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.embellishments && data.embellishments.length > 0) {
-                        data.embellishments.forEach(function(emb) {
-                            const option = document.createElement('option');
-                            option.value = emb.id;
-                            option.textContent = emb.name;
-                            embellishmentSelect.appendChild(option);
-                        });
-                        
-                        // Initialize Select2 for better multi-select UX
-                        $(embellishmentSelect).select2({
-                            placeholder: 'Select embellishments',
-                            allowClear: true,
-                            theme: 'classic'
-                        });
-                    } else {
-                        const option = document.createElement('option');
-                        option.disabled = true;
-                        option.textContent = 'No embellishments available for this product';
-                        embellishmentSelect.appendChild(option);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching embellishments:', error);
-                });
+            // Handle "Set" selection
+            if (productId === 'set') {
+                showSetItemsRow();
+                embellishmentSelect.disabled = true; // No embellishments for sets
+                embellishmentSelect.innerHTML = '<option value="" disabled>Sets do not have embellishments</option>';
+            } else {
+                hideSetItemsRow();
+                embellishmentSelect.disabled = false;
                 
-            // Also update base price
-            // ... existing code for price handling
+                // Fetch embellishments for this product
+                fetch(`/products/api/product-embellishments/${productId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.embellishments && data.embellishments.length > 0) {
+                            data.embellishments.forEach(function(emb) {
+                                const option = document.createElement('option');
+                                option.value = emb.id;
+                                option.textContent = emb.name;
+                                embellishmentSelect.appendChild(option);
+                            });
+                        } else {
+                            embellishmentSelect.innerHTML = '<option value="" disabled>No embellishments available</option>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching embellishments:', error);
+                        embellishmentSelect.innerHTML = '<option value="" disabled>Error loading embellishments</option>';
+                    });
+            }
         } else {
             embellishmentSelect.disabled = true;
+            hideProductPreview();
+            hideSetItemsRow();
         }
     });
-    
-    // Calculate total payment and update display
+
+    // Handle embellishment selection
+    embellishmentSelect.addEventListener('change', function() {
+        const selectedOptions = Array.from(this.selectedOptions);
+        updateEmbellishmentTags(selectedOptions);
+    });
+
+    function showProductPreview(productName) {
+        const preview = document.getElementById('product-preview');
+        const nameElement = document.getElementById('selected-product-name');
+        nameElement.textContent = productName;
+        preview.style.display = 'block';
+    }
+
+    function hideProductPreview() {
+        document.getElementById('product-preview').style.display = 'none';
+    }
+
+    function updateEmbellishmentTags(selectedOptions) {
+        const tagsContainer = document.getElementById('embellishments-tags');
+        tagsContainer.innerHTML = '';
+        
+        if (selectedOptions.length > 0) {
+            selectedOptions.forEach(option => {
+                const tag = document.createElement('div');
+                tag.className = 'embellishment-tag';
+                tag.innerHTML = `
+                    ${option.text}
+                    <button type="button" class="remove-btn" onclick="removeEmbellishment('${option.value}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                tagsContainer.appendChild(tag);
+            });
+            tagsContainer.style.display = 'flex';
+        } else {
+            tagsContainer.style.display = 'none';
+        }
+    }
+
+    function clearEmbellishmentTags() {
+        const tagsContainer = document.getElementById('embellishments-tags');
+        tagsContainer.innerHTML = '';
+        tagsContainer.style.display = 'none';
+    }
+
+    function showSetItemsRow() {
+        document.getElementById('set-items-row').style.display = 'block';
+    }
+
+    function hideSetItemsRow() {
+        document.getElementById('set-items-row').style.display = 'none';
+        document.getElementById('set_items_count').value = '1';
+    }
+
+    // Global function for removing embellishments
+    window.removeEmbellishment = function(embellishmentId) {
+        const option = embellishmentSelect.querySelector(`option[value="${embellishmentId}"]`);
+        if (option) {
+            option.selected = false;
+            const selectedOptions = Array.from(embellishmentSelect.selectedOptions);
+            updateEmbellishmentTags(selectedOptions);
+        }
+    };
+
+    // Payment calculations
     function updatePaymentSummary() {
         const totalPrice = parseFloat(totalPriceInput.value) || 0;
         const cashAmount = parseFloat(cashAmountInput.value) || 0;
@@ -590,61 +1077,150 @@ document.addEventListener('DOMContentLoaded', function() {
         const paymentTotal = cashAmount + cardAmount;
         const balance = paymentTotal - totalPrice;
         
-        // Update payment total
-        paymentTotalElement.textContent = paymentTotal.toFixed(2);
+        // Update display
+        document.getElementById('sale-total').textContent = `£${totalPrice.toFixed(2)}`;
+        document.getElementById('payment-total').textContent = `£${paymentTotal.toFixed(2)}`;
+        document.getElementById('balance-value').textContent = `£${Math.abs(balance).toFixed(2)}`;
         
-        // Update payment method
-        if (cashAmount > 0 && cardAmount > 0) {
-            paymentMethodElement.textContent = 'Split Payment';
-            paymentMethodElement.style.backgroundColor = '#8e44ad';
-        } else if (cardAmount > 0) {
-            paymentMethodElement.textContent = 'Card Payment';
-            paymentMethodElement.style.backgroundColor = '#3498db';
-        } else if (cashAmount > 0) {
-            paymentMethodElement.textContent = 'Cash Payment';
-            paymentMethodElement.style.backgroundColor = '#2ecc71';
-        } else {
-            paymentMethodElement.textContent = 'No Payment Entered';
-            paymentMethodElement.style.backgroundColor = '#e74c3c';
-        }
-        
-        // Update balance
-        balanceElement.textContent = `Balance: £${Math.abs(balance).toFixed(2)}`;
+        // Update status
+        const statusElement = document.getElementById('payment-status');
+        const balanceElement = document.getElementById('balance-summary');
         
         if (Math.abs(balance) < 0.01) {
-            balanceElement.className = 'balance balanced';
+            statusElement.className = 'payment-status balanced';
+            statusElement.innerHTML = '<i class="fas fa-check-circle"></i> <span>Payment Complete</span>';
+            balanceElement.querySelector('.summary-label').textContent = 'Balance:';
         } else if (balance > 0) {
-            balanceElement.className = 'balance positive';
-            balanceElement.textContent = `Overpayment: £${balance.toFixed(2)}`;
+            statusElement.className = 'payment-status overpaid';
+            statusElement.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span>Overpayment</span>';
+            balanceElement.querySelector('.summary-label').textContent = 'Change Due:';
         } else {
-            balanceElement.className = 'balance negative';
-            balanceElement.textContent = `Due: £${Math.abs(balance).toFixed(2)}`;
+            statusElement.className = 'payment-status underpaid';
+            statusElement.innerHTML = '<i class="fas fa-minus-circle"></i> <span>Amount Due</span>';
+            balanceElement.querySelector('.summary-label').textContent = 'Still Owed:';
         }
+
+        // Enable/disable submit button
+        const isSetSelected = productSelect.value === 'set';
+        const setItemsValid = !isSetSelected || (document.getElementById('set_items_count').value > 0);
+        const canSubmit = totalPrice > 0 && Math.abs(balance) < 0.01 && 
+                         productSelect.value && categorySelect.value && 
+                         document.getElementById('store_id').value && setItemsValid;
+        submitBtn.disabled = !canSubmit;
     }
     
-    // Initialize card and cash amounts when total price changes
+    // Payment method quick actions
+    window.setPaymentMethod = function(method) {
+        const totalPrice = parseFloat(totalPriceInput.value) || 0;
+        
+        // Remove active class from all buttons
+        document.querySelectorAll('.payment-quick-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        if (method === 'card') {
+            cardAmountInput.value = totalPrice.toFixed(2);
+            cashAmountInput.value = '0.00';
+            event.target.closest('.payment-quick-btn').classList.add('active');
+        } else if (method === 'cash') {
+            cashAmountInput.value = totalPrice.toFixed(2);
+            cardAmountInput.value = '0.00';
+            event.target.closest('.payment-quick-btn').classList.add('active');
+        } else if (method === 'split') {
+            const half = totalPrice / 2;
+            cashAmountInput.value = half.toFixed(2);
+            cardAmountInput.value = half.toFixed(2);
+            event.target.closest('.payment-quick-btn').classList.add('active');
+        }
+        
+        updatePaymentSummary();
+    };
+
+    // Quick actions
+    window.setTodayDate = function() {
+        // Already defaulted, but could add visual feedback
+        console.log('Date set to today');
+    };
+
+    window.clearForm = function() {
+        if (confirm('Are you sure you want to clear all form data?')) {
+            document.getElementById('saleForm').reset();
+            productSelect.disabled = true;
+            embellishmentSelect.disabled = true;
+            hideProductPreview();
+            clearEmbellishmentTags();
+            updatePaymentSummary();
+        }
+    };
+
+    window.duplicateLastSale = function() {
+        // This would need backend support to get last sale data
+        alert('Duplicate last sale feature will be implemented with backend support');
+    };
+
+    window.previewSale = function() {
+        // Show a preview modal or alert with sale details
+        const store = document.getElementById('store_id').selectedOptions[0]?.text || 'None';
+        const category = categorySelect.selectedOptions[0]?.text || 'None';
+        const product = productSelect.selectedOptions[0]?.text || 'None';
+        const qty = document.getElementById('quantity').value || '0';
+        const total = totalPriceInput.value || '0.00';
+        const cash = cashAmountInput.value || '0.00';
+        const card = cardAmountInput.value || '0.00';
+        
+        let previewText = `Sale Preview:\n\nStore: ${store}\nCategory: ${category}\nProduct: ${product}`;
+        
+        // Add set information if applicable
+        if (productSelect.value === 'set') {
+            const setItems = document.getElementById('set_items_count').value || '1';
+            previewText += `\nItems in Set: ${setItems}`;
+        }
+        
+        previewText += `\nQuantity: ${qty}\nTotal: £${total}\nCash: £${cash}\nCard: £${card}`;
+        
+        alert(previewText);
+    };
+
+    window.adjustQuantity = function(change) {
+        const qtyInput = document.getElementById('quantity');
+        const currentQty = parseInt(qtyInput.value) || 1;
+        const newQty = Math.max(1, currentQty + change);
+        qtyInput.value = newQty;
+    };
+
+    window.adjustSetItems = function(change) {
+        const setItemsInput = document.getElementById('set_items_count');
+        const currentCount = parseInt(setItemsInput.value) || 1;
+        const newCount = Math.max(1, currentCount + change);
+        setItemsInput.value = newCount;
+    };
+    
+    // Auto-fill payment when total changes
     totalPriceInput.addEventListener('input', function() {
         const totalPrice = parseFloat(this.value) || 0;
         
-        // By default, put the full amount on card payment
+        // Default to card payment
         cardAmountInput.value = totalPrice.toFixed(2);
-        cashAmountInput.value = "0.00";
+        cashAmountInput.value = '0.00';
         
         updatePaymentSummary();
     });
     
     // Update summary when payment amounts change
-    cashAmountInput.addEventListener('input', function() {
-        const totalPrice = parseFloat(totalPriceInput.value) || 0;
-        const cashAmount = parseFloat(this.value) || 0;
-        
-        // Auto-fill card amount to match total
-        cardAmountInput.value = Math.max(0, totalPrice - cashAmount).toFixed(2);
-        
-        updatePaymentSummary();
-    });
-    
+    cashAmountInput.addEventListener('input', updatePaymentSummary);
     cardAmountInput.addEventListener('input', updatePaymentSummary);
+    
+    // Form validation
+    document.getElementById('saleForm').addEventListener('submit', function(e) {
+        const totalPrice = parseFloat(totalPriceInput.value) || 0;
+        const paymentTotal = (parseFloat(cashAmountInput.value) || 0) + (parseFloat(cardAmountInput.value) || 0);
+        
+        if (Math.abs(paymentTotal - totalPrice) > 0.01) {
+            e.preventDefault();
+            alert('Payment total must equal the sale total.');
+            return false;
+        }
+    });
     
     // Initial update
     updatePaymentSummary();

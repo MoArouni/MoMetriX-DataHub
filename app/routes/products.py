@@ -7,9 +7,12 @@ from app.forms.product import ProductForm, ProductCategoryForm, EmbellishmentFor
 from app.forms.schema import DynamicProductForm
 from app.models.schema import CompanySchema
 from app.utils.decorators import company_required
+from app.services.analytics_service import AnalyticsService
+from app.utils.permission_utils import product_management_required
 
 # Create blueprint
 products_bp = Blueprint('products', __name__, url_prefix='/products')
+analytics_service = AnalyticsService()
 
 # Helper function to check if user belongs to a company
 def check_company():
@@ -130,29 +133,83 @@ def edit_embellishment(embellishment_id):
 @company_required
 def delete_embellishment(embellishment_id):
     """Delete an embellishment"""
-    embellishment = Embellishment.query.get_or_404(embellishment_id)
-    
-    # Ensure embellishment belongs to user's company
-    if embellishment.company_id != current_user.company_id:
-        flash('You do not have permission to delete this embellishment.', 'danger')
-        return redirect(url_for('products.embellishments'))
-    
-    # Check if this embellishment is used by any products
-    product_count = db.session.query(Product).join(
-        product_embellishments, 
-        Product.id == product_embellishments.c.product_id
-    ).filter(
-        product_embellishments.c.embellishment_id == embellishment_id
-    ).count()
-    
-    if product_count > 0:
-        flash(f'Cannot delete embellishment: It is used by {product_count} products.', 'warning')
-        return redirect(url_for('products.embellishments'))
-    
-    db.session.delete(embellishment)
-    db.session.commit()
-    flash('Embellishment deleted successfully!', 'success')
-    return redirect(url_for('products.embellishments'))
+    try:
+        embellishment = Embellishment.query.get_or_404(embellishment_id)
+        
+        # Ensure embellishment belongs to user's company
+        if embellishment.company_id != current_user.company_id:
+            return jsonify({'success': False, 'error': 'You do not have permission to delete this embellishment.'}), 403
+        
+        # Check if this embellishment is used by any products
+        product_count = db.session.query(Product).join(
+            product_embellishments, 
+            Product.id == product_embellishments.c.product_id
+        ).filter(
+            product_embellishments.c.embellishment_id == embellishment_id
+        ).count()
+        
+        if product_count > 0:
+            return jsonify({'success': False, 'error': f'Cannot delete embellishment: It is used by {product_count} products.'}), 400
+        
+        embellishment_name = embellishment.name
+        db.session.delete(embellishment)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': f'Embellishment "{embellishment_name}" deleted successfully!'})
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': f'Error deleting embellishment: {str(e)}'}), 500
+
+@products_bp.route('/embellishments/delete-all', methods=['POST'])
+@login_required
+@company_required
+@product_management_required
+def delete_all_embellishments():
+    """Delete all embellishments for the company"""
+    try:
+        # Get all embellishments for the company
+        embellishments = Embellishment.query.filter_by(company_id=current_user.company_id).all()
+        
+        if not embellishments:
+            return jsonify({'success': False, 'error': 'No embellishments found to delete.'}), 400
+        
+        # Check which embellishments are used by products
+        used_embellishments = []
+        deletable_embellishments = []
+        
+        for embellishment in embellishments:
+            product_count = db.session.query(Product).join(
+                product_embellishments, 
+                Product.id == product_embellishments.c.product_id
+            ).filter(
+                product_embellishments.c.embellishment_id == embellishment.id
+            ).count()
+            
+            if product_count > 0:
+                used_embellishments.append(embellishment.name)
+            else:
+                deletable_embellishments.append(embellishment)
+        
+        # Delete the unused embellishments
+        deleted_count = 0
+        for embellishment in deletable_embellishments:
+            db.session.delete(embellishment)
+            deleted_count += 1
+        
+        db.session.commit()
+        
+        message = f'Deleted {deleted_count} embellishments.'
+        if used_embellishments:
+            message += f' {len(used_embellishments)} embellishments could not be deleted because they are used by products: {", ".join(used_embellishments[:5])}'
+            if len(used_embellishments) > 5:
+                message += f' and {len(used_embellishments) - 5} more.'
+        
+        return jsonify({'success': True, 'message': message})
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': f'Error deleting embellishments: {str(e)}'}), 500
 
 @products_bp.route('/api/embellishments-for-category')
 @login_required
@@ -195,9 +252,15 @@ def categories():
     try:
         categories = ProductCategory.query.filter_by(company_id=current_user.company_id).order_by(ProductCategory.name).all()
         
-        # Count fields per category
+        # Count products for each category to avoid AppenderQuery len() error
         for category in categories:
             try:
+                category.product_count = Product.query.filter_by(
+                    company_id=current_user.company_id,
+                    category_id=category.id
+                ).count()
+                
+                # Count fields per category
                 category.field_count = CompanySchema.query.filter_by(
                     company_id=current_user.company_id, 
                     category_id=category.id
@@ -210,16 +273,17 @@ def categories():
                 ).count()
                 
                 category.total_fields = category.field_count + global_fields
+                
             except Exception as field_error:
                 # If there's an error counting fields, just set them to 0
-                print(f"Error counting fields: {str(field_error)}")
+                category.product_count = 0
                 category.field_count = 0
                 category.total_fields = 0
-            
+        
         return render_template('products/categories.html', categories=categories)
+        
     except Exception as e:
         # Log the error
-        print(f"Error in products.categories: {str(e)}")
         flash('An error occurred while loading categories. Please try again.', 'error')
         return redirect(url_for('dashboard.dashboard'))
 
@@ -316,18 +380,33 @@ def edit_product(product_id):
 @products_bp.route('/delete/<int:product_id>', methods=['POST'])
 @login_required
 @company_required
+@product_management_required
 def delete_product(product_id):
     """Delete a product"""
-    product = Product.query.get_or_404(product_id)
+    product = Product.query.filter_by(
+        id=product_id,
+        company_id=current_user.company_id
+    ).first_or_404()
     
-    # Ensure product belongs to user's company
-    if product.company_id != current_user.company_id:
-        flash('You do not have permission to delete this product.', 'danger')
+    # Check if product is used by any sales
+    from app.models.sales import Sale
+    sales_count = Sale.query.filter_by(
+        company_id=current_user.company_id,
+        product_name=product.name
+    ).count()
+    
+    if sales_count > 0:
+        flash(f'Cannot delete product "{product.name}" because it is used by {sales_count} sales.', 'error')
         return redirect(url_for('products.index'))
     
-    db.session.delete(product)
-    db.session.commit()
-    flash('Product deleted successfully!', 'success')
+    try:
+        db.session.delete(product)
+        db.session.commit()
+        flash(f'Product "{product.name}" has been deleted.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting product: {str(e)}', 'error')
+    
     return redirect(url_for('products.index'))
 
 @products_bp.route('/category/new', methods=['GET', 'POST'])
@@ -374,30 +453,45 @@ def edit_category(category_id):
 @products_bp.route('/category/delete/<int:category_id>', methods=['POST'])
 @login_required
 @company_required
+@product_management_required
 def delete_category(category_id):
-    """Delete a category"""
-    category = ProductCategory.query.get_or_404(category_id)
+    """Delete a product category"""
+    try:
+        category = ProductCategory.query.filter_by(
+            id=category_id,
+            company_id=current_user.company_id
+        ).first_or_404()
+        
+        # Check if category is used by any sales
+        from app.models.sales import Sale
+        sales_count = Sale.query.filter_by(
+            company_id=current_user.company_id,
+            product_category=category.name
+        ).count()
+        
+        if sales_count > 0:
+            flash(f'Cannot delete category "{category.name}" because it is used by {sales_count} sales.', 'error')
+            return redirect(url_for('products.categories'))
+        
+        # Check if category is used by any products
+        products_count = Product.query.filter_by(
+            company_id=current_user.company_id,
+            category_id=category.id
+        ).count()
+        
+        if products_count > 0:
+            flash(f'Cannot delete category "{category.name}" because it is used by {products_count} products.', 'error')
+            return redirect(url_for('products.categories'))
+        
+        db.session.delete(category)
+        db.session.commit()
+        
+        flash(f'Category "{category.name}" has been deleted.', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting category: {str(e)}', 'error')
     
-    # Ensure category belongs to user's company
-    if category.company_id != current_user.company_id:
-        flash('You do not have permission to delete this category.', 'danger')
-        return redirect(url_for('products.categories'))
-    
-    # Check if there are products in this category
-    products_count = Product.query.filter_by(category_id=category_id).count()
-    if products_count > 0:
-        flash(f'Cannot delete category: There are {products_count} products assigned to it.', 'warning')
-        return redirect(url_for('products.categories'))
-    
-    # Check if there are schema fields for this category
-    schema_count = CompanySchema.query.filter_by(category_id=category_id).count()
-    if schema_count > 0:
-        flash(f'Cannot delete category: There are {schema_count} schema fields assigned to it.', 'warning')
-        return redirect(url_for('products.categories'))
-    
-    db.session.delete(category)
-    db.session.commit()
-    flash('Category deleted successfully!', 'success')
     return redirect(url_for('products.categories'))
 
 @products_bp.route('/category/<int:category_id>/fields')
@@ -546,4 +640,42 @@ def api_product_embellishments(product_id):
         ]
     }
     
-    return jsonify(result) 
+    return jsonify(result)
+
+@products_bp.route('/auto-create', methods=['POST'])
+@login_required
+@company_required
+@product_management_required
+def auto_create_products():
+    """Auto-create products from sales data"""
+    if not current_user.company:
+        return jsonify({
+            'success': False,
+            'error': 'You must be associated with a company to use this feature'
+        }), 403
+        
+    result = analytics_service.auto_create_from_sales(current_user.company.id, create_embellishments=False)
+    
+    if result['success']:
+        return jsonify(result), 200
+    else:
+        return jsonify(result), 500
+
+@products_bp.route('/embellishments/auto-create', methods=['POST'])
+@login_required
+@company_required
+@product_management_required
+def auto_create_embellishments():
+    """Auto-create embellishments from sales data"""
+    if not current_user.company:
+        return jsonify({
+            'success': False,
+            'error': 'You must be associated with a company to use this feature'
+        }), 403
+        
+    result = analytics_service.auto_create_from_sales(current_user.company.id, create_products=False)
+    
+    if result['success']:
+        return jsonify(result), 200
+    else:
+        return jsonify(result), 500 

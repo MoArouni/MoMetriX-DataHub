@@ -11,7 +11,8 @@ from app.models.store import Store
 from app.models.sales import Sale, SaleItem
 from app.models.schema import CompanySchema
 from app.models.mailing_list import MailingList
-from app.models.join_request import EmailVerificationCode, JoinRequest, ModeratorInvite, DirectModeratorInvite
+from app.models.join_request import EmailVerificationCode, JoinRequest, ModeratorInvite
 from app.models.subscription import CompanySubscription, SubscriptionPlan
 from app.models.user_permissions import UserPermissions
+from app.models.stock_adjustment import StockAdjustmentEntry
 # Legacy models - might need migration or removal 

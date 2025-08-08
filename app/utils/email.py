@@ -157,6 +157,32 @@ def send_join_request_declined_email(join_request):
         company=join_request.company
     )
 
+def send_join_approved_email(join_request, user, role_permissions):
+    """
+    Send notification to user about approved join request
+    
+    Args:
+        join_request: JoinRequest model instance
+        user: User model instance
+        role_permissions: String indicating the role permissions level
+    """
+    # Format role permissions for display
+    role_display = {
+        'data_entry': 'Data Entry Only',
+        'daily_sales': 'Data Entry + Daily Sales View',
+        'full_access': 'Full Access (All Data)'
+    }.get(role_permissions, role_permissions.title())
+    
+    send_email(
+        to=user.email,
+        subject=f'Join Request Approved - {join_request.company.company_name}',
+        template='join_request/email/approved_notification',
+        join_request=join_request,
+        company=join_request.company,
+        user=user,
+        role_permissions=role_display
+    )
+
 def send_moderator_invite_email(invite):
     """
     Send moderator invite email with passcode
@@ -195,6 +221,26 @@ def send_direct_moderator_invite_email(invite):
         invite_url=invite_url
     )
 
+def send_existing_user_invite_email(invite):
+    """
+    Send invitation email to existing users
+    
+    Args:
+        invite: ExistingUserInvite model instance
+    """
+    invite_url = url_for('join_request.accept_existing_user_invite', token=invite.invite_token, _external=True)
+    
+    send_email(
+        to=invite.email,
+        subject=f'Invitation to Join {invite.company.company_name} as Moderator',
+        template='join_request/email/existing_user_invite',
+        invite=invite,
+        company=invite.company,
+        inviter=invite.inviter,
+        user=invite.user,
+        invite_url=invite_url
+    )
+
 def send_email_verification_email(user):
     """
     Send email verification email for new user registration
@@ -229,4 +275,55 @@ def send_email_verification_email(user):
         # Rollback any database changes if there was an error
         from app import db
         db.session.rollback()
-        raise e 
+        raise e
+
+def send_welcome_to_company_email(user, company, role_permissions):
+    """
+    Send welcome email to users who have accepted company invitations
+    
+    Args:
+        user: User model instance
+        company: Company model instance
+        role_permissions: String indicating role permissions level
+    """
+    send_email(
+        to=user.email,
+        subject=f'Welcome to {company.company_name}!',
+        template='join_request/email/welcome_to_company',
+        user=user,
+        company=company,
+        role_permissions=role_permissions
+    )
+
+def send_newsletter_welcome_email(email, first_name=None, last_name=None):
+    """
+    Send welcome email to new newsletter subscribers
+    
+    Args:
+        email: Email address of the subscriber
+        first_name: Optional first name
+        last_name: Optional last name
+    """
+    try:
+        name = first_name if first_name else "Subscriber"
+        
+        result = send_email(
+            to=email,
+            subject='Welcome to MoMetriX DataHub Newsletter!',
+            template='newsletter/email/welcome',
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            name=name
+        )
+        
+        if result is None:
+            current_app.logger.error(f"Failed to send newsletter welcome email to {email}")
+            return False
+        
+        current_app.logger.info(f"Newsletter welcome email sent to {email}")
+        return True
+        
+    except Exception as e:
+        current_app.logger.error(f"Error sending newsletter welcome email to {email}: {str(e)}")
+        return False 

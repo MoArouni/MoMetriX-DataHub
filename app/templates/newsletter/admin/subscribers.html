@@ -1,0 +1,675 @@
+{% extends "base.html" %}
+
+{% block title %}Newsletter Subscribers{% endblock %}
+
+{% block content %}
+<div class="subscribers-container">
+    <div class="page-header">
+        <div class="header-content">
+            <h1><i class="fas fa-users"></i> Newsletter Subscribers</h1>
+            <p>Manage your newsletter subscriber list</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('newsletter.admin_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Newsletter
+            </a>
+            <button type="button" class="btn btn-primary" onclick="showAddSubscriber()">
+                <i class="fas fa-plus"></i> Add Subscriber
+            </button>
+        </div>
+    </div>
+    
+    <!-- Stats Summary -->
+    <div class="stats-summary">
+        <div class="stat-item">
+            <div class="stat-value">{{ subscribers.total if subscribers else 0 }}</div>
+            <div class="stat-label">Total Subscribers</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ subscribers.items | selectattr('is_active') | list | length if subscribers else 0 }}</div>
+            <div class="stat-label">Active</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ subscribers.items | rejectattr('is_active') | list | length if subscribers else 0 }}</div>
+            <div class="stat-label">Inactive</div>
+        </div>
+    </div>
+    
+    <!-- Filters and Search -->
+    <div class="filters-section">
+        <form method="GET" class="filters-form">
+            <div class="search-group">
+                <input type="text" name="search" value="{{ search }}" placeholder="Search subscribers..." class="search-input">
+                <button type="submit" class="btn btn-outline">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="filter-group">
+                <select name="status" class="filter-select" onchange="this.form.submit()">
+                    <option value="all" {% if status == 'all' %}selected{% endif %}>All Status</option>
+                    <option value="active" {% if status == 'active' %}selected{% endif %}>Active Only</option>
+                    <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive Only</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Subscribers Table -->
+    <div class="table-container">
+        {% if subscribers and subscribers.items %}
+        <table class="subscribers-table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Subscribed Date</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subscriber in subscribers.items %}
+                <tr>
+                    <td>
+                        <div class="email-cell">
+                            <i class="fas fa-envelope"></i>
+                            {{ subscriber.email }}
+                        </div>
+                    </td>
+                    <td>{{ subscriber.full_name }}</td>
+                    <td>{{ subscriber.subscribed_at.strftime('%Y-%m-%d') if subscriber.subscribed_at else 'N/A' }}</td>
+                    <td>
+                        <span class="source-badge source-{{ subscriber.source or 'admin' }}">
+                            {{ (subscriber.source or 'admin').title() }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if subscriber.is_active %}
+                            <span class="status-badge status-active">
+                                <i class="fas fa-check-circle"></i> Active
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-inactive">
+                                <i class="fas fa-times-circle"></i> Inactive
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <form method="POST" action="{{ url_for('newsletter.toggle_subscriber', subscriber_id=subscriber.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm {% if subscriber.is_active %}btn-warning{% else %}btn-success{% endif %}" 
+                                        title="{% if subscriber.is_active %}Unsubscribe{% else %}Resubscribe{% endif %}">
+                                    <i class="fas {% if subscriber.is_active %}fa-pause{% else %}fa-play{% endif %}"></i>
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('newsletter.delete_subscriber', subscriber_id=subscriber.id) }}" 
+                                  style="display: inline;" onsubmit="return confirm('Are you sure you want to permanently delete this subscriber?')">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Delete Permanently">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <!-- Pagination -->
+        {% if subscribers.pages > 1 %}
+        <div class="pagination-container">
+            <div class="pagination">
+                {% if subscribers.has_prev %}
+                    <a href="{{ url_for('newsletter.admin_subscribers', page=subscribers.prev_num, search=search, status=status) }}" class="page-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                {% endif %}
+                
+                {% for page_num in subscribers.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != subscribers.page %}
+                            <a href="{{ url_for('newsletter.admin_subscribers', page=page_num, search=search, status=status) }}" class="page-btn">{{ page_num }}</a>
+                        {% else %}
+                            <span class="page-btn active">{{ page_num }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="page-btn">...</span>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if subscribers.has_next %}
+                    <a href="{{ url_for('newsletter.admin_subscribers', page=subscribers.next_num, search=search, status=status) }}" class="page-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="pagination-info">
+                Showing {{ subscribers.items | length }} of {{ subscribers.total }} subscribers
+            </div>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-users"></i>
+            <h3>No Subscribers Found</h3>
+            <p>{% if search %}No subscribers match your search criteria.{% else %}You don't have any newsletter subscribers yet.{% endif %}</p>
+            <button type="button" class="btn btn-primary" onclick="showAddSubscriber()">
+                <i class="fas fa-plus"></i> Add Your First Subscriber
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add Subscriber Modal -->
+<div id="addSubscriberModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-plus"></i> Add New Subscriber</h3>
+            <button type="button" class="close-btn" onclick="closeAddSubscriber()">&times;</button>
+        </div>
+        <form method="POST" action="{{ url_for('newsletter.add_subscriber') }}">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" class="form-control" required placeholder="Enter email address">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" id="first_name" name="first_name" class="form-control" placeholder="First name">
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Last name">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeAddSubscriber()">Cancel</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Subscriber
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.subscribers-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.header-content h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.header-content p {
+    color: #666;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.filters-section {
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.filters-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-group {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.filter-select {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    background: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.subscribers-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.subscribers-table th {
+    background: #f8f9fa;
+    padding: 1.5rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.subscribers-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f3f4;
+    vertical-align: middle;
+}
+
+.email-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.email-cell i {
+    color: var(--primary-color);
+}
+
+.source-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.source-admin {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+.source-api {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
+.source-import {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-active {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.status-inactive {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #e74c3c;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-outline {
+    background: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.pagination-container {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e9ecef;
+}
+
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.page-btn {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e9ecef;
+    background: white;
+    color: #666;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover {
+    background: #f8f9fa;
+    color: var(--primary-color);
+}
+
+.page-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination-info {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #ccc;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-footer {
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.required {
+    color: #dc3545;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .subscribers-container {
+        padding: 1rem;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+    
+    .filters-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-group {
+        max-width: none;
+    }
+    
+    .subscribers-table {
+        font-size: 0.9rem;
+    }
+    
+    .subscribers-table th,
+    .subscribers-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+function showAddSubscriber() {
+    document.getElementById('addSubscriberModal').style.display = 'block';
+    document.getElementById('email').focus();
+}
+
+function closeAddSubscriber() {
+    document.getElementById('addSubscriberModal').style.display = 'none';
+    document.getElementById('addSubscriberModal').querySelector('form').reset();
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('addSubscriberModal');
+    if (event.target === modal) {
+        closeAddSubscriber();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeAddSubscriber();
+    }
+});
+</script>
+{% endblock %} 

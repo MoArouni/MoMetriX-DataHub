@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Request Approved - {{ company.company_name }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 30px;
+        }
+        .content h2 {
+            color: #28a745;
+            margin-top: 0;
+            font-size: 22px;
+        }
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .info-box h4 {
+            margin-top: 0;
+            color: #28a745;
+        }
+        .info-box ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .action-button {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .action-button:hover {
+            background-color: #218838;
+            color: white;
+            text-decoration: none;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .success-icon {
+            font-size: 48px;
+            color: #28a745;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 Join Request Approved!</h1>
+            <p>Welcome to {{ company.company_name }}</p>
+        </div>
+        
+        <div class="content">
+            <div class="success-icon">✅</div>
+            
+            <h2>Congratulations, {{ user.first_name or user.username }}!</h2>
+            
+            <p>Great news! Your request to join <strong>{{ company.company_name }}</strong> as a team member has been approved.</p>
+            
+            <div class="info-box">
+                <h4>Your New Access Details:</h4>
+                <ul>
+                    <li><strong>Company:</strong> {{ company.company_name }}</li>
+                    <li><strong>Role:</strong> Team Member (Moderator)</li>
+                    <li><strong>Status:</strong> Active</li>
+                    <li><strong>Your Account:</strong> {{ user.email }}</li>
+                </ul>
+            </div>
+            
+            <p>You can now log in to your account and access the company's data dashboard. Your permissions have been set by the company administrator, and you'll be able to view and manage data according to your assigned access level.</p>
+            
+            {% if user.role_website == 'viewer' %}
+            <div class="info-box">
+                <h4>Role Change Notice:</h4>
+                <p>Your account role has been updated to <strong>Viewer</strong> as you are now part of a company team. This gives you access to the company's data while maintaining appropriate security levels.</p>
+            </div>
+            {% endif %}
+            
+            <div style="text-align: center;">
+                <a href="{{ url_for('auth.login', _external=True) }}" class="action-button">Access Your Dashboard</a>
+            </div>
+            
+            <p>If you have any questions about your new access or need help getting started, please contact your company administrator or reach out to our support team.</p>
+            
+            <p>Welcome to the team!<br>
+            <strong>The MoMetriX DataHub Team</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated message from MoMetriX DataHub.</p>
+            <p>© 2024 MoMetriX DataHub. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html> 

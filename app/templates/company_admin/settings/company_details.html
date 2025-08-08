@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block title %}Company Details - {{ company.company_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-building"></i> Company Details</h1>
+        <nav class="breadcrumb">
+            <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('company_admin.settings') }}">Settings</a>
+            <span>Company Details</span>
+        </nav>
+    </div>
+
+    <div class="company-details-container">
+        <div class="details-form-card">
+            <div class="card-header">
+                <h3><i class="fas fa-edit"></i> Edit Company Information</h3>
+                <p>Update your company profile and contact information</p>
+            </div>
+            
+            <form method="POST" class="company-form">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-section">
+                    <h4>Basic Information</h4>
+                    
+                    <div class="form-group">
+                        {{ form.company_name.label(class="form-label") }}
+                        {{ form.company_name(class="form-control" + (" is-invalid" if form.company_name.errors else "")) }}
+                        {% if form.company_name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.company_name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text">This is how your company name appears throughout the system</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.company_email.label(class="form-label") }}
+                        {{ form.company_email(class="form-control" + (" is-invalid" if form.company_email.errors else "")) }}
+                        {% if form.company_email.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.company_email.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text">Main contact email for your company</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.phone.label(class="form-label") }}
+                        {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else "")) }}
+                        {% if form.phone.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.phone.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text">Company phone number (optional)</small>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a href="{{ url_for('company_admin.settings') }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Company Information Display -->
+        <div class="info-display-card">
+            <div class="card-header">
+                <h3><i class="fas fa-info-circle"></i> Current Information</h3>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Company Name</label>
+                    <span>{{ company.company_name }}</span>
+                </div>
+                
+                <div class="info-item">
+                    <label>Contact Email</label>
+                    <span>{{ company.company_email or "Not set" }}</span>
+                </div>
+                
+                <div class="info-item">
+                    <label>Phone Number</label>
+                    <span>{{ company.phone or "Not set" }}</span>
+                </div>
+                
+                <div class="info-item">
+                    <label>Established Date</label>
+                    <span>{{ company.created_at.strftime('%B %d, %Y') }}</span>
+                </div>
+                
+                <div class="info-item">
+                    <label>Administrator</label>
+                    <span>{{ company.admin.first_name }} {{ company.admin.last_name }}</span>
+                </div>
+                
+                <div class="info-item">
+                    <label>Team Members</label>
+                    <span>{{ company.members|length }} {% if company.members|length == 1 %}member{% else %}members{% endif %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.breadcrumb {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: #999;
+}
+
+.breadcrumb a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.breadcrumb span:not(:last-child)::after {
+    content: '>';
+    margin-left: 0.5rem;
+    color: #666;
+}
+
+.company-details-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .company-details-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.details-form-card,
+.info-display-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 1.5rem;
+    background: var(--surface-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-header h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.card-header p {
+    margin: 0;
+    color: #ccc;
+    font-size: 0.95rem;
+}
+
+.company-form {
+    padding: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section h4 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(3, 218, 198, 0.2);
+}
+
+.form-control.is-invalid {
+    border-color: var(--error-color);
+}
+
+.invalid-feedback {
+    display: block;
+    color: var(--error-color);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.form-text {
+    color: #999;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background: var(--primary-color-light);
+    border-color: var(--primary-color-light);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--surface-color);
+    color: var(--text-color);
+    border-color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    transform: translateY(-1px);
+}
+
+.info-grid {
+    padding: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item label {
+    color: #ccc;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.info-item span {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %} 

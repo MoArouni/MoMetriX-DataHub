@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section-header">
+        <h1>Analytics Dashboard</h1>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Today's Sales</h5>
+                    <p class="card-text display-4">${{ "%.2f"|format(dashboard.today_sales) }}</p>
+                    <small class="text-muted">{{ dashboard.today_transactions }} transactions</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">This Month</h5>
+                    <p class="card-text display-4">${{ "%.2f"|format(dashboard.this_month_sales) }}</p>
+                    <small class="text-muted">Monthly Revenue</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Top Product</h5>
+                    <p class="card-text">{{ dashboard.top_product }}</p>
+                    <small class="text-muted">Best Performing Product</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Links -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Sales Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{{ url_for('analytics.stores') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-store"></i> Store Performance
+                        </a>
+                        <a href="{{ url_for('analytics.products') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-box"></i> Product Analytics
+                        </a>
+                        <a href="{{ url_for('analytics.categories') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tags"></i> Category Analysis
+                        </a>
+                        <a href="{{ url_for('analytics.payments') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-credit-card"></i> Payment Methods
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Reports & Tools</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{{ url_for('analytics.reports') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-line"></i> Performance Reports
+                        </a>
+                        <a href="{{ url_for('products.index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-boxes"></i> Manage Products
+                        </a>
+                        <a href="{{ url_for('products.categories') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tags"></i> Manage Categories
+                        </a>
+                        <a href="{{ url_for('sales.index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-cash-register"></i> Sales Management
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.card {
+    margin-bottom: 1rem;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 1rem;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.list-group-item i {
+    width: 1.5rem;
+    text-align: center;
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
+
+.display-4 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.text-muted {
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %} 

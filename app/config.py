@@ -62,7 +62,7 @@ class Config:
     MAIL_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     
     # Contact information for footer and contact forms
-    CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'contact@example.com')
+    CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'mmtxhelp@gmail.com')
     CONTACT_PHONE = os.environ.get('CONTACT_PHONE', '+1 (555) 123-4567')
     CONTACT_ADDRESS = os.environ.get('CONTACT_ADDRESS', 'Your Business Address')
     COMPANY_NAME = os.environ.get('COMPANY_NAME', 'MoMetriX DataHub')

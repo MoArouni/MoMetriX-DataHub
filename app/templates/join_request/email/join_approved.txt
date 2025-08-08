@@ -1,0 +1,31 @@
+🎉 Join Request Approved! - MoMetriX DataHub
+
+Welcome to {{ company.company_name }}
+
+Congratulations, {{ user.first_name or user.username }}!
+
+Great news! Your request to join {{ company.company_name }} as a team member has been approved.
+
+Your New Access Details:
+- Company: {{ company.company_name }}
+- Role: Team Member (Moderator)
+- Status: Active
+- Your Account: {{ user.email }}
+
+You can now log in to your account and access the company's data dashboard. Your permissions have been set by the company administrator, and you'll be able to view and manage data according to your assigned access level.
+
+{% if user.role_website == 'viewer' %}
+Role Change Notice:
+Your account role has been updated to Viewer as you are now part of a company team. This gives you access to the company's data while maintaining appropriate security levels.
+{% endif %}
+
+Access your dashboard at: {{ url_for('auth.login', _external=True) }}
+
+If you have any questions about your new access or need help getting started, please contact your company administrator or reach out to our support team.
+
+Welcome to the team!
+The MoMetriX DataHub Team
+
+---
+This is an automated message from MoMetriX DataHub.
+© 2024 MoMetriX DataHub. All rights reserved. 

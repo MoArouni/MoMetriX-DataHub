@@ -30,7 +30,7 @@ def index():
             
             standard_plan = SubscriptionPlan(
                 name="Standard",
-                price=19.99,
+                price=4.99,
                 billing_cycle="monthly",
                 max_sales=500,
                 max_users=5,
@@ -41,7 +41,7 @@ def index():
             
             premium_plan = SubscriptionPlan(
                 name="Premium",
-                price=49.99,
+                price=9.99,
                 billing_cycle="monthly",
                 max_sales=0,  # Unlimited
                 max_users=0,  # Unlimited
@@ -70,6 +70,7 @@ def index():
                         'Up to 50 sales entries per month',
                         'Up to 2 users per company',
                         'Basic analytics and reports',
+                        'Trial access to Standard features',
                         'Community support'
                     ],
                     'recommended': False,
@@ -78,13 +79,15 @@ def index():
                 },
                 {
                     'name': 'Standard',
-                    'price': '19.99',
+                    'price': '4.99',
                     'features': [
                         'Everything in Free',
                         'Up to 500 sales entries per month',
                         'Up to 5 users per company',
                         'Data import/export (CSV)',
                         'Advanced analytics and reports',
+                        'Product and embellishment management',
+                        'Store management and multi-location support',
                         'Email support',
                         'Data backup and restore'
                     ],
@@ -94,13 +97,16 @@ def index():
                 },
                 {
                     'name': 'Premium',
-                    'price': '49.99',
+                    'price': '9.99',
                     'features': [
                         'Everything in Standard',
                         'Unlimited sales entries',
                         'Unlimited users',
-                        'Advanced data analytics',
+                        'Advanced data analytics and insights',
                         'Custom reports and dashboards',
+                        'Advanced embellishment tracking',
+                        'Payment method analytics',
+                        'Time-based performance analysis',
                         'Priority support',
                         'API access',
                         'Advanced security features',
@@ -144,6 +150,7 @@ def index():
                 f'Up to {plan.max_sales} sales entries per month',
                 f'Up to {plan.max_users} users per company',
                 'Basic analytics and reports',
+                'Trial access to Standard features',
                 'Community support'
             ]
         elif plan.name == 'Standard':
@@ -153,6 +160,8 @@ def index():
                 f'Up to {plan.max_users} users per company',
                 'Data import/export (CSV)',
                 'Advanced analytics and reports',
+                'Product and embellishment management',
+                'Store management and multi-location support',
                 'Email support',
                 'Data backup and restore'
             ]
@@ -161,8 +170,11 @@ def index():
                 'Everything in Standard',
                 'Unlimited sales entries',
                 'Unlimited users',
-                'Advanced data analytics',
+                'Advanced data analytics and insights',
                 'Custom reports and dashboards',
+                'Advanced embellishment tracking',
+                'Payment method analytics',
+                'Time-based performance analysis',
                 'Priority support',
                 'API access',
                 'Advanced security features',

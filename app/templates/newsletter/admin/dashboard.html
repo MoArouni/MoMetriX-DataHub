@@ -1,0 +1,628 @@
+{% extends "base.html" %}
+
+{% block title %}Newsletter Admin{% endblock %}
+
+{% block content %}
+<div class="newsletter-admin-container">
+    <div class="admin-header">
+        <h1><i class="fas fa-envelope"></i> Newsletter Management</h1>
+        <p>Manage subscribers and send newsletters to your audience</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">{{ total_subscribers }}</div>
+                <div class="stat-label">Active Subscribers</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-paper-plane"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">{{ total_campaigns }}</div>
+                <div class="stat-label">Total Campaigns</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-plus"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">{{ new_subscribers_30d }}</div>
+                <div class="stat-label">New This Month</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Actions -->
+    <div class="action-grid">
+        <!-- Quick Send Newsletter -->
+        <div class="action-card primary">
+            <div class="card-header">
+                <h2><i class="fas fa-bolt"></i> Quick Send Newsletter</h2>
+                <p>Send an email to all {{ total_subscribers }} active subscribers</p>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('newsletter.quick_send') }}" class="quick-send-form">
+                    <div class="form-group">
+                        <label for="subject">Email Subject</label>
+                        <input type="text" id="subject" name="subject" class="form-control" 
+                               placeholder="Enter email subject..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" class="form-control" rows="6" 
+                                  placeholder="Write your newsletter message here..." required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="previewMessage()">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button type="submit" class="btn btn-primary" onclick="return confirmSend({{ total_subscribers }})">
+                            <i class="fas fa-paper-plane"></i> Send to All Subscribers
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Management Links -->
+        <div class="action-card secondary">
+            <div class="card-header">
+                <h2><i class="fas fa-cogs"></i> Manage Newsletter</h2>
+                <p>Advanced newsletter management options</p>
+            </div>
+            <div class="card-body">
+                <div class="action-links">
+                    <a href="{{ url_for('newsletter.admin_subscribers') }}" class="action-link">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <strong>Manage Subscribers</strong>
+                            <small>View, add, edit, and remove subscribers</small>
+                        </div>
+                    </a>
+                    
+                    <a href="{{ url_for('newsletter.admin_campaigns') }}" class="action-link">
+                        <i class="fas fa-newspaper"></i>
+                        <div>
+                            <strong>Campaign History</strong>
+                            <small>View and manage past campaigns</small>
+                        </div>
+                    </a>
+                    
+                    <a href="{{ url_for('newsletter.create_campaign') }}" class="action-link">
+                        <i class="fas fa-plus-circle"></i>
+                        <div>
+                            <strong>Create Campaign</strong>
+                            <small>Design and schedule newsletters</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    {% if recent_campaigns %}
+    <div class="recent-activity">
+        <h3><i class="fas fa-clock"></i> Recent Campaigns</h3>
+        <div class="campaign-list">
+            {% for campaign in recent_campaigns %}
+            <div class="campaign-item">
+                <div class="campaign-info">
+                    <h4>{{ campaign.title }}</h4>
+                    <p>{{ campaign.subject }}</p>
+                    <small>
+                        <i class="fas fa-calendar"></i> {{ campaign.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        {% if campaign.status == 'sent' %}
+                        | <i class="fas fa-check-circle text-success"></i> Sent to {{ campaign.emails_sent }} subscribers
+                        {% elif campaign.status == 'draft' %}
+                        | <i class="fas fa-edit text-warning"></i> Draft
+                        {% endif %}
+                    </small>
+                </div>
+                <div class="campaign-actions">
+                    <a href="{{ url_for('newsletter.view_campaign', campaign_id=campaign.id) }}" class="btn btn-sm btn-outline">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Preview Modal -->
+<div id="previewModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Email Preview</h3>
+            <button type="button" class="close-btn" onclick="closePreview()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="email-preview">
+                <div class="email-header">
+                    <strong>Subject:</strong> <span id="previewSubject"></span>
+                </div>
+                <div class="email-body" id="previewMessage"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closePreview()">Close</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.newsletter-admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.admin-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.admin-header h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.admin-header p {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), #e74c3c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Action Grid */
+.action-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.action-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.action-card.primary {
+    border-top: 4px solid var(--primary-color);
+}
+
+.action-card.secondary {
+    border-top: 4px solid #6c757d;
+}
+
+.card-header {
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.card-header h2 {
+    color: #333;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.card-header p {
+    color: #666;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #e74c3c;
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-outline:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* Action Links */
+.action-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.action-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.action-link:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    color: var(--primary-color);
+}
+
+.action-link i {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.action-link strong {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.action-link small {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+/* Recent Activity */
+.recent-activity {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.recent-activity h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.campaign-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.campaign-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.campaign-info h4 {
+    margin: 0 0 0.25rem 0;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.campaign-info p {
+    margin: 0 0 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.campaign-info small {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body {
+    padding: 2rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.email-preview {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.email-header {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+}
+
+.email-body {
+    padding: 1.5rem;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .newsletter-admin-container {
+        padding: 1rem;
+    }
+    
+    .action-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .campaign-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+</style>
+
+<script>
+function previewMessage() {
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+    
+    if (!subject && !message) {
+        alert('Please enter a subject and message first.');
+        return;
+    }
+    
+    document.getElementById('previewSubject').textContent = subject || 'No Subject';
+    document.getElementById('previewMessage').textContent = message || 'No message content';
+    
+    document.getElementById('previewModal').style.display = 'block';
+}
+
+function closePreview() {
+    document.getElementById('previewModal').style.display = 'none';
+}
+
+function confirmSend(subscriberCount) {
+    if (subscriberCount === 0) {
+        alert('No subscribers found. Please add subscribers first.');
+        return false;
+    }
+    
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+    
+    if (!subject || !message) {
+        alert('Please fill in both subject and message.');
+        return false;
+    }
+    
+    return confirm(`Are you sure you want to send this newsletter to ${subscriberCount} subscribers?`);
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('previewModal');
+    if (event.target === modal) {
+        closePreview();
+    }
+});
+</script>
+{% endblock %} 

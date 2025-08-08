@@ -3,6 +3,12 @@
 {% block title %}Subscription Information{% endblock %}
 
 {% block content %}
+<!-- Demo Mode Banner -->
+<div class="demo-banner">
+    <i class="fas fa-star"></i>
+    <strong>DEMO MODE:</strong> Platform is currently free for all users! Experience all features at no cost while we're in beta.
+</div>
+
 <div class="container">
     <div class="page-header">
         <h1><i class="fas fa-credit-card"></i> Subscription & Billing</h1>
@@ -13,141 +19,111 @@
         </nav>
     </div>
 
+    <!-- Demo Notice -->
+    <div class="demo-notice">
+        <h3><i class="fas fa-gift"></i> Currently in Demo Mode</h3>
+        <p>
+            We're excited to offer <strong>free access</strong> to all features of MoMetriX DataHub while we're in beta! 
+            This is your chance to explore our sales management platform, import your data, and discover how it can 
+            help your business grow - all without any cost.
+        </p>
+        <div class="demo-features">
+            <div class="demo-feature">
+                <i class="fas fa-check-circle"></i>
+                <span>Unlimited Sales Tracking</span>
+            </div>
+            <div class="demo-feature">
+                <i class="fas fa-check-circle"></i>
+                <span>Advanced Analytics</span>
+            </div>
+            <div class="demo-feature">
+                <i class="fas fa-check-circle"></i>
+                <span>Multi-Store Management</span>
+            </div>
+            <div class="demo-feature">
+                <i class="fas fa-check-circle"></i>
+                <span>Team Collaboration</span>
+            </div>
+        </div>
+    </div>
+
     <div class="subscription-layout">
         <!-- Current Plan Information -->
         <div class="plan-info-section">
-            <div class="current-plan-card">
+            <div class="current-plan-card demo-plan">
                 <div class="plan-header">
                     <div class="plan-icon">
-                        <i class="fas fa-crown"></i>
+                        <i class="fas fa-star"></i>
                     </div>
                     <div class="plan-details">
-                        {% if subscription and plan %}
-                        <h2>{{ plan.name }} Plan</h2>
-                        <p class="plan-price">${{ plan.price }}/{{ plan.billing_cycle }}</p>
-                        <p class="plan-status status-active">Active</p>
-                        {% else %}
-                        <h2>Free Plan</h2>
-                        <p class="plan-price">$0/month</p>
-                        <p class="plan-status status-free">Current Plan</p>
-                        {% endif %}
+                        <h2>Demo Plan</h2>
+                        <p class="plan-price">FREE</p>
+                        <p class="plan-status status-demo">All Features Unlocked</p>
                     </div>
                 </div>
                 
-                {% if subscription and plan %}
-                <div class="plan-dates">
-                    <div class="date-item">
-                        <span class="label">Current Period:</span>
-                        <span class="value">{{ subscription.current_period_start.strftime('%b %d, %Y') }} - {{ subscription.current_period_end.strftime('%b %d, %Y') if subscription.current_period_end else 'Ongoing' }}</span>
+                <div class="demo-info">
+                    <div class="demo-item">
+                        <span class="label">Access Level:</span>
+                        <span class="value">Full Platform Access</span>
                     </div>
-                    <div class="date-item">
-                        <span class="label">Subscribed Since:</span>
-                        <span class="value">{{ subscription.created_at.strftime('%B %d, %Y') }}</span>
+                    <div class="demo-item">
+                        <span class="label">Duration:</span>
+                        <span class="value">While in Beta</span>
+                    </div>
+                    <div class="demo-item">
+                        <span class="label">Features:</span>
+                        <span class="value">All Premium Features</span>
                     </div>
                 </div>
-                {% endif %}
             </div>
         </div>
 
         <!-- Usage Statistics -->
         <div class="usage-section">
-            <h3>Usage Statistics</h3>
+            <h3>Current Usage</h3>
             
-            {% if subscription and plan %}
-            <div class="usage-cards">
-                <div class="usage-card">
-                    <div class="usage-header">
-                        <h4>Users</h4>
-                        <span class="usage-count">{{ usage_stats.users }}/{{ plan.max_users }}</span>
-                    </div>
-                    <div class="usage-bar">
-                        <div class="usage-fill" data-width="{{ subscription.user_usage_percent }}"></div>
-                    </div>
-                    <p class="usage-description">
-                        {% if subscription.user_usage_percent > 80 %}
-                            <i class="fas fa-exclamation-triangle text-warning"></i>
-                            Approaching user limit
-                        {% else %}
-                            <i class="fas fa-check-circle text-success"></i>
-                            Good usage level
-                        {% endif %}
-                    </p>
-                </div>
-                
-                <div class="usage-card">
-                    <div class="usage-header">
-                        <h4>Monthly Sales</h4>
-                        <span class="usage-count">{{ subscription.sales_count }}/{{ plan.max_sales }}</span>
-                    </div>
-                    <div class="usage-bar">
-                        <div class="usage-fill" data-width="{{ subscription.sales_usage_percent }}"></div>
-                    </div>
-                    <p class="usage-description">
-                        {% if subscription.sales_usage_percent > 80 %}
-                            <i class="fas fa-exclamation-triangle text-warning"></i>
-                            Approaching sales limit
-                        {% else %}
-                            <i class="fas fa-check-circle text-success"></i>
-                            Good usage level
-                        {% endif %}
-                    </p>
-                </div>
-                
-                <div class="usage-card">
-                    <div class="usage-header">
-                        <h4>Stores</h4>
-                        <span class="usage-count">{{ usage_stats.stores }}</span>
-                    </div>
-                    <div class="feature-status">
-                        <i class="fas fa-store"></i>
-                        <span>Configured</span>
-                    </div>
-                </div>
-                
-                <div class="usage-card">
-                    <div class="usage-header">
-                        <h4>Moderators</h4>
-                        <span class="usage-count">{{ usage_stats.moderators }}</span>
-                    </div>
-                    <div class="feature-status">
-                        <i class="fas fa-users"></i>
-                        <span>Active</span>
-                    </div>
-                </div>
-            </div>
-            {% else %}
-            <!-- Free Plan Usage -->
-            <div class="free-plan-usage">
+            <div class="demo-usage">
                 <div class="usage-info">
-                    <h4>Free Plan Limits</h4>
+                    <h4>Demo Mode Usage</h4>
                     <div class="limit-item">
                         <span>Users:</span>
-                        <span>{{ usage_stats.users }}/3</span>
+                        <span>{{ usage_stats.users }} (Unlimited)</span>
                     </div>
                     <div class="limit-item">
-                        <span>Sales per month:</span>
-                        <span>Limited to 100</span>
+                        <span>Sales Entries:</span>
+                        <span>Unlimited</span>
                     </div>
                     <div class="limit-item">
                         <span>Stores:</span>
-                        <span>{{ usage_stats.stores }}</span>
+                        <span>{{ usage_stats.stores }} (Unlimited)</span>
                     </div>
                     <div class="limit-item">
                         <span>Analytics:</span>
-                        <span>Basic</span>
+                        <span>Full Access</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>Data Export:</span>
+                        <span>Available</span>
                     </div>
                 </div>
             </div>
-            {% endif %}
         </div>
     </div>
 
-    <!-- Available Plans -->
+    <!-- Future Plans Preview (Disabled) -->
     <div class="plans-section">
-        <h3>Available Plans</h3>
+        <h3>Future Pricing Plans <span class="coming-soon">(Coming Soon)</span></h3>
+        <p class="plans-description">
+            Once we exit beta, these will be our available plans. Current users will receive special early-bird pricing!
+        </p>
         <div class="plans-grid">
             {% for available_plan in plans %}
-            <div class="plan-card {% if subscription and plan and plan.id == available_plan.id %}current-plan{% endif %}">
+            <div class="plan-card future-plan">
+                <div class="plan-overlay">
+                    <div class="overlay-text">Coming Soon</div>
+                </div>
+                
                 <div class="plan-card-header">
                     <h4>{{ available_plan.name }}</h4>
                     <div class="plan-card-price">
@@ -159,11 +135,11 @@
                 <div class="plan-features">
                     <div class="feature-item">
                         <i class="fas fa-users"></i>
-                        <span>Up to {{ available_plan.max_users }} users</span>
+                        <span>{% if available_plan.max_users == 0 %}Unlimited{% else %}Up to {{ available_plan.max_users }}{% endif %} users</span>
                     </div>
                     <div class="feature-item">
                         <i class="fas fa-chart-bar"></i>
-                        <span>{{ available_plan.max_sales }} sales/month</span>
+                        <span>{% if available_plan.max_sales == 0 %}Unlimited{% else %}{{ available_plan.max_sales }}{% endif %} sales/month</span>
                     </div>
                     {% if available_plan.feature_analytics %}
                     <div class="feature-item">
@@ -186,55 +162,76 @@
                 </div>
                 
                 <div class="plan-action">
-                    {% if subscription and plan and plan.id == available_plan.id %}
-                    <button class="btn btn-current" disabled>Current Plan</button>
-                    {% elif available_plan.name == 'Free' %}
-                    {% if not subscription or plan.name != 'Free' %}
-                    <a href="#" class="btn btn-outline">Downgrade</a>
-                    {% else %}
-                    <button class="btn btn-current" disabled>Current Plan</button>
-                    {% endif %}
-                    {% else %}
-                    <a href="{{ url_for('payment.checkout', plan_id=available_plan.id) }}" class="btn btn-primary">
-                        {% if subscription %}Upgrade{% else %}Choose Plan{% endif %}
-                    </a>
-                    {% endif %}
+                    <button class="btn btn-disabled" disabled>Coming Soon</button>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
-
-    <!-- Billing Information -->
-    {% if subscription and subscription.payment_method %}
-    <div class="billing-section">
-        <h3>Billing Information</h3>
-        <div class="billing-card">
-            <div class="billing-info">
-                <div class="info-item">
-                    <span class="label">Payment Method:</span>
-                    <span class="value">{{ subscription.payment_method }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">Next Billing Date:</span>
-                    <span class="value">{{ subscription.current_period_end.strftime('%B %d, %Y') if subscription.current_period_end else 'N/A' }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">Status:</span>
-                    <span class="value status-{{ subscription.status }}">{{ subscription.status.title() }}</span>
-                </div>
-            </div>
-            <div class="billing-actions">
-                <a href="{{ url_for('payment.manage') }}" class="btn btn-outline">
-                    <i class="fas fa-cog"></i> Manage Billing
-                </a>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 </div>
 
 <style>
+.demo-banner {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #9eff00 100%);
+    color: #000;
+    padding: 1rem 2rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(var(--primary-color-rgb), 0.3);
+    border-radius: 8px;
+}
+
+.demo-banner i {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.demo-notice {
+    background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.1) 0%, rgba(0, 35, 75, 0.1) 100%);
+    border: 1px solid rgba(var(--primary-color-rgb), 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.demo-notice h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.demo-notice h3 i {
+    margin-right: 0.5rem;
+}
+
+.demo-notice p {
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.demo-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.demo-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.demo-feature i {
+    color: #27ae60;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -276,7 +273,7 @@
     margin-bottom: 3rem;
 }
 
-.current-plan-card {
+.current-plan-card.demo-plan {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-color-light));
     border-radius: 12px;
     padding: 2rem;
@@ -314,107 +311,46 @@
     font-weight: 600;
 }
 
-.status-active {
+.status-demo {
     background: rgba(46, 204, 113, 0.2);
     color: #27ae60;
 }
 
-.status-free {
-    background: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.7);
-}
-
-.plan-dates {
+.demo-info {
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     padding-top: 1rem;
 }
 
-.date-item {
+.demo-item {
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.5rem;
 }
 
-.date-item .label {
+.demo-item .label {
     font-weight: 600;
 }
 
 .usage-section h3,
-.plans-section h3,
-.billing-section h3 {
+.plans-section h3 {
     color: var(--primary-color);
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
 }
 
-.usage-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-}
-
-.usage-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.usage-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.usage-header h4 {
-    margin: 0;
-    color: #fff;
-}
-
-.usage-count {
-    font-weight: bold;
-    color: var(--primary-color);
-}
-
-.usage-bar {
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 0.75rem;
-}
-
-.usage-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary-color), var(--primary-color-light));
-    transition: width 0.3s ease;
-    width: 0%;
-}
-
-.usage-description {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #ccc;
-}
-
-.text-warning {
+.coming-soon {
     color: #f39c12;
+    font-size: 0.9rem;
+    font-weight: normal;
 }
 
-.text-success {
-    color: #27ae60;
+.plans-description {
+    color: #ccc;
+    margin-bottom: 2rem;
+    text-align: center;
 }
 
-.feature-status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-.free-plan-usage {
+.demo-usage {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     padding: 2rem;
@@ -454,16 +390,35 @@
     border-radius: 12px;
     padding: 2rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
 }
 
-.plan-card.current-plan {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.3);
+.plan-card.future-plan {
+    opacity: 0.7;
 }
 
-.plan-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+.plan-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    z-index: 10;
+}
+
+.overlay-text {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transform: rotate(-15deg);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .plan-card-header {
@@ -515,36 +470,6 @@
     text-align: center;
 }
 
-.billing-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.billing-info {
-    flex: 1;
-}
-
-.info-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.info-item .label {
-    color: #ccc;
-}
-
-.info-item .value {
-    color: #fff;
-    font-weight: 600;
-}
-
 .btn {
     display: inline-flex;
     align-items: center;
@@ -558,28 +483,7 @@
     cursor: pointer;
 }
 
-.btn-primary {
-    background: var(--primary-color);
-    color: #000;
-}
-
-.btn-primary:hover {
-    background: var(--primary-color-light);
-    transform: translateY(-2px);
-}
-
-.btn-outline {
-    background: transparent;
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-}
-
-.btn-outline:hover {
-    background: var(--primary-color);
-    color: #000;
-}
-
-.btn-current {
+.btn-disabled {
     background: rgba(255, 255, 255, 0.1);
     color: #999;
     cursor: not-allowed;
@@ -598,22 +502,15 @@
         grid-template-columns: 1fr;
     }
     
-    .billing-card {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
+    .demo-features {
+        grid-template-columns: 1fr;
+    }
+    
+    .demo-banner {
+        padding: 1rem;
+        font-size: 1rem;
     }
 }
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.usage-fill[data-width]').forEach(function(el) {
-        setTimeout(function() {
-            el.style.width = el.getAttribute('data-width') + '%';
-        }, 100);
-    });
-});
-</script>
 
 {% endblock %} 

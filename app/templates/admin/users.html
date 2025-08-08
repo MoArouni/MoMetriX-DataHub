@@ -19,11 +19,12 @@
             <i class="fas fa-search"></i>
         </div>
         <div class="filter-options">
-            <select id="roleFilter">
-                <option value="all">All Roles</option>
-                <option value="admin">Admin</option>
-                <option value="subscriber">Subscriber</option>
-            </select>
+                         <select id="roleFilter">
+                 <option value="all">All Roles</option>
+                 <option value="admin">Admin</option>
+                 <option value="subscriber">Subscriber</option>
+                 <option value="viewer">Viewer</option>
+             </select>
         </div>
     </div>
     
@@ -46,13 +47,17 @@
                     <tr>
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
-                        <td>
-                            {% if user.is_admin %}
-                                <span class="role-badge role-admin">Admin</span>
-                            {% else %}
-                                <span class="role-badge role-subscriber">{{ user.role_website|capitalize }}</span>
-                            {% endif %}
-                        </td>
+                                                 <td>
+                             {% if user.is_admin %}
+                                 <span class="role-badge role-admin">Admin</span>
+                             {% elif user.role_website == 'subscriber' %}
+                                 <span class="role-badge role-subscriber">Subscriber</span>
+                             {% elif user.role_website == 'viewer' %}
+                                 <span class="role-badge role-viewer">Viewer</span>
+                             {% else %}
+                                 <span class="role-badge role-subscriber">{{ user.role_website|capitalize }}</span>
+                             {% endif %}
+                         </td>
                         <td>{{ user.company.company_name if user.company else 'N/A' }}</td>
                         <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
                         <td>{{ user.last_login.strftime('%Y-%m-%d') if user.last_login else 'Never' }}</td>

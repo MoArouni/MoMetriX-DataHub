@@ -4,22 +4,34 @@
     <li class="dropdown">
         <a href="#" class="dropdown-toggle">Dashboard <i class="fas fa-chevron-down"></i></a>
         <ul class="dropdown-menu">
+            {% if current_user.is_admin %}
+            <li><a href="{{ url_for('admin.dashboard') }}"><i class="fas fa-chart-bar"></i> Admin Dashboard</a></li>
+            {% else %}
             <li><a href="{{ url_for('dashboard.dashboard') }}"><i class="fas fa-chart-bar"></i> Main Dashboard</a></li>
+            {% endif %}
             {% if current_user.company_id %}
+            {% if has_analytics_access() %}
             <li><a href="{{ url_for('analytics.index') }}"><i class="fas fa-chart-pie"></i> Analytics Hub</a></li>
+            {% endif %}
             <li><a href="{{ url_for('sales.index') }}"><i class="fas fa-chart-line"></i> Sales Management</a></li>
             <li><a href="{{ url_for('products.index') }}"><i class="fas fa-box"></i> Products</a></li>
             <li><a href="{{ url_for('stores.index') }}"><i class="fas fa-store"></i> Stores</a></li>
             {% endif %}
             {% if current_user.is_admin %}
             <li><a href="{{ url_for('admin.users') }}"><i class="fas fa-users"></i> User Management</a></li>
+            <li><a href="{{ url_for('newsletter.admin_dashboard') }}"><i class="fas fa-envelope"></i> Newsletter Admin</a></li>
             {% endif %}
             {% if current_user.company_id and current_user.company and current_user.company.admin_id == current_user.id %}
             <li><a href="{{ url_for('team.index') }}"><i class="fas fa-users"></i> Team Management</a></li>
             <li><a href="{{ url_for('company_admin.join_requests') }}"><i class="fas fa-user-plus"></i> Join Requests</a></li>
+            <li><a href="{{ url_for('stock_adjustment.index') }}"><i class="fas fa-clipboard-check"></i> Stock Adjustments</a></li>
+            <li><a href="{{ url_for('company_admin.settings') }}"><i class="fas fa-cog"></i> Company Settings</a></li>
             {% endif %}
             {% if not current_user.company_id and current_user.role_website in ['subscriber', 'admin'] %}
             <li><a href="{{ url_for('dashboard.create_company') }}"><i class="fas fa-plus-circle"></i> Create Company</a></li>
+            {% endif %}
+            {% if not current_user.company_id %}
+            <li><a href="{{ url_for('join_request.join_company') }}"><i class="fas fa-building"></i> Join Company</a></li>
             {% endif %}
         </ul>
     </li>

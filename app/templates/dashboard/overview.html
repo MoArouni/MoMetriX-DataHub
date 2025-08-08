@@ -443,130 +443,7 @@
         background-color: rgba(255, 255, 255, 0.05);
     }
     
-    /* Tools Grid - Mobile First */
-    .tools-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    @media (min-width: 576px) {
-        .tools-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    
-    @media (min-width: 992px) {
-        .tools-grid {
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-    }
-    
-    .tool-card {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
-        padding: 1.25rem;
-        transition: all 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-    
-    @media (min-width: 768px) {
-        .tool-card {
-            padding: 1.5rem;
-        }
-    }
-    
-    .tool-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        background: rgba(var(--primary-color-rgb), 0.1);
-    }
-    
-    .tool-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    
-    .tool-icon {
-        width: 35px;
-        height: 35px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(var(--primary-color-rgb), 0.2);
-        border-radius: 8px;
-        margin-right: 0.75rem;
-        color: var(--primary-color);
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
-    
-    @media (min-width: 768px) {
-        .tool-icon {
-            width: 40px;
-            height: 40px;
-            margin-right: 1rem;
-            font-size: 1.2rem;
-        }
-    }
-    
-    .tool-name {
-        font-size: 1.1rem;
-        font-weight: 600;
-        line-height: 1.3;
-    }
-    
-    @media (min-width: 768px) {
-        .tool-name {
-            font-size: 1.2rem;
-        }
-    }
-    
-    .tool-description {
-        margin-bottom: 1rem;
-        flex-grow: 1;
-        color: #aaa;
-        font-size: 0.9rem;
-        line-height: 1.4;
-    }
-    
-    @media (min-width: 768px) {
-        .tool-description {
-            font-size: 1rem;
-        }
-    }
-    
-    .tool-actions {
-        display: flex;
-        justify-content: flex-end;
-    }
-    
-    .tool-button {
-        background: rgba(var(--primary-color-rgb), 0.2);
-        color: var(--primary-color);
-        border: none;
-        padding: 0.75rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-        min-height: 44px; /* Touch-friendly */
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .tool-button:hover {
-        background: var(--primary-color);
-        color: #000;
-    }
+
     
     /* Small Stats Cards - Mobile Optimized */
     .stats-cards-small {
@@ -664,31 +541,398 @@
         }
     }
     
-    /* Mobile-specific improvements */
-    @media (max-width: 767px) {
-        .dashboard-card {
-            margin-bottom: 1rem;
+
+    
+    .key-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .key-metric {
+        background: rgba(var(--primary-color-rgb), 0.05);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+    }
+
+    .key-metric:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        background: rgba(var(--primary-color-rgb), 0.08);
+    }
+
+    .metric-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(var(--primary-color-rgb), 0.1);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--primary-color);
+    }
+
+    .metric-content {
+        flex: 1;
+    }
+
+    .metric-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.3rem;
+        line-height: 1.2;
+    }
+
+    .metric-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.3rem;
+        font-weight: 500;
+    }
+
+    .metric-subtext {
+        font-size: 0.8rem;
+        color: #888;
+    }
+
+    .metric-change {
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .metric-change.positive {
+        color: #28a745;
+    }
+
+    .metric-change.negative {
+        color: #dc3545;
+    }
+
+    .metric-change.neutral {
+        color: #6c757d;
+    }
+
+    @media (max-width: 768px) {
+        .key-metrics-grid {
+            grid-template-columns: 1fr;
         }
         
-        .welcome-section {
+        .key-metric {
+            padding: 1.2rem;
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+        }
+    }
+    
+    /* Plan Information Styling */
+    .plan-info {
+        padding: 0;
+    }
+    
+    .plan-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .plan-header h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .plan-badge {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .plan-features {
+        margin-bottom: 1.5rem;
+    }
+    
+    .plan-feature-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .plan-feature-item:hover {
+        background: rgba(255, 255, 255, 0.02);
+        padding-left: 0.5rem;
+    }
+    
+    .plan-feature-item i {
+        margin-right: 0.75rem;
+        color: var(--primary-color);
+        font-size: 1rem;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .plan-feature-item span {
+        font-size: 0.9rem;
+        color: #ccc;
+    }
+    
+    .plan-upgrade {
+        text-align: center;
+        padding-top: 1rem;
+    }
+    
+    .btn-upgrade {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 0.875rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-upgrade:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+        color: white;
+    }
+    
+    .btn-upgrade i {
+        font-size: 0.9rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .btn-upgrade:hover i {
+        transform: translateX(3px);
+    }
+    
+    /* Stat Action Links */
+    .stat-action {
+        background: rgba(var(--primary-color-rgb), 0.2);
+        color: var(--primary-color);
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stat-action:hover {
+        background: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+    
+    /* Tools Grid */
+    .section-title {
+        font-size: 1.5rem;
+        margin: 2rem 0 1.5rem 0;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .section-title i {
+        color: var(--primary-color);
+        font-size: 1.3rem;
+    }
+    
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .tool-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    
+    .tool-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(var(--primary-color-rgb), 0.3);
+    }
+    
+    .tool-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        gap: 1rem;
+    }
+    
+    .tool-icon {
+        width: 50px;
+        height: 50px;
+        background: rgba(var(--primary-color-rgb), 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+    
+    .tool-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin: 0;
+    }
+    
+    .tool-description {
+        color: #aaa;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+    
+    .tool-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: auto;
+    }
+    
+    .tool-button {
+        background: rgba(var(--primary-color-rgb), 0.2);
+        color: var(--primary-color);
+        border: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .tool-button:hover {
+        background: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Improved responsive design */
+    @media (max-width: 992px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .dashboard-wide {
+            grid-column: span 1;
+        }
+        
+        .stats-cards-small {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .stats-cards-small {
+            grid-template-columns: 1fr;
+        }
+        
+        .plan-header {
+            flex-direction: column;
+            gap: 0.75rem;
             text-align: center;
         }
         
-        .welcome-section::after {
-            display: none; /* Hide decorative element on mobile */
+        .tools-grid {
+            grid-template-columns: 1fr;
         }
         
-        /* Stack elements vertically on mobile */
         .tool-header {
             flex-direction: column;
             text-align: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
         
         .tool-icon {
-            margin-right: 0;
-            margin-bottom: 0.5rem;
+            margin: 0 auto;
         }
+    }
+    
+    /* Enhanced visual hierarchy */
+    .dashboard-card h2 {
+        position: relative;
+        padding-left: 0;
+    }
+    
+    .dashboard-card h2::before {
+        content: '';
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 60%;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: 2px;
+    }
+    
+    /* Better spacing and alignment */
+    .quick-actions {
+        gap: 0.75rem;
+    }
+    
+    .quick-action-link {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .quick-action-link:hover {
+        border-color: rgba(var(--primary-color-rgb), 0.5);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 </style>
 {% endblock %}
@@ -708,7 +952,7 @@
             <div class="stat-icon">
                 <i class="fas fa-users"></i>
             </div>
-            <div class="stat-value">{{ stats.team_members }}</div>
+            <div class="stat-value">{{ stats.team_members|default(0) }}</div>
             <div class="stat-label">Team Members</div>
         </div>
         
@@ -716,7 +960,7 @@
             <div class="stat-icon">
                 <i class="fas fa-calendar-alt"></i>
             </div>
-            <div class="stat-value">{{ stats.days_active }}</div>
+            <div class="stat-value">{{ stats.days_active|default(0) }}</div>
             <div class="stat-label">Days Active</div>
         </div>
         {% endif %}
@@ -725,16 +969,6 @@
     
     <!-- Main Dashboard Layout - 3 column grid -->
     <div class="dashboard-grid">
-        <!-- Data Overview Chart - Spans 2 columns -->
-        <div class="dashboard-card dashboard-wide">
-            <h2><i class="fas fa-chart-line"></i> Data Overview</h2>
-            <div class="chart-container">
-                <div class="chart-placeholder">
-                    <span>Data visualization will appear here</span>
-                </div>
-            </div>
-        </div>
-        
         <!-- Quick Actions - Single column -->
         <div class="dashboard-card">
             <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
@@ -747,13 +981,42 @@
                 </li>
                 
                 {% if current_user.company_id %}
+                <!-- Analytics Dashboard - Only if user has analytics permission -->
+                {% if current_user.has_permission('analytics') %}
+                <li class="quick-action-item">
+                    <a href="{{ url_for('analytics.index') }}" class="quick-action-link">
+                        <i class="fas fa-chart-line quick-action-icon"></i>
+                        <span>Analytics Dashboard</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                <!-- Sales Management - Available for all company members -->
+                <li class="quick-action-item">
+                    <a href="{{ url_for('sales.new_sale') }}" class="quick-action-link">
+                        <i class="fas fa-cash-register quick-action-icon"></i>
+                        <span>Record Sale</span>
+                    </a>
+                </li>
+                
+                <li class="quick-action-item">
+                    <a href="{{ url_for('sales.index') }}" class="quick-action-link">
+                        <i class="fas fa-chart-line quick-action-icon"></i>
+                        <span>View Sales</span>
+                    </a>
+                </li>
+                
+                <!-- Management Options - Based on Permissions -->
+                {% if current_user.has_permission('manage_stores') %}
                 <li class="quick-action-item">
                     <a href="{{ url_for('stores.index') }}" class="quick-action-link">
                         <i class="fas fa-store quick-action-icon"></i>
                         <span>Manage Stores</span>
                     </a>
                 </li>
+                {% endif %}
                 
+                {% if current_user.has_permission('manage_products') %}
                 <li class="quick-action-item">
                     <a href="{{ url_for('products.categories') }}" class="quick-action-link">
                         <i class="fas fa-tags quick-action-icon"></i>
@@ -774,20 +1037,6 @@
                         <span>Manage Embellishments</span>
                     </a>
                 </li>
-                
-                <li class="quick-action-item">
-                    <a href="{{ url_for('sales.new_sale') }}" class="quick-action-link">
-                        <i class="fas fa-cash-register quick-action-icon"></i>
-                        <span>Record Sale</span>
-                    </a>
-                </li>
-                {% else %}
-                <li class="quick-action-item">
-                    <a href="{{ url_for('dashboard.create_company') }}" class="quick-action-link">
-                        <i class="fas fa-building quick-action-icon"></i>
-                        <span>Create Company</span>
-                    </a>
-                </li>
                 {% endif %}
                 
                 <li class="quick-action-item">
@@ -796,11 +1045,27 @@
                         <span>Settings</span>
                     </a>
                 </li>
+                {% else %}
+                {% if current_user.role_website in ['subscriber', 'admin'] %}
+                <li class="quick-action-item">
+                    <a href="{{ url_for('dashboard.create_company') }}" class="quick-action-link">
+                        <i class="fas fa-building quick-action-icon"></i>
+                        <span>Create Company</span>
+                    </a>
+                </li>
+                {% endif %}
+                <li class="quick-action-item">
+                    <a href="{{ url_for('join_request.join_company') }}" class="quick-action-link">
+                        <i class="fas fa-user-plus quick-action-icon"></i>
+                        <span>Join Company</span>
+                    </a>
+                </li>
+                {% endif %}
             </ul>
         </div>
         
-        <!-- Company Management Section -->
-        {% if current_user.company_id %}
+        <!-- Company Management Section - Only for Company Admins -->
+        {% if current_user.company_id and current_user.company and current_user.company.admin_id == current_user.id %}
         <div class="dashboard-card dashboard-wide">
             <h2><i class="fas fa-building"></i> Company Management</h2>
             
@@ -850,8 +1115,53 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         
-        <!-- Plan Information -->
+        <!-- Moderator Dashboard Section - For non-admin company members -->
+        {% if current_user.company_id and current_user.role_company == 'moderator' and (not current_user.company or current_user.company.admin_id != current_user.id) %}
+        <div class="dashboard-card dashboard-wide">
+            <h2><i class="fas fa-user-tie"></i> Your Dashboard</h2>
+            
+            <div class="stats-cards-small">
+                <div class="stat-card-small">
+                    <div class="stat-icon-small">
+                        <i class="fas fa-cash-register"></i>
+                    </div>
+                    <div class="stat-content-small">
+                        <div class="stat-value-small">{{ dashboard.today_sales|default(0)|round(2) if dashboard else 0 }}</div>
+                        <div class="stat-label-small">Today's Sales</div>
+                    </div>
+                    <a href="{{ url_for('sales.index') }}" class="stat-action">View</a>
+                </div>
+                
+                <div class="stat-card-small">
+                    <div class="stat-icon-small">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="stat-content-small">
+                        <div class="stat-value-small">{{ dashboard.today_transactions|default(0) if dashboard else 0 }}</div>
+                        <div class="stat-label-small">Transactions</div>
+                    </div>
+                    <a href="{{ url_for('sales.new_sale') }}" class="stat-action">Add Sale</a>
+                </div>
+                
+                {% if current_user.has_permission('analytics') %}
+                <div class="stat-card-small">
+                    <div class="stat-icon-small">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="stat-content-small">
+                        <div class="stat-value-small">{{ dashboard.total_sales|default(0)|round(2) if dashboard else 0 }}</div>
+                        <div class="stat-label-small">Total Sales</div>
+                    </div>
+                    <a href="{{ url_for('analytics.index') }}" class="stat-action">Analytics</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Plan Information - Only for Company Admins -->
+        {% if current_user.company and current_user.company.admin_id == current_user.id %}
         <div class="dashboard-card">
             <h2><i class="fas fa-crown"></i> Your Plan</h2>
             
@@ -887,6 +1197,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         {% endif %}
         
         <!-- Recent Activity Section -->

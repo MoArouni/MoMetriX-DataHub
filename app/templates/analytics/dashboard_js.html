@@ -1,0 +1,31 @@
+// Date range form handler
+const dateRangeForm = document.getElementById('dateRangeForm');
+dateRangeForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    // Update URL with date range
+    const url = new URL(window.location.href);
+    url.searchParams.set('start_date', startDate);
+    url.searchParams.set('end_date', endDate);
+    window.location.href = url.toString();
+});
+
+// Refresh button handler
+const refreshBtn = document.getElementById('refreshBtn');
+refreshBtn.addEventListener('click', function() {
+    window.location.reload();
+});
+
+// Initialize date range inputs with URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const startDateParam = urlParams.get('start_date');
+const endDateParam = urlParams.get('end_date');
+
+if (startDateParam) {
+    document.getElementById('startDate').value = startDateParam;
+}
+if (endDateParam) {
+    document.getElementById('endDate').value = endDateParam;
+} 

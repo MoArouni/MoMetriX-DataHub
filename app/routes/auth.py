@@ -32,7 +32,11 @@ def login():
             db.session.commit()
             next_page = request.args.get('next')
             if next_page is None or not next_page.startswith('/'):
-                next_page = url_for('dashboard.index')
+                # Redirect admin users to admin dashboard, others to main dashboard
+                if user.is_admin:
+                    next_page = url_for('admin.dashboard')
+                else:
+                    next_page = url_for('dashboard.index')
             return redirect(next_page)
         flash('Invalid email or password.', 'error')
     return render_template('auth/login.html', form=form)

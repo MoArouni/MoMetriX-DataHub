@@ -1,0 +1,29 @@
+🎉 Welcome to MoMetriX DataHub Newsletter!
+
+Hi {{ name }}! 👋
+
+Welcome to the MoMetriX DataHub community! We're thrilled to have you on board.
+
+You've just joined thousands of business owners, data analysts, and entrepreneurs who rely on our insights to grow their businesses and make data-driven decisions.
+
+Here's what you can expect from us:
+
+📊 Weekly Analytics Insights: Get actionable business intelligence tips
+🚀 Product Updates: Be the first to know about new features and tools  
+💡 Expert Tips: Learn best practices from industry professionals
+📈 Market Trends: Stay ahead with the latest data trends and analysis
+🎯 Exclusive Content: Access subscriber-only resources and guides
+
+In the meantime, feel free to explore our platform and discover how MoMetriX DataHub can transform your business analytics.
+
+If you have any questions or need help getting started, don't hesitate to reach out to our support team.
+
+Welcome aboard!
+
+The MoMetriX DataHub Team
+
+---
+© 2025 MoMetriX DataHub. All rights reserved.
+
+You received this email because you subscribed to our newsletter.
+To unsubscribe, visit: {{ url_for('newsletter.unsubscribe', email=email, _external=True) }} 

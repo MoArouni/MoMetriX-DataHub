@@ -7,6 +7,11 @@
     <div class="section-header">
         <h1>Stores</h1>
         <div class="button-group">
+            {% if current_user.role_company == 'admin' or current_user.is_admin %}
+            <a href="{{ url_for('stores.manage') }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Manage Stores
+            </a>
+            {% endif %}
             <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">
                 <i class="fas fa-home"></i> Dashboard
             </a>
@@ -17,6 +22,9 @@
         <div class="card-header">
             <h2>Your Stores</h2>
             <p>View and manage all your physical or online store locations.</p>
+            {% if current_user.role_company == 'admin' or current_user.is_admin %}
+            <p class="admin-note"><i class="fas fa-info-circle"></i> As a company admin, you can add or edit stores using the "Manage Stores" button above.</p>
+            {% endif %}
         </div>
         
         <div class="card-body">
@@ -43,9 +51,13 @@
                 </div>
                 <h3>No Stores Yet</h3>
                 <p>Start by adding your first store location.</p>
+                {% if current_user.role_company == 'admin' or current_user.is_admin %}
                 <a href="{{ url_for('stores.manage') }}" class="btn btn-primary">
                     Add First Store
                 </a>
+                {% else %}
+                <p class="permission-note">Contact your company administrator to add stores.</p>
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -191,6 +203,29 @@
     .empty-state p {
         color: #999;
         margin-bottom: 2rem;
+    }
+    
+    .admin-note {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        color: var(--primary-color);
+        padding: 0.75rem 1rem;
+        border-radius: 4px;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        border-left: 3px solid var(--primary-color);
+    }
+    
+    .admin-note i {
+        margin-right: 0.5rem;
+    }
+    
+    .permission-note {
+        color: #999;
+        font-style: italic;
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+        border-radius: 4px;
+        margin-top: 1rem;
     }
 </style>
 {% endblock %} 

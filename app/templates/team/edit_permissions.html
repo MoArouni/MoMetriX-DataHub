@@ -47,12 +47,12 @@
                                     <input type="radio" name="access_level" value="daily_sales" id="access_daily" {{ 'checked' if form.access_level.data == 'daily_sales' else '' }}>
                                     <label for="access_daily">
                                         <i class="fas fa-calendar-day"></i>
-                                        <h5>Add & See Daily Sales</h5>
-                                        <p>Can add sales and view daily reports</p>
+                                        <h5>Add & See Daily Sales Only</h5>
+                                        <p>Can add sales and view daily reports only</p>
                                     </label>
                                 </div>
-                                <div class="option-card {{ 'selected' if form.access_level.data == 'full_access' else '' }}" data-value="full_access">
-                                    <input type="radio" name="access_level" value="full_access" id="access_full" {{ 'checked' if form.access_level.data == 'full_access' else '' }}>
+                                <div class="option-card {{ 'selected' if form.access_level.data == 'see_everything' else '' }}" data-value="see_everything">
+                                    <input type="radio" name="access_level" value="see_everything" id="access_full" {{ 'checked' if form.access_level.data == 'see_everything' else '' }}>
                                     <label for="access_full">
                                         <i class="fas fa-crown"></i>
                                         <h5>See Everything</h5>
@@ -62,35 +62,10 @@
                             </div>
                         </div>
 
-                        <!-- Setting 2: Date range -->
+                        <!-- Setting 2: Store access -->
                         <div class="permission-setting">
                             <div class="setting-header">
-                                <h4><span class="setting-number">2</span> Date range for seeing data</h4>
-                            </div>
-                            <div class="setting-options">
-                                <div class="option-card {{ 'selected' if form.data_range.data == 'current_day' else '' }}" data-value="current_day">
-                                    <input type="radio" name="data_range" value="current_day" id="range_day" {{ 'checked' if form.data_range.data == 'current_day' else '' }}>
-                                    <label for="range_day">
-                                        <i class="fas fa-calendar-day"></i>
-                                        <h5>Current Day Only</h5>
-                                        <p>Can only see today's data</p>
-                                    </label>
-                                </div>
-                                <div class="option-card {{ 'selected' if form.data_range.data == 'all_time' else '' }}" data-value="all_time">
-                                    <input type="radio" name="data_range" value="all_time" id="range_all" {{ 'checked' if form.data_range.data == 'all_time' else '' }}>
-                                    <label for="range_all">
-                                        <i class="fas fa-infinity"></i>
-                                        <h5>All Time</h5>
-                                        <p>Can see all historical data</p>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Setting 3: Store access -->
-                        <div class="permission-setting">
-                            <div class="setting-header">
-                                <h4><span class="setting-number">3</span> Which stores can they access?</h4>
+                                <h4><span class="setting-number">2</span> Which stores can they access?</h4>
                             </div>
                             <div class="stores-grid">
                                 {% for store_id, store_name in form.allowed_stores.choices %}

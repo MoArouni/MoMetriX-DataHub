@@ -1,0 +1,170 @@
+{% extends "analytics/stores.html" %}
+
+{% block title %}Category Analytics - MoMetriX DataHub{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <a href="{{ url_for('analytics.index') }}" class="nav-back">
+        <i class="fas fa-arrow-left"></i> Back to Analytics Dashboard
+    </a>
+
+    <div class="analytics-header">
+        <h1><i class="fas fa-tags"></i> Category Analytics</h1>
+        <p>Performance insights for all product categories</p>
+        
+        <!-- View Full Data Button -->
+        <div style="margin-top: 1.5rem;">
+            <a href="{{ url_for('analytics.reports') }}" class="view-full-data-btn">
+                <i class="fas fa-table"></i> View Full Data Report
+            </a>
+        </div>
+    </div>
+
+    <div class="date-filter">
+        <form method="GET">
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}" {% if not view_all %}required{% endif %}>
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}" {% if not view_all %}required{% endif %}>
+            </div>
+            <div class="form-group view-all-group">
+                <div class="custom-checkbox">
+                    <input type="checkbox" id="view_all_checkbox" name="view_all" value="1" {% if view_all %}checked{% endif %} onchange="toggleDateInputs(this)">
+                    <label for="view_all_checkbox" class="checkbox-label">
+                        <span class="checkbox-custom"></span>
+                        <span class="checkbox-text">
+                            <i class="fas fa-chart-line"></i>
+                            View All Data
+                        </span>
+                    </label>
+                </div>
+                <small class="form-text text-muted">Show analytics for all available data periods</small>
+            </div>
+            <div class="form-group">
+                <button type="submit">
+                    <i class="fas fa-search"></i> Update Data
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+    function toggleDateInputs(checkbox) {
+        const startDate = document.getElementById('start_date');
+        const endDate = document.getElementById('end_date');
+        
+        if (checkbox.checked) {
+            startDate.required = false;
+            endDate.required = false;
+            startDate.disabled = true;
+            endDate.disabled = true;
+            startDate.value = '';
+            endDate.value = '';
+        } else {
+            startDate.required = true;
+            endDate.required = true;
+            startDate.disabled = false;
+            endDate.disabled = false;
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewAllCheckbox = document.querySelector('input[name="view_all"]');
+        if (viewAllCheckbox && viewAllCheckbox.checked) {
+            toggleDateInputs(viewAllCheckbox);
+        }
+    });
+    </script>
+
+    {% if no_data %}
+    <div class="no-data">
+        <i class="fas fa-tags"></i>
+        <h3>No Category Data Available</h3>
+        <p>No sales data found for categories in the selected period.</p>
+    </div>
+    {% else %}
+
+    <div class="insights-grid">
+        <div class="insight-card">
+            <div class="insight-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="insight-value">{{ analytics.peak_category }}</div>
+            <div class="insight-label">Top Performing Category</div>
+        </div>
+        
+        <div class="insight-card">
+            <div class="insight-icon">
+                <i class="fas fa-arrow-down"></i>
+            </div>
+            <div class="insight-value">{{ analytics.worst_category }}</div>
+            <div class="insight-label">Lowest Performing Category</div>
+        </div>
+    </div>
+
+    {% if analytics.charts.category_bar %}
+    <div class="chart-section">
+        <h2 class="chart-title">Revenue by Category</h2>
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ analytics.charts.category_bar }}" alt="Revenue by Category">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if analytics.charts.category_trends %}
+    <div class="chart-section">
+        <h2 class="chart-title">Category Performance Trends</h2>
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ analytics.charts.category_trends }}" alt="Category Trends">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if analytics.charts.category_scatter %}
+    <div class="chart-section">
+        <h2 class="chart-title">Category Analysis: Quantity vs Revenue</h2>
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ analytics.charts.category_scatter }}" alt="Category Scatter Plot">
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="chart-section">
+        <h2 class="chart-title">Category Statistics</h2>
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Total Revenue</th>
+                    <th>Revenue %</th>
+                    <th>Avg Sale</th>
+                    <th>Transactions</th>
+                    <th>Transaction %</th>
+                    <th>Total Quantity</th>
+                    <th>Quantity %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in analytics.stats %}
+                <tr>
+                    <td>{{ category.product_category }}</td>
+                    <td>${{ "{:,.2f}".format(category.total_revenue) }}</td>
+                    <td><strong>{{ "{:.1f}%".format(category.revenue_percentage) }}</strong></td>
+                    <td>${{ "{:,.2f}".format(category.avg_sale) }}</td>
+                    <td>{{ category.total_transactions }}</td>
+                    <td><strong>{{ "{:.1f}%".format(category.transaction_percentage) }}</strong></td>
+                    <td>{{ category.total_quantity }}</td>
+                    <td><strong>{{ "{:.1f}%".format(category.quantity_percentage) }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %} 

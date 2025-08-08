@@ -9,6 +9,7 @@ from app.models.sales import Sale
 from app.models.roles import RoleCompany
 from app.forms.sales_setup_forms import SaleEntryForm
 from app.utils.decorators import company_required, subscriber_required
+from app.utils.permission_utils import get_accessible_stores, has_store_access, filter_sales_by_permissions, can_view_all_sales
 from app.models.subscription import CompanySubscription
 from app.services.sales_import_export import SalesImportExportService
 from datetime import datetime, date
@@ -17,6 +18,7 @@ import io
 import tempfile
 import os
 import uuid
+import logging
 
 # Create blueprint
 sales_bp = Blueprint('sales', __name__, url_prefix='/sales')
@@ -29,10 +31,15 @@ def index():
     company_id = current_user.company_id
     
     # Check if user is admin (role_company is stored directly in User model)
-    is_admin = current_user.role_company == 'admin'
+    is_admin = current_user.role_company == 'admin' or current_user.is_admin
     
-    # Check if company has stores, categories, and products set up
-    stores = Store.query.filter_by(company_id=company_id).all()
+    # Get accessible stores based on permissions
+    if is_admin:
+        stores = Store.query.filter_by(company_id=company_id).all()
+    else:
+        accessible_store_ids = get_accessible_stores()
+        stores = Store.query.filter_by(company_id=company_id).filter(Store.id.in_(accessible_store_ids)).all()
+    
     categories = ProductCategory.query.filter_by(company_id=company_id).all()
     
     # Get all products for filter
@@ -75,8 +82,21 @@ def index():
         if not has_products and categories:
             missing_setup.append('products for your categories')
     
-    # Get recent sales
-    recent_sales = Sale.query.filter_by(company_id=company_id).order_by(desc(Sale.created_at)).limit(10).all()
+    # Get sales data based on permissions
+    sales_query = Sale.query.filter_by(company_id=company_id)
+    
+    # Apply permission-based filtering
+    if is_admin or can_view_all_sales():
+        # Admins and users with full permissions see ALL sales
+        all_sales = sales_query.order_by(desc(Sale.created_at)).all()
+        show_all_data = True
+    else:
+        # Users without permissions only see today's sales
+        today = date.today()
+        all_sales = sales_query.filter(
+            func.date(Sale.created_at) == today
+        ).order_by(desc(Sale.created_at)).all()
+        show_all_data = False
     
     # Calculate daily sales total
     today = date.today()
@@ -85,20 +105,27 @@ def index():
         func.date(Sale.created_at) == today
     ).scalar() or 0
     
-    # Calculate monthly sales total
-    monthly_sales = db.session.query(func.sum(Sale.card_amount + Sale.cash_amount)).filter(
-        Sale.company_id == company_id,
-        func.extract('month', Sale.created_at) == today.month,
-        func.extract('year', Sale.created_at) == today.year
-    ).scalar() or 0
+    # Calculate monthly sales total (only show if user has permission to see all sales)
+    from app.utils.permission_utils import can_view_all_sales
+    monthly_sales = None
+    show_monthly_stats = is_admin or can_view_all_sales()
+    
+    if show_monthly_stats:
+        monthly_sales = db.session.query(func.sum(Sale.card_amount + Sale.cash_amount)).filter(
+            Sale.company_id == company_id,
+            func.extract('month', Sale.created_at) == today.month,
+            func.extract('year', Sale.created_at) == today.year
+        ).scalar() or 0
     
     return render_template(
         'sales/index.html',
         setup_complete=setup_complete,
         missing_setup=missing_setup,
-        recent_sales=recent_sales,
+        all_sales=all_sales,
+        show_all_data=show_all_data,
         daily_sales=daily_sales,
         monthly_sales=monthly_sales,
+        show_monthly_stats=show_monthly_stats,
         store_count=len(stores),
         category_count=len(categories),
         stores=stores,
@@ -115,18 +142,32 @@ def index():
 def new_sale():
     """Create a new sale entry"""
     company_id = current_user.company_id
+    subscription = None  # Initialize subscription variable
     
-    # Check subscription limits
-    subscription = CompanySubscription.query.filter_by(company_id=company_id).first()
-    if subscription and not subscription.can_add_sale:
-        flash('You have reached the maximum number of sales allowed under your current plan. Please upgrade to add more sales.', 'warning')
-        return redirect(url_for('pricing.index'))
+    # Check if user is admin
+    is_admin = current_user.role_company == 'admin' or current_user.is_admin
     
-    # Check if company has necessary setup
-    stores = Store.query.filter_by(company_id=company_id).all()
+    # Only check subscription limits for company admins
+    if is_admin:
+        subscription = CompanySubscription.query.filter_by(company_id=company_id).first()
+        if subscription and not subscription.can_add_sale:
+            flash('You have reached the maximum number of sales allowed under your current plan. Please upgrade to add more sales.', 'warning')
+            return redirect(url_for('pricing.index'))
+    
+    # Get accessible stores based on permissions
+    if is_admin:
+        stores = Store.query.filter_by(company_id=company_id).all()
+    else:
+        accessible_store_ids = get_accessible_stores()
+        stores = Store.query.filter_by(company_id=company_id).filter(Store.id.in_(accessible_store_ids)).all()
+    
     if not stores:
-        flash('You need to create at least one store before recording sales.', 'warning')
-        return redirect(url_for('stores.manage'))
+        if is_admin:
+            flash('You need to create at least one store before recording sales.', 'warning')
+            return redirect(url_for('stores.manage'))
+        else:
+            flash('You don\'t have access to any stores. Contact your administrator.', 'error')
+            return redirect(url_for('sales.index'))
     
     categories = ProductCategory.query.filter_by(company_id=company_id).all()
     if not categories:
@@ -166,6 +207,16 @@ def new_sale():
         return redirect(url_for('products.new_product'))
     
     if form.validate_on_submit():
+        # Check if user has access to the selected store
+        if not is_admin and not has_store_access(form.store_id.data):
+            flash('You don\'t have access to the selected store.', 'error')
+            return render_template(
+                'sales/new_sale.html',
+                form=form,
+                stores=stores,
+                product_choices=product_choices_by_category
+            )
+        
         # Validate payment amounts
         total_amount = form.cash_amount.data + form.card_amount.data
         if total_amount <= 0:
@@ -177,32 +228,124 @@ def new_sale():
                 product_choices=product_choices_by_category
             )
         
+        # Handle "set" selection
+        product_id_value = form.product_id.data
+        is_set = product_id_value == 'set'
+        set_items_count = None
+        
+        if is_set:
+            # For sets, we don't link to a specific product
+            product_id_value = None
+            set_items_count = request.form.get('set_items_count', 1)
+            try:
+                set_items_count = int(set_items_count)
+                if set_items_count < 1:
+                    set_items_count = 1
+            except (ValueError, TypeError):
+                set_items_count = 1
+        
+        # Get store and product information for required fields
+        store = Store.query.get(form.store_id.data)
+        store_name = store.name if store else 'Unknown Store'
+        
+        # Handle product information
+        if is_set:
+            product_name = 'Set'
+            category_select = request.form.get('selected_category_id') or request.form.get('category_id')
+            if category_select:
+                try:
+                    category = ProductCategory.query.get(int(category_select))
+                    product_category = category.name if category else 'Unknown Category'
+                    product_name = f"{product_category} Set"
+                except (ValueError, TypeError):
+                    product_category = 'Unknown Category'
+            else:
+                product_category = 'Unknown Category'
+        else:
+            product = Product.query.get(product_id_value) if product_id_value else None
+            product_name = product.name if product else 'Unknown Product'
+            product_category = product.category.name if product and product.category else 'Unknown Category'
+        
+        # Calculate total from payment amounts
+        total_amount = form.cash_amount.data + form.card_amount.data
+        
         # Create new sale
         new_sale = Sale(
             company_id=company_id,
             user_id=current_user.id,
             store_id=form.store_id.data,
-            product_id=form.product_id.data,
+            store_name=store_name,
+            product_id=product_id_value,  # None for sets
+            product_name=product_name,
+            product_category=product_category,
             quantity=form.quantity.data,
+            total=total_amount,
             cash_amount=form.cash_amount.data,
             card_amount=form.card_amount.data,
             notes=form.notes.data if form.notes.data else None,
             sale_date=date.today()
         )
+        
+        # Add set information to notes if it's a set
+        if is_set:
+            category_name = ProductCategory.query.get(request.form.get('category_id', '')).name if request.form.get('category_id') else 'Unknown Category'
+            set_note = f"Set sale - {category_name} set with {set_items_count} items"
+            if new_sale.notes:
+                new_sale.notes = f"{set_note}. {new_sale.notes}"
+            else:
+                new_sale.notes = set_note
         db.session.add(new_sale)
         db.session.flush()  # Get the sale ID without committing
         
-        # Process embellishments
-        embellishment_ids = request.form.getlist('embellishment_ids')
-        if embellishment_ids:
-            for emb_id in embellishment_ids:
+        # Process embellishments (only for individual products, not sets)
+        if not is_set:
+            embellishment_ids = request.form.getlist('embellishment_ids')
+            if embellishment_ids:
+                for emb_id in embellishment_ids:
+                    try:
+                        embellishment = Embellishment.query.get(int(emb_id))
+                        if embellishment and embellishment.company_id == company_id:
+                            new_sale.embellishments.append(embellishment)
+                    except (ValueError, TypeError):
+                        # Skip invalid IDs
+                        continue
+        
+        # Create stock adjustment entry for new sales (not imports)
+        from app.models.stock_adjustment import StockAdjustmentEntry
+        
+        # Get product and store details for the adjustment entry
+        store = Store.query.get(new_sale.store_id)
+        category_name = 'Unknown Category'
+        
+        if is_set:
+            # For sets, we need to get the category name from the form submission
+            category_select = request.form.get('selected_category_id') or request.form.get('category_id')
+            if category_select:
                 try:
-                    embellishment = Embellishment.query.get(int(emb_id))
-                    if embellishment and embellishment.company_id == company_id:
-                        new_sale.embellishments.append(embellishment)
+                    category = ProductCategory.query.get(int(category_select))
+                    if category:
+                        category_name = category.name
                 except (ValueError, TypeError):
-                    # Skip invalid IDs
-                    continue
+                    pass
+        else:
+            # For individual products, get category from product
+            product = Product.query.get(new_sale.product_id)
+            if product and product.category:
+                category_name = product.category.name
+        
+        adjustment_entry = StockAdjustmentEntry(
+            company_id=company_id,
+            product_id=new_sale.product_id,  # Will be None for sets
+            sale_id=new_sale.id,
+            product_name=f"{category_name} Set" if is_set else (product.name if product else 'Unknown Product'),
+            category_name=category_name,
+            store_name=store.name if store else 'Unknown Store',
+            quantity_sold=new_sale.quantity,
+            sale_date=new_sale.sale_date,
+            is_set=is_set,
+            set_items_count=set_items_count if is_set else None
+        )
+        db.session.add(adjustment_entry)
         
         # Update subscription sales count
         if subscription:
@@ -286,6 +429,18 @@ def edit_sale(sale_id):
         sale.card_amount = form.card_amount.data
         sale.notes = form.notes.data if form.notes.data else None
         
+        # Update required string fields
+        store = Store.query.get(form.store_id.data)
+        sale.store_name = store.name if store else 'Unknown Store'
+        
+        if form.product_id.data:
+            product = Product.query.get(form.product_id.data)
+            sale.product_name = product.name if product else 'Unknown Product'
+            sale.product_category = product.category.name if product and product.category else 'Unknown Category'
+        
+        # Update total
+        sale.total = sale.cash_amount + sale.card_amount
+        
         # Update embellishments
         sale.embellishments = []
         embellishment_ids = request.form.getlist('embellishment_ids')
@@ -324,11 +479,36 @@ def delete_sale(sale_id):
     # Get the sale and check if it belongs to the user's company
     sale = Sale.query.filter_by(id=sale_id, company_id=company_id).first_or_404()
     
-    # Delete the sale
-    db.session.delete(sale)
-    db.session.commit()
+    # Check if user has access to this sale's store
+    is_admin = current_user.role_company == 'admin' or current_user.is_admin
+    if not is_admin and not has_store_access(sale.store_id):
+        flash('You don\'t have access to delete this sale.', 'error')
+        return redirect(url_for('sales.index'))
     
-    flash('Sale deleted successfully!', 'success')
+    try:
+        # First, delete any related stock adjustment entries
+        from app.models.stock_adjustment import StockAdjustmentEntry
+        stock_adjustments = StockAdjustmentEntry.query.filter_by(sale_id=sale_id).all()
+        
+        adjustment_count = len(stock_adjustments)
+        for adjustment in stock_adjustments:
+            db.session.delete(adjustment)
+        
+        # Then delete the sale
+        db.session.delete(sale)
+        db.session.commit()
+        
+        if adjustment_count > 0:
+            flash(f'Sale deleted successfully! Also removed {adjustment_count} related stock adjustment(s).', 'success')
+        else:
+            flash('Sale deleted successfully!', 'success')
+            
+    except Exception as e:
+        db.session.rollback()
+        # Log the error for debugging
+        logging.error(f"Error deleting sale {sale_id}: {str(e)}")
+        flash(f'Error deleting sale: Unable to delete due to database constraints. Please contact support.', 'error')
+    
     return redirect(url_for('sales.index'))
 
 @sales_bp.route('/locations')

@@ -52,6 +52,9 @@ class CompanySubscription(db.Model):
     
     @property
     def can_add_sale(self):
+        # If max_sales is 0, it means unlimited sales
+        if self.plan.max_sales == 0:
+            return self.is_active
         return self.is_active and (self.sales_count < self.plan.max_sales)
     
     @property

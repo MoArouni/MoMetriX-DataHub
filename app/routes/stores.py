@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.models.store import Store
 from app.forms.sales_setup_forms import StoresSetupForm
-from app.utils.decorators import company_required
+from app.utils.decorators import company_required, company_admin_required
 from app.models.subscription import CompanySubscription
 
 # Create blueprint
@@ -25,7 +25,7 @@ def index():
 
 @stores_bp.route('/manage', methods=['GET', 'POST'])
 @login_required
-@company_required
+@company_admin_required
 def manage():
     """Manage company stores"""
     try:

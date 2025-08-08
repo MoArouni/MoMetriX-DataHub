@@ -32,22 +32,16 @@ class CompanyDetailsForm(FlaskForm):
     submit = SubmitField('Update Company Details')
 
 class UserPermissionsForm(FlaskForm):
-    """Form for managing user permissions - 3 simple settings"""
+    """Form for managing user permissions - 2 simple settings"""
     user_id = HiddenField('User ID', validators=[DataRequired()])
     
-    # 1. What can they do
+    # 1. What can they do - 2 options
     access_level = SelectField('What can they do?', choices=[
-        ('daily_sales', 'Add & See Daily Sales'),
-        ('full_access', 'See Everything')
+        ('daily_sales', 'Add & See Daily Sales Only'),
+        ('see_everything', 'See Everything')
     ], validators=[DataRequired()])
     
-    # 2. Date range for seeing data
-    data_range = SelectField('Date range for seeing data', choices=[
-        ('current_day', 'Current Day Only'),
-        ('all_time', 'All Time')
-    ], validators=[DataRequired()])
-    
-    # 3. Store access permissions
+    # 2. Store access permissions
     allowed_stores = MultiCheckboxField('Which stores can they access?', coerce=int)
     
     submit = SubmitField('Update Permissions')

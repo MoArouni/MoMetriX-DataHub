@@ -23,18 +23,24 @@
                         <div class="col-md-6">
                             <form action="{{ url_for('sales.export_sales') }}" method="GET" id="exportForm">
                                 <div class="form-group">
-                                    <label for="start_date">Start Date (Optional)</label>
+                                    <label for="start_date">Start Date</label>
                                     <input type="date" class="form-control" id="start_date" name="start_date">
-                                    <small class="form-text text-muted">
-                                        Leave empty to export all sales from the beginning
-                                    </small>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label for="end_date">End Date (Optional)</label>
+                                    <label for="end_date">End Date</label>
                                     <input type="date" class="form-control" id="end_date" name="end_date">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="export_all" name="export_all" value="1" onchange="toggleExportDates(this)" checked>
+                                        <label class="form-check-label" for="export_all">
+                                            Export All Data (All Time)
+                                        </label>
+                                    </div>
                                     <small class="form-text text-muted">
-                                        Leave empty to export all sales until today
+                                        Uncheck to specify custom date range
                                     </small>
                                 </div>
                                 
@@ -81,14 +87,37 @@
 </div>
 
 <script>
+function toggleExportDates(checkbox) {
+    const startDate = document.getElementById('start_date');
+    const endDate = document.getElementById('end_date');
+    
+    if (checkbox.checked) {
+        startDate.disabled = true;
+        endDate.disabled = true;
+        startDate.value = '';
+        endDate.value = '';
+        startDate.required = false;
+        endDate.required = false;
+    } else {
+        startDate.disabled = false;
+        endDate.disabled = false;
+        startDate.required = true;
+        endDate.required = true;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('exportForm');
     const startDate = document.getElementById('start_date');
     const endDate = document.getElementById('end_date');
+    const exportAllCheckbox = document.getElementById('export_all');
+    
+    // Initialize the state
+    toggleExportDates(exportAllCheckbox);
     
     // Date validation
     function validateDates() {
-        if (startDate.value && endDate.value) {
+        if (!exportAllCheckbox.checked && startDate.value && endDate.value) {
             if (new Date(startDate.value) > new Date(endDate.value)) {
                 alert('End date must be after start date.');
                 return false;

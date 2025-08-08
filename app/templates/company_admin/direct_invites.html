@@ -1,48 +1,165 @@
-    .filter-btn.warning {
-        background: rgba(255, 193, 7, 0.1);
-        color: #ffc107;
-        border: 1px solid rgba(255, 193, 7, 0.3);
-    }
-    
-    .filter-btn.warning.active {
-        background: #ffc107;
-        color: #000;
-    }
-    
-    .filter-btn.success {
-        background: rgba(40, 167, 69, 0.1);
-        color: #28a745;
-        border: 1px solid rgba(40, 167, 69, 0.3);
-    }
-    
-    .filter-btn.success.active {
-        background: #28a745;
-        color: #fff;
-    }
-    
-    .filter-btn.danger {
-        background: rgba(220, 53, 69, 0.1);
-        color: #dc3545;
-        border: 1px solid rgba(220, 53, 69, 0.3);
-    }
-    
-    .filter-btn.danger.active {
-        background: #dc3545;
-        color: #fff;
-    }
-    
-    .filter-btn.secondary {
-        background: rgba(108, 117, 125, 0.1);
-        color: #6c757d;
-        border: 1px solid rgba(108, 117, 125, 0.3);
-    }
-    
-    .filter-btn.secondary.active {
-        background: #6c757d;
-        color: #fff;
-    }
-    
-    .filter-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    } 
+{% extends "base.html" %}
+
+{% block title %}Direct Invites - {{ company.company_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Direct Invites - {{ company.company_name }}</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('company_admin.join_requests') }}">Join Requests</a></li>
+                        <li class="breadcrumb-item active">Direct Invites</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-paper-plane"></i> Sent Invitations</h4>
+                    <a href="{{ url_for('company_admin.invite_moderator') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Send New Invitation
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if invites %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Permission Level</th>
+                                    <th>Sent Date</th>
+                                    <th>Expires</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in invites %}
+                                <tr>
+                                    <td>
+                                        {% if item.type == 'new_user' %}
+                                            <span class="badge bg-primary">
+                                                <i class="fas fa-user-plus"></i> New User
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-info">
+                                                <i class="fas fa-user-check"></i> Existing User
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.email }}</td>
+                                    <td>
+                                        {% if item.invite.role_permissions == 'data_entry' %}
+                                            <span class="badge bg-secondary">Data Entry Only</span>
+                                        {% elif item.invite.role_permissions == 'daily_sales' %}
+                                            <span class="badge bg-info">Data & Sales</span>
+                                        {% elif item.invite.role_permissions == 'full_access' %}
+                                            <span class="badge bg-success">Full Access</span>
+                                        {% else %}
+                                            <span class="badge bg-light text-dark">{{ item.invite.role_permissions|title }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>
+                                        {% if item.status == 'expired' %}
+                                            <span class="text-danger">Expired</span>
+                                        {% else %}
+                                            {{ item.expires_at.strftime('%Y-%m-%d %H:%M') }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if item.status == 'accepted' or item.status == 'used' %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check"></i> Accepted
+                                            </span>
+                                            {% if item.type == 'new_user' and item.invite.used_at %}
+                                                <br><small class="text-muted">{{ item.invite.used_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                            {% elif item.type == 'existing_user' and item.invite.responded_at %}
+                                                <br><small class="text-muted">{{ item.invite.responded_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                            {% endif %}
+                                        {% elif item.status == 'rejected' %}
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times"></i> Declined
+                                            </span>
+                                            {% if item.invite.responded_at %}
+                                                <br><small class="text-muted">{{ item.invite.responded_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                            {% endif %}
+                                        {% elif item.status == 'expired' %}
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-clock"></i> Expired
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock"></i> Pending
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if pagination.pages > 1 %}
+                    <nav aria-label="Invites pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if pagination.has_prev %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('company_admin.direct_invites', page=pagination.prev_num) }}">Previous</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for page_num in range(1, pagination.pages + 1) %}
+                                {% if page_num != pagination.page %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('company_admin.direct_invites', page=page_num) }}">{{ page_num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if pagination.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('company_admin.direct_invites', page=pagination.next_num) }}">Next</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-paper-plane fa-3x text-muted mb-3"></i>
+                        <h4>No Invitations Sent Yet</h4>
+                        <p class="text-muted">You haven't sent any direct invitations yet. Start by sending your first invitation!</p>
+                        <a href="{{ url_for('company_admin.invite_moderator') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Send First Invitation
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.badge {
+    font-size: 0.75em;
+}
+</style>
+{% endblock %} 

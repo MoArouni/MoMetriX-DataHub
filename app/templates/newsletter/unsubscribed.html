@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Unsubscribed - MoMetriX DataHub{% endblock %}
+
+{% block content %}
+<div class="unsubscribed-page">
+    <div class="unsubscribed-container">
+        <div class="unsubscribed-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <h1>Successfully Unsubscribed</h1>
+        <p>You have been successfully removed from our newsletter mailing list.</p>
+        
+        <div class="unsubscribed-info">
+            <h3>What happens next?</h3>
+            <ul>
+                <li>You will no longer receive newsletter emails from us</li>
+                <li>Your email address has been removed from our mailing list</li>
+                <li>You can resubscribe at any time if you change your mind</li>
+            </ul>
+        </div>
+        
+        <div class="unsubscribed-actions">
+            <a href="{{ url_for('newsletter.subscribe') }}" class="btn btn-outline">
+                <i class="fas fa-undo"></i> Resubscribe
+            </a>
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </div>
+        
+        <div class="feedback-section">
+            <h4>Help us improve</h4>
+            <p>We're sorry to see you go. If you have a moment, we'd love to know why you unsubscribed:</p>
+            <div class="feedback-options">
+                <button class="feedback-btn" onclick="submitFeedback('too-frequent')">
+                    Too many emails
+                </button>
+                <button class="feedback-btn" onclick="submitFeedback('not-relevant')">
+                    Content not relevant
+                </button>
+                <button class="feedback-btn" onclick="submitFeedback('other')">
+                    Other reason
+                </button>
+            </div>
+            <p class="feedback-thanks" style="display: none;">
+                <i class="fas fa-heart"></i> Thank you for your feedback!
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+.unsubscribed-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.unsubscribed-container {
+    max-width: 600px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 3rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.unsubscribed-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem auto;
+    font-size: 2.5rem;
+    color: white;
+    box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+}
+
+.unsubscribed-container h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.unsubscribed-container > p {
+    color: #ccc;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.unsubscribed-info {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.unsubscribed-info h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.unsubscribed-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.unsubscribed-info li {
+    padding: 0.5rem 0;
+    color: #ccc;
+    position: relative;
+    padding-left: 2rem;
+}
+
+.unsubscribed-info li:before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #28a745;
+    font-weight: bold;
+}
+
+.unsubscribed-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-outline:hover {
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+}
+
+.feedback-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 2rem;
+}
+
+.feedback-section h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.feedback-section p {
+    color: #ccc;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.feedback-options {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.feedback-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ccc;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.feedback-btn:hover {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.feedback-thanks {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.feedback-thanks i {
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .unsubscribed-container {
+        padding: 2rem;
+    }
+    
+    .unsubscribed-container h1 {
+        font-size: 2rem;
+    }
+    
+    .unsubscribed-actions {
+        flex-direction: column;
+    }
+    
+    .feedback-options {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+function submitFeedback(reason) {
+    // Hide feedback options
+    document.querySelector('.feedback-options').style.display = 'none';
+    
+    // Show thank you message
+    document.querySelector('.feedback-thanks').style.display = 'block';
+    
+    // Optional: Send feedback to server
+    fetch('/newsletter/api/feedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'unsubscribe_reason',
+            reason: reason
+        })
+    }).catch(err => {
+        console.log('Feedback submission failed:', err);
+        // Don't show error to user, just log it
+    });
+}
+</script>
+{% endblock %} 

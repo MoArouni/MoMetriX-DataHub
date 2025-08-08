@@ -1,0 +1,94 @@
+<!-- Sales Overview -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Sales Overview</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h3>Total Sales</h3>
+                    <p class="stat-value">${{ "%.2f"|format(total_sales) }}</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <p class="stat-value">{{ total_orders }}</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h3>Average Order Value</h3>
+                    <p class="stat-value">${{ "%.2f"|format(avg_order_value) }}</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h3>Top Product</h3>
+                    <p class="stat-value">{{ top_product }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sales Trends -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Sales Trends</h2>
+    </div>
+    <div class="card-body">
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ sales_trend_chart }}" alt="Sales Trends" class="img-fluid">
+        </div>
+    </div>
+</div>
+
+<!-- Product Performance -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Product Performance</h2>
+    </div>
+    <div class="card-body">
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ product_performance_chart }}" alt="Product Performance" class="img-fluid">
+        </div>
+    </div>
+</div>
+
+<!-- Store Performance -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Store Performance</h2>
+    </div>
+    <div class="card-body">
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ store_performance_chart }}" alt="Store Performance" class="img-fluid">
+        </div>
+    </div>
+</div>
+
+<!-- Payment Methods -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Payment Methods</h2>
+    </div>
+    <div class="card-body">
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ payment_methods_chart }}" alt="Payment Methods" class="img-fluid">
+        </div>
+    </div>
+</div>
+
+<!-- Sales Heatmap -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Sales Heatmap</h2>
+    </div>
+    <div class="card-body">
+        <div class="chart-container">
+            <img src="data:image/png;base64,{{ sales_heatmap }}" alt="Sales Heatmap" class="img-fluid">
+        </div>
+    </div>
+</div> 

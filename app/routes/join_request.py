@@ -1,18 +1,19 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session, current_app, jsonify
 from flask_login import login_user, current_user, login_required
 from datetime import datetime
 
 from app import db
 from app.models.user import User
 from app.models.company import Company
-from app.models.join_request import EmailVerificationCode, JoinRequest, ModeratorInvite, DirectModeratorInvite
+from app.models.join_request import EmailVerificationCode, JoinRequest, ModeratorInvite, ExistingUserInvite
 from app.forms.join_request_forms import (
     EmailVerificationForm, VerifyCodeForm, CompanySelectionForm,
-    ModeratorRegistrationForm, InviteAcceptanceForm
+    ModeratorRegistrationForm, InviteAcceptanceForm, AuthenticatedUserJoinForm
 )
 from app.utils.email import (
     send_verification_code_email, send_join_request_notification,
-    send_join_request_declined_email, send_moderator_invite_email
+    send_join_request_declined_email, send_moderator_invite_email,
+    send_welcome_to_company_email
 )
 
 # Create blueprint
@@ -21,9 +22,9 @@ join_request_bp = Blueprint('join_request', __name__, url_prefix='/join')
 @join_request_bp.route('/', methods=['GET', 'POST'])
 def start():
     """Start the join request process with email verification"""
+    # If user is authenticated, redirect to the authenticated join flow
     if current_user.is_authenticated:
-        flash('You are already logged in. Please logout to join a different company.', 'info')
-        return redirect(url_for('dashboard.index'))
+        return redirect(url_for('join_request.join_company'))
     
     form = EmailVerificationForm()
     if form.validate_on_submit():
@@ -65,6 +66,99 @@ def start():
         return redirect(url_for('join_request.verify_email'))
     
     return render_template('join_request/start.html', form=form)
+
+@join_request_bp.route('/join-company', methods=['GET', 'POST'])
+@login_required
+def join_company():
+    """Join company route for authenticated users"""
+    # Check if user already has a company
+    if current_user.company_id:
+        # Show option to leave current company if not admin
+        if current_user.company and current_user.company.admin_id == current_user.id:
+            flash('As a company administrator, you cannot join another company. You must transfer admin rights to another user first if you wish to leave.', 'warning')
+            return redirect(url_for('dashboard.dashboard'))
+        else:
+            # User can leave current company to join another
+            return render_template('join_request/switch_company.html')
+    
+    # Check if there's already a pending join request for this user
+    existing_request = JoinRequest.query.filter_by(
+        email=current_user.email,
+        status='pending'
+    ).first()
+    
+    if existing_request:
+        flash('You already have a pending join request. Please wait for admin approval.', 'warning')
+        return redirect(url_for('dashboard.dashboard'))
+    
+    form = AuthenticatedUserJoinForm()
+    form.email.data = current_user.email
+    
+    if form.validate_on_submit():
+        if form.company_id.data == 0:
+            flash('Please select a company.', 'error')
+            return render_template('join_request/join_company.html', form=form)
+        
+        # Create join request with user information
+        join_request = JoinRequest(
+            email=current_user.email,
+            first_name=form.first_name.data or current_user.first_name,
+            last_name=form.last_name.data or current_user.last_name,
+            username=current_user.username,  # Use existing username
+            company_id=form.company_id.data,
+            message=form.message.data
+        )
+        db.session.add(join_request)
+        db.session.commit()
+        
+        # Notify company admin
+        company = Company.query.get(form.company_id.data)
+        if company and company.admin:
+            send_join_request_notification(join_request, company.admin)
+        
+        flash('Your join request has been submitted successfully! You will receive an email when it is reviewed.', 'success')
+        return redirect(url_for('dashboard.dashboard'))
+    
+    # Pre-populate form with current user data
+    if request.method == 'GET':
+        form.first_name.data = current_user.first_name
+        form.last_name.data = current_user.last_name
+        # Don't pre-populate username since it's readonly for existing users
+    
+    return render_template('join_request/join_company.html', form=form)
+
+@join_request_bp.route('/leave-company', methods=['POST'])
+@login_required
+def leave_company():
+    """Allow user to leave their current company"""
+    if not current_user.company_id:
+        flash('You are not currently part of any company.', 'info')
+        return redirect(url_for('dashboard.dashboard'))
+    
+    # Check if user is the admin of the company
+    if current_user.company and current_user.company.admin_id == current_user.id:
+        flash('As the company administrator, you cannot leave the company. You must transfer admin rights to another user first.', 'error')
+        return redirect(url_for('dashboard.dashboard'))
+    
+    try:
+        # Remove user from company
+        company_name = current_user.company.company_name
+        current_user.company_id = None
+        current_user.role_company = None
+        
+        # Remove user permissions
+        from app.models.user_permissions import UserPermissions
+        permissions = UserPermissions.query.filter_by(user_id=current_user.id).all()
+        for permission in permissions:
+            db.session.delete(permission)
+        
+        db.session.commit()
+        flash(f'You have successfully left {company_name}. You can now join a different company or create your own.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error leaving company: {str(e)}', 'error')
+    
+    return redirect(url_for('dashboard.dashboard'))
 
 @join_request_bp.route('/verify-email', methods=['GET', 'POST'])
 def verify_email():
@@ -111,8 +205,10 @@ def verify_email():
 @join_request_bp.route('/select-company', methods=['GET', 'POST'])
 def select_company():
     """Select company and submit join request"""
+    # This route is for unauthenticated users only
+    # Authenticated users should use /join-company
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard.index'))
+        return redirect(url_for('join_request.join_company'))
     
     email = session.get('join_email')
     email_verified = session.get('join_email_verified')
@@ -316,6 +412,132 @@ def accept_direct_invite(token):
                          form=form, 
                          invite=invite,
                          company=invite.company)
+
+@join_request_bp.route('/accept-existing-user-invite/<token>')
+@login_required
+def accept_existing_user_invite(token):
+    """Accept invite for existing users - shows popup"""
+    # Find the existing user invite
+    invite = ExistingUserInvite.query.filter_by(invite_token=token).first()
+    if not invite or not invite.is_valid:
+        flash('Invalid or expired invite link.', 'error')
+        return redirect(url_for('dashboard.index'))
+    
+    # Check if the current user is the invited user
+    if current_user.id != invite.user_id:
+        flash('This invitation is not for your account.', 'error')
+        return redirect(url_for('dashboard.index'))
+    
+    # Check if user is already in a company
+    if current_user.company_id:
+        # Check if they're admin of their current company
+        if current_user.company and current_user.company.admin_id == current_user.id:
+            flash('As a company administrator, you cannot join another company.', 'error')
+            return redirect(url_for('dashboard.index'))
+        
+        # Check if they're already in this company
+        if current_user.company_id == invite.company_id:
+            flash('You are already a member of this company.', 'info')
+            return redirect(url_for('dashboard.index'))
+    
+    # Show the invitation popup page
+    return render_template('join_request/existing_user_invite.html', 
+                         invite=invite,
+                         company=invite.company,
+                         inviter=invite.inviter)
+
+@join_request_bp.route('/respond-existing-user-invite/<token>', methods=['POST'])
+@login_required
+def respond_existing_user_invite(token):
+    """Handle accept/reject for existing user invites"""
+    try:
+        # Find the existing user invite
+        invite = ExistingUserInvite.query.filter_by(invite_token=token).first()
+        if not invite:
+            return jsonify({'success': False, 'message': 'Invalid invite link.'})
+        
+        if not invite.is_valid:
+            if invite.is_expired:
+                return jsonify({'success': False, 'message': 'This invitation has expired.'})
+            elif invite.status != 'pending':
+                return jsonify({'success': False, 'message': 'This invitation has already been responded to.'})
+            else:
+                return jsonify({'success': False, 'message': 'Invalid or expired invite link.'})
+        
+        # Check if the current user is the invited user
+        if current_user.id != invite.user_id:
+            return jsonify({'success': False, 'message': 'This invitation is not for your account.'})
+        
+        action = request.form.get('action')
+        if not action or action not in ['accept', 'reject']:
+            return jsonify({'success': False, 'message': 'Invalid action.'})
+        
+        try:
+            if action == 'accept':
+                # Check if user is already in a company
+                if current_user.company_id:
+                    # Check if they're admin of their current company
+                    if current_user.company and current_user.company.admin_id == current_user.id:
+                        return jsonify({'success': False, 'message': 'As a company administrator, you cannot join another company.'})
+                    
+                    # Check if they're already in this company
+                    if current_user.company_id == invite.company_id:
+                        return jsonify({'success': False, 'message': 'You are already a member of this company.'})
+                    
+                    # Leave current company first
+                    current_user.company_id = None
+                    current_user.role_company = None
+                
+                # Accept the invitation
+                invite.accept()
+                
+                # Update user's company and role
+                current_user.company_id = invite.company_id
+                current_user.role_company = 'moderator'
+                current_user.role_website = 'viewer'
+                
+                # Create permissions based on the invite
+                from app.models.user_permissions import UserPermissions
+                permissions = UserPermissions(
+                    user_id=current_user.id,
+                    company_id=invite.company_id
+                )
+                permissions.set_permissions(
+                    access_level=invite.role_permissions,
+                    allowed_store_ids=[]  # Admin can set this later
+                )
+                db.session.add(permissions)
+                
+                db.session.commit()
+                
+                # Send welcome email
+                send_welcome_to_company_email(current_user, invite.company, invite.role_permissions)
+                
+                return jsonify({
+                    'success': True, 
+                    'message': f'Welcome to {invite.company.company_name}! You are now a moderator.',
+                    'redirect': url_for('dashboard.index')
+                })
+                
+            elif action == 'reject':
+                # Reject the invitation
+                invite.reject()
+                db.session.commit()
+                
+                return jsonify({
+                    'success': True, 
+                    'message': 'Invitation declined.',
+                    'redirect': url_for('dashboard.index')
+                })
+                
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error processing invite response: {str(e)}")
+            return jsonify({'success': False, 'message': 'An error occurred while processing your request. Please try again.'})
+            
+    except Exception as e:
+        current_app.logger.error(f"Error in respond_existing_user_invite: {str(e)}")
+        return jsonify({'success': False, 'message': 'An unexpected error occurred. Please try again.'})
 
 @join_request_bp.route('/resend-code', methods=['POST'])
 def resend_code():

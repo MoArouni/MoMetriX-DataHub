@@ -25,6 +25,43 @@
         font-weight: 700;
     }
     
+    /* View Full Data Button Styling - Match stores template */
+    .view-full-data-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 0.875rem 1.75rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+    
+    .view-full-data-btn:hover {
+        background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
+        border-color: rgba(255,255,255,0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+        color: white;
+    }
+    
+    .view-full-data-btn i {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+    
+    .view-full-data-btn:hover i {
+        opacity: 1;
+    }
+    
     .date-filter {
         background: var(--card-bg);
         padding: 1.5rem;
@@ -70,6 +107,106 @@
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
+    }
+    
+    /* Custom Checkbox Styling - Match stores template */
+    .view-all-group {
+        margin: 1rem 0 1.5rem 0;
+    }
+
+    .custom-checkbox {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .custom-checkbox input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        background: linear-gradient(45deg, rgba(0, 123, 255, 0.1), rgba(108, 117, 125, 0.05));
+        border: 1px solid rgba(0, 123, 255, 0.2);
+        transition: all 0.3s ease;
+        gap: 0.75rem;
+        font-weight: 500;
+        color: var(--text-color);
+        margin: 0;
+    }
+
+    .checkbox-label:hover {
+        background: linear-gradient(45deg, rgba(0, 123, 255, 0.15), rgba(108, 117, 125, 0.1));
+        border-color: rgba(0, 123, 255, 0.4);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+    }
+
+    .checkbox-custom {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(0, 123, 255, 0.3);
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .checkbox-custom::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        width: 6px;
+        height: 10px;
+        border: solid #007bff;
+        border-width: 0 2px 2px 0;
+        transform-origin: center;
+        transition: all 0.2s ease;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked + .checkbox-label .checkbox-custom {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked + .checkbox-label .checkbox-custom::after {
+        transform: translate(-50%, -60%) rotate(45deg) scale(1);
+        border-color: white;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked + .checkbox-label {
+        background: linear-gradient(45deg, rgba(0, 123, 255, 0.2), rgba(0, 86, 179, 0.1));
+        border-color: #007bff;
+        color: #007bff;
+    }
+
+    .checkbox-text {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .checkbox-text i {
+        font-size: 1rem;
+        opacity: 0.8;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked + .checkbox-label .checkbox-text i {
+        opacity: 1;
+        color: #007bff;
     }
     
     .reports-grid {
@@ -234,11 +371,24 @@
         <form method="GET">
             <div class="form-group">
                 <label for="start_date">Start Date</label>
-                <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}" {% if not view_all %}required{% endif %}>
             </div>
             <div class="form-group">
                 <label for="end_date">End Date</label>
-                <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}" {% if not view_all %}required{% endif %}>
+            </div>
+            <div class="form-group view-all-group">
+                <div class="custom-checkbox">
+                    <input type="checkbox" id="view_all_checkbox" name="view_all" value="1" {% if view_all %}checked{% endif %} onchange="toggleDateInputs(this)">
+                    <label for="view_all_checkbox" class="checkbox-label">
+                        <span class="checkbox-custom"></span>
+                        <span class="checkbox-text">
+                            <i class="fas fa-chart-line"></i>
+                            View All Data
+                        </span>
+                    </label>
+                </div>
+                <small class="form-text text-muted">Show reports for all available data periods</small>
             </div>
             <div class="form-group">
                 <button type="submit">
@@ -247,6 +397,35 @@
             </div>
         </form>
     </div>
+
+    <script>
+    function toggleDateInputs(checkbox) {
+        const startDate = document.getElementById('start_date');
+        const endDate = document.getElementById('end_date');
+        
+        if (checkbox.checked) {
+            startDate.required = false;
+            endDate.required = false;
+            startDate.disabled = true;
+            endDate.disabled = true;
+            startDate.value = '';
+            endDate.value = '';
+        } else {
+            startDate.required = true;
+            endDate.required = true;
+            startDate.disabled = false;
+            endDate.disabled = false;
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewAllCheckbox = document.querySelector('input[name="view_all"]');
+        if (viewAllCheckbox && viewAllCheckbox.checked) {
+            toggleDateInputs(viewAllCheckbox);
+        }
+    });
+    </script>
 
     {% if no_data %}
     <div class="no-data">
@@ -280,7 +459,7 @@
                     </div>
                     <div class="performance-column">
                         <div class="column-header worst-header">
-                            <i class="fas fa-exclamation-triangle"></i> Lowest Products
+                            <i class="fas fa-arrow-down"></i> Lowest Products
                         </div>
                         <ul class="performance-list">
                             {% for product, revenue in reports.worst_products.items() %}
@@ -368,45 +547,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Embellishments Performance -->
-        {% if reports.best_embellishments %}
-        <div class="report-section">
-            <div class="report-header">
-                <h3><i class="fas fa-gem"></i> Embellishment Performance</h3>
-            </div>
-            <div class="report-content">
-                <div class="performance-grid">
-                    <div class="performance-column">
-                        <div class="column-header best-header">
-                            <i class="fas fa-sparkles"></i> Top Embellishments
-                        </div>
-                        <ul class="performance-list">
-                            {% for embellishment, revenue in reports.best_embellishments.items() %}
-                            <li class="performance-item">
-                                <span class="item-name">{{ embellishment }}</span>
-                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <div class="performance-column">
-                        <div class="column-header worst-header">
-                            <i class="fas fa-minus-circle"></i> Lowest Embellishments
-                        </div>
-                        <ul class="performance-list">
-                            {% for embellishment, revenue in reports.worst_embellishments.items() %}
-                            <li class="performance-item">
-                                <span class="item-name">{{ embellishment }}</span>
-                                <span class="item-value">${{ "{:,.2f}".format(revenue) }}</span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
 
         <!-- Day Performance -->
         <div class="report-section">

@@ -267,16 +267,20 @@
             <div class="card-content">
                 <div class="system-info">
                     <div class="info-row">
-                        <span>Company ID:</span>
-                        <span>#{{ company.id }}</span>
+                        <span>Company Name:</span>
+                        <span>{{ company.company_name }}</span>
                     </div>
                     <div class="info-row">
-                        <span>Created:</span>
+                        <span>Established:</span>
                         <span>{{ company.created_at.strftime('%B %d, %Y') }}</span>
                     </div>
                     <div class="info-row">
-                        <span>Total Members:</span>
+                        <span>Team Members:</span>
                         <span>{{ company.members|length }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span>Administrator:</span>
+                        <span>{{ company.admin.first_name }} {{ company.admin.last_name }}</span>
                     </div>
                 </div>
             </div>

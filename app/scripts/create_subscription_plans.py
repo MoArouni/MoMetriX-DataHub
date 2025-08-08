@@ -21,27 +21,27 @@ def create_subscription_plans():
             name="Free",
             price=0.00,
             billing_cycle="monthly",
-            max_sales=100,
-            max_users=3,
+            max_sales=50,
+            max_users=2,
+            feature_analytics=True,
+            feature_export=False,
+            feature_premium_tools=False
+        )
+        
+        standard_plan = SubscriptionPlan(
+            name="Standard",
+            price=4.99,
+            billing_cycle="monthly",
+            max_sales=500,
+            max_users=5,
             feature_analytics=True,
             feature_export=True,
             feature_premium_tools=False
         )
         
-        pro_plan = SubscriptionPlan(
-            name="Pro",
-            price=29.00,
-            billing_cycle="monthly",
-            max_sales=1000,
-            max_users=10,
-            feature_analytics=True,
-            feature_export=True,
-            feature_premium_tools=True
-        )
-        
-        enterprise_plan = SubscriptionPlan(
-            name="Enterprise",
-            price=99.00,
+        premium_plan = SubscriptionPlan(
+            name="Premium",
+            price=9.99,
             billing_cycle="monthly",
             max_sales=0,  # Unlimited
             max_users=0,  # Unlimited
@@ -52,11 +52,11 @@ def create_subscription_plans():
         
         # Add to database
         db.session.add(free_plan)
-        db.session.add(pro_plan)
-        db.session.add(enterprise_plan)
+        db.session.add(standard_plan)
+        db.session.add(premium_plan)
         db.session.commit()
         
-        print(f"Created plans: {free_plan.name}, {pro_plan.name}, {enterprise_plan.name}")
+        print(f"Created plans: {free_plan.name}, {standard_plan.name}, {premium_plan.name}")
         
         # Set all existing companies to Free plan
         free_plan = SubscriptionPlan.query.filter_by(name="Free").first()

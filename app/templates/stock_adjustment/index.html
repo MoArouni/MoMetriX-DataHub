@@ -1,0 +1,484 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Adjustment Checklist - MoMetriX DataHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stock-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .stock-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--primary-color);
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        opacity: 0.8;
+        margin-top: 0.5rem;
+    }
+    
+    .filters-section {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--primary-color);
+        margin-bottom: 2rem;
+    }
+    
+    .filters-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        align-items: end;
+    }
+    
+    .bulk-actions {
+        background: var(--surface-color);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .checklist-section {
+        background: var(--card-bg);
+        border-radius: 8px;
+        border: 1px solid var(--primary-color);
+    }
+    
+    .checklist-header {
+        background: var(--surface-color);
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--primary-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .adjustment-item {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--primary-color);
+        transition: all 0.3s ease;
+    }
+    
+    .adjustment-item:last-child {
+        border-bottom: none;
+    }
+    
+    .adjustment-item.completed {
+        background: rgba(46, 204, 113, 0.1);
+        opacity: 0.8;
+    }
+    
+    .adjustment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1rem;
+    }
+    
+    .adjustment-info {
+        flex: 1;
+    }
+    
+    .product-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .adjustment-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: var(--text-color);
+        opacity: 0.8;
+    }
+    
+    .adjustment-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .status-pending {
+        background: rgba(255, 193, 7, 0.2);
+        color: #856404;
+        border: 1px solid #ffc107;
+    }
+    
+    .status-completed {
+        background: rgba(40, 167, 69, 0.2);
+        color: #155724;
+        border: 1px solid #28a745;
+    }
+    
+    .adjustment-form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .notes-input {
+        padding: 0.5rem;
+        border: 1px solid var(--primary-color);
+        border-radius: 4px;
+        width: 200px;
+        font-size: 0.9rem;
+        background: var(--surface-color);
+        color: var(--text-color);
+    }
+    
+    .btn-complete {
+        background: var(--success-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-uncomplete {
+        background: var(--warning-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-bulk {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .no-adjustments {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-color);
+        opacity: 0.7;
+    }
+    
+    .select-all-checkbox {
+        margin-right: 1rem;
+    }
+    
+    .item-checkbox {
+        margin-right: 1rem;
+        transform: scale(1.2);
+    }
+
+    /* Form controls styling */
+    .form-control {
+        background: var(--surface-color);
+        border: 1px solid var(--primary-color);
+        color: var(--text-color);
+        border-radius: 4px;
+        padding: 0.5rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 2px rgba(3, 218, 198, 0.2);
+        outline: none;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: var(--bg-color);
+    }
+
+    .btn-success {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .btn-warning {
+        background: var(--warning-color);
+        color: white;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Better responsive design */
+    @media (max-width: 768px) {
+        .filters-form {
+            grid-template-columns: 1fr;
+        }
+        
+        .adjustment-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .adjustment-details {
+            grid-template-columns: 1fr;
+        }
+        
+        .notes-input {
+            width: 100%;
+        }
+        
+        .adjustment-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stock-container">
+    <div class="stock-header">
+        <h1><i class="fas fa-clipboard-check"></i> Stock Adjustment Checklist</h1>
+        <p>Track and manage stock adjustments needed after sales</p>
+    </div>
+    
+    <!-- Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.pending }}</div>
+            <div class="stat-label">Pending Adjustments</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.completed }}</div>
+            <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.total }}</div>
+            <div class="stat-label">Total Items</div>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filters-section">
+        <form method="GET" class="filters-form">
+            <div class="filter-group">
+                <label>Status</label>
+                <select name="status" class="form-control enhanced-select">
+                    <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="completed" {% if current_status == 'completed' %}selected{% endif %}>Completed</option>
+                    <option value="all" {% if current_status == 'all' %}selected{% endif %}>All</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Store</label>
+                <select name="store" class="form-control enhanced-select">
+                    <option value="all">All Stores</option>
+                    {% for store in stores %}
+                        <option value="{{ store.name }}" {% if current_store == store.name %}selected{% endif %}>
+                            {{ store.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Category</label>
+                <select name="category" class="form-control enhanced-select">
+                    <option value="all">All Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category.name }}" {% if current_category == category.name %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>&nbsp;</label>
+                <button type="submit" class="btn-filter">
+                    <i class="fas fa-filter"></i> Apply Filters
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    {% if adjustments %}
+    <!-- Bulk Actions -->
+    {% if current_status in ['pending', 'all'] %}
+    <div class="bulk-actions">
+        <form method="POST" action="{{ url_for('stock_adjustment.bulk_complete') }}" id="bulk-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" id="select-all" class="select-all-checkbox" onchange="toggleSelectAll()">
+                <label for="select-all" class="mr-3">Select All</label>
+                <button type="submit" class="btn btn-success" onclick="return confirmBulkComplete()">
+                    <i class="fas fa-check-double"></i> Mark Selected as Complete
+                </button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    
+    <!-- Adjustments List -->
+    <div class="checklist-section">
+        <div class="checklist-header">
+            <h5><i class="fas fa-list"></i> Stock Adjustments ({{ adjustments|length }} items)</h5>
+        </div>
+        <div>
+            {% for adjustment in adjustments %}
+            <div class="adjustment-item {% if adjustment.is_completed %}completed{% endif %}">
+                <div class="adjustment-header">
+                    <div class="adjustment-info">
+                        {% if not adjustment.is_completed and current_status in ['pending', 'all'] %}
+                        <input type="checkbox" name="adjustment_ids" value="{{ adjustment.id }}" class="item-checkbox">
+                        {% endif %}
+                        <div class="product-name">
+                            {% if adjustment.is_set %}
+                                <i class="fas fa-boxes"></i> {{ adjustment.category_name }} Set
+                            {% else %}
+                                <i class="fas fa-box"></i> {{ adjustment.product_name }}
+                            {% endif %}
+                        </div>
+                        <div class="adjustment-details">
+                            <div><strong>Store:</strong> {{ adjustment.store_name }}</div>
+                            <div><strong>Category:</strong> {{ adjustment.category_name }}</div>
+                            <div><strong>Sale Date:</strong> {{ adjustment.sale_date.strftime('%Y-%m-%d') }}</div>
+                            <div><strong>Quantity:</strong> {{ adjustment.quantity_sold }}</div>
+                        </div>
+                        {% if adjustment.admin_notes %}
+                        <div style="margin-top: 0.5rem;">
+                            <strong>Notes:</strong> {{ adjustment.admin_notes }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="adjustment-actions">
+                        {% if adjustment.is_completed %}
+                            <span class="status-badge status-completed">
+                                <i class="fas fa-check"></i> Completed
+                            </span>
+                            <form method="POST" action="{{ url_for('stock_adjustment.uncomplete_adjustment', adjustment_id=adjustment.id) }}" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-warning" onclick="return confirm('Mark as pending again?')">
+                                    <i class="fas fa-undo"></i> Reopen
+                                </button>
+                            </form>
+                        {% else %}
+                            <span class="status-badge status-pending">
+                                <i class="fas fa-clock"></i> Pending
+                            </span>
+                            <form method="POST" action="{{ url_for('stock_adjustment.complete_adjustment', adjustment_id=adjustment.id) }}" class="adjustment-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="text" name="admin_notes" placeholder="Optional notes..." class="notes-input">
+                                <button type="submit" class="btn-complete" onclick="return confirm('Mark as completed?')">
+                                    <i class="fas fa-check"></i> Complete
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    {% else %}
+    <div class="checklist-section">
+        <div class="no-adjustments">
+            <i class="fas fa-clipboard-check fa-3x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+            <h4>No Stock Adjustments Found</h4>
+            <p>{% if current_status == 'pending' %}All caught up! No pending stock adjustments.{% else %}No adjustments match your current filters.{% endif %}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function toggleSelectAll() {
+    const selectAll = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('input[name="adjustment_ids"]');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+}
+
+function confirmBulkComplete() {
+    const selectedBoxes = document.querySelectorAll('input[name="adjustment_ids"]:checked');
+    if (selectedBoxes.length === 0) {
+        alert('Please select at least one adjustment to complete.');
+        return false;
+    }
+    
+    return confirm(`Mark ${selectedBoxes.length} adjustments as completed?`);
+}
+
+// Add selected checkboxes to form before submission
+document.getElementById('bulk-form').addEventListener('submit', function(e) {
+    const selectedBoxes = document.querySelectorAll('input[name="adjustment_ids"]:checked');
+    selectedBoxes.forEach(checkbox => {
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'adjustment_ids';
+        hiddenInput.value = checkbox.value;
+        this.appendChild(hiddenInput);
+    });
+});
+</script>
+{% endblock %} 

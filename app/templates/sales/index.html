@@ -79,6 +79,7 @@
             </div>
         </div>
         
+        {% if show_monthly_stats %}
         <div class="stat-card">
             <div class="stat-icon">
                 <i class="fas fa-calendar-alt"></i>
@@ -88,42 +89,62 @@
                 <div class="stat-label">This Month</div>
             </div>
         </div>
+        {% endif %}
         
         <div class="stat-card">
             <div class="stat-icon">
                 <i class="fas fa-shopping-cart"></i>
             </div>
             <div class="stat-content">
-                <div class="stat-value">{{ recent_sales|length }}</div>
-                <div class="stat-label">Recent Sales</div>
+                <div class="stat-value">{{ all_sales|length }}</div>
+                <div class="stat-label">{% if show_all_data %}Total Sales{% else %}Today's Sales{% endif %}</div>
             </div>
         </div>
     </div>
     
     <div class="sales-container">
         <div class="sales-header">
-            <h2>Recent Sales</h2>
+            <h2>{% if show_all_data %}All Sales Data{% else %}Today's Sales{% endif %}</h2>
+            {% if not show_all_data %}
+            <div class="permission-notice">
+                <i class="fas fa-info-circle"></i>
+                <span>You can only view today's sales. Contact your administrator for full access.</span>
+            </div>
+            {% endif %}
             <div class="sales-filters">
-                <select id="filter-store" class="filter-select">
+                <input type="date" id="filter-date" class="filter-select" placeholder="Filter by date" {% if not show_all_data %}disabled{% endif %}>
+                <select id="filter-store" class="filter-select enhanced-select">
                     <option value="">All Stores</option>
                     {% for store in stores %}
                     <option value="{{ store.id }}">{{ store.name }}</option>
                     {% endfor %}
                 </select>
-                <select id="filter-product" class="filter-select">
+                <select id="filter-product" class="filter-select enhanced-select">
                     <option value="">All Products</option>
                     {% for product in products %}
                     <option value="{{ product.id }}">{{ product.name }}</option>
                     {% endfor %}
                 </select>
-                <button id="filter-button" class="btn btn-filter">
-                    <i class="fas fa-filter"></i> Filter
+                <input type="text" id="filter-search" class="filter-select" placeholder="Search sales...">
+                <button id="filter-button" class="btn-filter">
+                    <i class="fas fa-filter"></i> Apply Filters
+                </button>
+                <button id="clear-filters" class="btn-filter btn-secondary">
+                    <i class="fas fa-times"></i> Clear
                 </button>
             </div>
         </div>
         
-        {% if recent_sales %}
+        {% if all_sales %}
         <div class="sales-table-container">
+            <div class="table-info">
+                <span class="total-count">Showing <span id="visible-count">{{ all_sales|length }}</span> of {{ all_sales|length }} sales</span>
+                {% if show_all_data %}
+                <span class="data-scope">All historical data</span>
+                {% else %}
+                <span class="data-scope">Today only</span>
+                {% endif %}
+            </div>
             <table class="sales-table">
                 <thead>
                     <tr>
@@ -141,7 +162,7 @@
                     </tr>
                 </thead>
                 <tbody id="sales-table-body">
-                    {% for sale in recent_sales %}
+                    {% for sale in all_sales %}
                     <tr>
                         <td>{{ sale.id }}</td>
                         <td>{{ sale.sale_date.strftime('%Y-%m-%d') }}</td>
@@ -369,8 +390,10 @@
     .sales-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
         margin-bottom: 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
     }
     
     .sales-header h2 {
@@ -378,22 +401,62 @@
         color: #fff;
     }
     
+    .permission-notice {
+        background: rgba(255, 193, 7, 0.1);
+        border: 1px solid #ffc107;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        color: #856404;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
     .sales-filters {
         display: flex;
-        gap: 0.5rem;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    
+    .table-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .total-count {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    
+    .data-scope {
+        font-size: 0.9rem;
+        color: #999;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
     }
     
     .filter-select {
         padding: 0.5rem;
-        background-color: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid #ced4da;
         border-radius: 4px;
-        color: #fff;
+        background-color: #fff;
+        color: #212529;
+        min-width: 200px;
     }
     
     .filter-select option {
-        background-color: #2c3e50;
-        color: #fff;
+        background-color: #fff;
+        color: #212529;
+        padding: 0.5rem;
     }
     
     .sales-table-container {
@@ -539,7 +602,10 @@
         
         .sales-filters {
             width: 100%;
-            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            width: 100%;
         }
     }
     
@@ -551,37 +617,109 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const filterButton = document.getElementById('filter-button');
+    const clearButton = document.getElementById('clear-filters');
+    const dateFilter = document.getElementById('filter-date');
     const storeFilter = document.getElementById('filter-store');
     const productFilter = document.getElementById('filter-product');
-    const filterButton = document.getElementById('filter-button');
-    const salesTableBody = document.getElementById('sales-table-body');
-    
-    // Apply filters when filter button is clicked
-    filterButton.addEventListener('click', applyFilters);
+    const searchFilter = document.getElementById('filter-search');
+    const tableBody = document.getElementById('sales-table-body');
+    const visibleCount = document.getElementById('visible-count');
     
     function applyFilters() {
-        const storeId = storeFilter.value;
-        const productId = productFilter.value;
+        if (!tableBody) return;
         
-        // Get all rows
-        const rows = salesTableBody.querySelectorAll('tr');
+        const dateValue = dateFilter ? dateFilter.value : '';
+        const storeValue = storeFilter ? storeFilter.value : '';
+        const productValue = productFilter ? productFilter.value : '';
+        const searchValue = searchFilter ? searchFilter.value.toLowerCase() : '';
+        
+        const rows = tableBody.querySelectorAll('tr');
+        let visibleRows = 0;
         
         rows.forEach(row => {
-            const rowStoreId = row.getAttribute('data-store-id');
-            const rowProductId = row.getAttribute('data-product-id');
+            let showRow = true;
             
-            // Check if row matches filter criteria
-            const storeMatch = !storeId || rowStoreId === storeId;
-            const productMatch = !productId || rowProductId === productId;
-            
-            // Show/hide row based on filter
-            if (storeMatch && productMatch) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
+            // Filter by date
+            if (dateValue && row.cells[1]) {
+                const dateCell = row.cells[1].textContent.trim();
+                showRow = showRow && dateCell.includes(dateValue);
             }
+            
+            // Filter by store
+            if (storeValue && row.cells[2]) {
+                const storeCell = row.cells[2].textContent.trim();
+                const storeSelect = document.querySelector(`#filter-store option[value="${storeValue}"]`);
+                const storeName = storeSelect ? storeSelect.textContent : storeValue;
+                showRow = showRow && storeCell.includes(storeName);
+            }
+            
+            // Filter by product
+            if (productValue && row.cells[4]) {
+                const productCell = row.cells[4].textContent.trim();
+                const productSelect = document.querySelector(`#filter-product option[value="${productValue}"]`);
+                const productName = productSelect ? productSelect.textContent : productValue;
+                showRow = showRow && productCell.includes(productName);
+            }
+            
+            // Filter by search text (searches across all visible columns)
+            if (searchValue) {
+                const rowText = Array.from(row.cells).slice(0, -1).map(cell => 
+                    cell.textContent.toLowerCase()
+                ).join(' ');
+                showRow = showRow && rowText.includes(searchValue);
+            }
+            
+            // Show or hide the row
+            row.style.display = showRow ? '' : 'none';
+            if (showRow) visibleRows++;
         });
+        
+        // Update visible count
+        if (visibleCount) {
+            visibleCount.textContent = visibleRows;
+        }
     }
+    
+    function clearFilters() {
+        if (dateFilter) dateFilter.value = '';
+        if (storeFilter) storeFilter.value = '';
+        if (productFilter) productFilter.value = '';
+        if (searchFilter) searchFilter.value = '';
+        
+        // Show all rows
+        if (tableBody) {
+            const rows = tableBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+            
+            if (visibleCount) {
+                visibleCount.textContent = rows.length;
+            }
+        }
+    }
+    
+    // Event listeners
+    if (filterButton) {
+        filterButton.addEventListener('click', applyFilters);
+    }
+    
+    if (clearButton) {
+        clearButton.addEventListener('click', clearFilters);
+    }
+    
+    // Real-time search
+    if (searchFilter) {
+        searchFilter.addEventListener('input', applyFilters);
+    }
+    
+    // Auto-apply filters on change
+    [dateFilter, storeFilter, productFilter].forEach(filter => {
+        if (filter) {
+            filter.addEventListener('change', applyFilters);
+        }
+    });
 });
 </script>
 {% endblock %}

@@ -14,6 +14,12 @@ from app.forms.company import CompanyForm
 from app.forms.sales_setup_forms import StoresSetupForm, CategoriesSetupForm, ProductsSetupForm
 from app.utils.decorators import company_required
 from datetime import datetime, timedelta
+import pandas as pd
+import matplotlib.pyplot as plt
+import io
+import base64
+from app.services.analytics_service import AnalyticsService
+from flask import current_app
 
 # Create blueprint
 dashboard_bp = Blueprint('dashboard', __name__)
@@ -32,107 +38,137 @@ def index():
 @dashboard_bp.route('/dashboard')
 @login_required
 def dashboard():
-    """User dashboard page"""
+    """User dashboard page - redirects to admin dashboard if user is admin"""
+    # Check if user is admin and redirect to admin dashboard
     if current_user.is_admin:
-        # Get stats for admin dashboard
-        stats = {
-            'users': User.query.count(),
-            'companies': Company.query.count(),
-            'questions': Question.query.count(),
-            'blog_posts': BlogPost.query.count()
-        }
+        return redirect(url_for('admin.dashboard'))
+    
+    # Initialize analytics service
+    analytics_service = AnalyticsService()
+    
+    # Get date range for analytics (last 30 days)
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=30)
+    
+    # Initialize dashboard data
+    dashboard_data = {}
+    
+    if current_user.company_id:
+        # Get sales data for analytics
+        df = analytics_service.get_company_sales_data(current_user.company_id, start_date, end_date)
         
-        # Get recent users, companies, questions, and blog posts
-        recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
-        recent_companies = Company.query.order_by(Company.created_at.desc()).limit(5).all()
-        recent_questions = Question.query.order_by(Question.created_at.desc()).limit(5).all()
-        recent_posts = BlogPost.query.order_by(BlogPost.created_at.desc()).limit(5).all()
-        
-        return render_template(
-            'dashboard/admin_dashboard.html',
-            stats=stats,
-            recent_users=recent_users,
-            recent_companies=recent_companies,
-            recent_questions=recent_questions,
-            recent_posts=recent_posts
-        )
-    else:
-        # Get stats for subscriber dashboard
-        stats = {
-            'questions': Question.query.filter_by(user_id=current_user.id).count(),
-            'blog_count': BlogPost.query.count(),
-            'users': User.query.count(),
-            'companies': Company.query.count()
-        }
-        
-        # Add company-specific stats if user has a company
-        if current_user.company_id:
-            stats['team_members'] = User.query.filter_by(company_id=current_user.company_id).count()
-            company = Company.query.get(current_user.company_id)
-            if company and company.created_at:
-                days_active = (datetime.utcnow() - company.created_at).days
-                stats['days_active'] = max(1, days_active)  # Ensure at least 1 day
+        if not df.empty:
+            # Get full dashboard summary for admins and users with analytics permission
+            if current_user.role_company in ['admin', 'moderator']:
+                dashboard_data = analytics_service.get_dashboard_summary(df)
             else:
-                stats['days_active'] = 1
+                # Get daily summary for regular users
+                today = pd.Timestamp.now().normalize()
+                today_sales = df[df['sale_date'].dt.normalize() == today]
                 
-            # Get store, category, and product counts for the company
-            stats['stores'] = Store.query.filter_by(company_id=current_user.company_id).count()
-            stats['categories'] = ProductCategory.query.filter_by(company_id=current_user.company_id).count()
-            stats['products'] = Product.query.filter_by(company_id=current_user.company_id).count()
-            stats['embellishments'] = Embellishment.query.filter_by(company_id=current_user.company_id).count()
-        
-        # Get tools, recent blog posts, and questions
-        user_tools = Tool.query.filter_by(creator_id=current_user.id).all()
-        recent_posts = BlogPost.query.order_by(BlogPost.created_at.desc()).limit(5).all()
-        recent_questions = Question.query.order_by(Question.created_at.desc()).limit(5).all()
-        
-        # Get subscription information
-        subscription = None
-        subscription_features = {}
-        if current_user.company_id:
-            subscription = CompanySubscription.query.filter_by(company_id=current_user.company_id).first()
-            # Default free plan features
-            subscription_features = {
-                'max_stores': 3,
-                'max_categories': 5,
-                'max_products': 20,
-                'max_sales': 100,
-                'advanced_analytics': False,
-                'data_export': False,
-                'api_access': False,
-                'support_level': 'Basic'
-            }
-            
-            # Get company data for management sections
-            stores = Store.query.filter_by(company_id=current_user.company_id).all()
-            categories = ProductCategory.query.filter_by(company_id=current_user.company_id).all()
-            recent_products = Product.query.filter_by(company_id=current_user.company_id).order_by(Product.created_at.desc()).limit(5).all()
+                dashboard_data = {
+                    'today_sales': today_sales['total'].sum(),
+                    'today_transactions': len(today_sales),
+                    'avg_transaction': df['total'].mean() if not df.empty else 0,
+                    'store_daily_goal': 1000,  # This should come from company settings
+                    'store_goal_progress': (today_sales['total'].sum() / 1000 * 100) if not today_sales.empty else 0
+                }
+                
+                # Create daily performance chart for regular users
+                if not today_sales.empty:
+                    fig, ax = plt.subplots(figsize=(10, 4))
+                    hourly_sales = today_sales.groupby(today_sales['sale_date'].dt.hour)['total'].sum()
+                    ax.plot(hourly_sales.index, hourly_sales.values, marker='o')
+                    ax.set_title('Today\'s Sales by Hour')
+                    ax.set_xlabel('Hour')
+                    ax.set_ylabel('Sales ($)')
+                    ax.grid(True, linestyle='--', alpha=0.7)
+                    plt.tight_layout()
+                    
+                    # Convert plot to base64
+                    buffer = io.BytesIO()
+                    plt.savefig(buffer, format='png')
+                    buffer.seek(0)
+                    dashboard_data['daily_chart'] = base64.b64encode(buffer.getvalue()).decode()
+                    plt.close()
+    
+    # Get stats for subscriber dashboard
+    stats = {
+        'questions': Question.query.filter_by(user_id=current_user.id).count(),
+        'blog_count': BlogPost.query.count(),
+        'users': User.query.count(),
+        'companies': Company.query.count()
+    }
+    
+    # Add company-specific stats if user has a company
+    if current_user.company_id:
+        stats['team_members'] = User.query.filter_by(company_id=current_user.company_id).count()
+        company = Company.query.get(current_user.company_id)
+        if company and company.created_at:
+            days_active = (datetime.utcnow() - company.created_at).days
+            stats['days_active'] = max(1, days_active)  # Ensure at least 1 day
         else:
-            stores = []
-            categories = []
-            recent_products = []
-        
-        if current_user.company_id:
-            company_tools = Tool.query.filter_by(
-                company_id=current_user.company_id,
-                is_public=True
-            ).all()
-        else:
-            company_tools = []
+            stats['days_active'] = 1
             
-        return render_template(
-            'dashboard/overview.html',
-            stats=stats,
-            user_tools=user_tools,
-            company_tools=company_tools,
-            recent_posts=recent_posts,
-            recent_questions=recent_questions,
-            stores=stores,
-            categories=categories,
-            recent_products=recent_products,
-            subscription=subscription,
-            subscription_features=subscription_features
-        )
+        # Get store, category, and product counts for the company
+        stats['stores'] = Store.query.filter_by(company_id=current_user.company_id).count()
+        stats['categories'] = ProductCategory.query.filter_by(company_id=current_user.company_id).count()
+        stats['products'] = Product.query.filter_by(company_id=current_user.company_id).count()
+        stats['embellishments'] = Embellishment.query.filter_by(company_id=current_user.company_id).count()
+    
+    # Get tools, recent blog posts, and questions
+    user_tools = Tool.query.filter_by(creator_id=current_user.id).all()
+    recent_posts = BlogPost.query.order_by(BlogPost.created_at.desc()).limit(5).all()
+    recent_questions = Question.query.order_by(Question.created_at.desc()).limit(5).all()
+    
+    # Get subscription information
+    subscription = None
+    subscription_features = {}
+    if current_user.company_id:
+        subscription = CompanySubscription.query.filter_by(company_id=current_user.company_id).first()
+        # Default free plan features
+        subscription_features = {
+            'max_stores': 3,
+            'max_categories': 5,
+            'max_products': 20,
+            'max_sales': 100,
+            'advanced_analytics': False,
+            'data_export': False,
+            'api_access': False,
+            'support_level': 'Basic'
+        }
+        
+        # Get company data for management sections
+        stores = Store.query.filter_by(company_id=current_user.company_id).all()
+        categories = ProductCategory.query.filter_by(company_id=current_user.company_id).all()
+        recent_products = Product.query.filter_by(company_id=current_user.company_id).order_by(Product.created_at.desc()).limit(5).all()
+    else:
+        stores = []
+        categories = []
+        recent_products = []
+    
+    if current_user.company_id:
+        company_tools = Tool.query.filter_by(
+            company_id=current_user.company_id,
+            is_public=True
+        ).all()
+    else:
+        company_tools = []
+        
+    return render_template(
+        'dashboard/overview.html',
+        stats=stats,
+        dashboard=dashboard_data,
+        user_tools=user_tools,
+        company_tools=company_tools,
+        recent_posts=recent_posts,
+        recent_questions=recent_questions,
+        stores=stores,
+        categories=categories,
+        recent_products=recent_products,
+        subscription=subscription,
+        subscription_features=subscription_features
+    )
 
 @dashboard_bp.route('/create-company', methods=['GET', 'POST'])
 @login_required
@@ -212,4 +248,49 @@ def manage_products_redirect():
 def manage_category_products_redirect(category_id):
     """Redirect to the new category products module"""
     flash('This page has been moved to a dedicated products module', 'info')
-    return redirect(url_for('products.category_products', category_id=category_id)) 
+    return redirect(url_for('products.category_products', category_id=category_id))
+
+@dashboard_bp.route('/overview')
+@login_required
+def overview():
+    """Render the dashboard overview page."""
+    try:
+        # Get date range from query parameters or default to last 30 days
+        end_date = datetime.utcnow()
+        start_date = end_date - timedelta(days=30)
+        
+        # Get dashboard data from analytics service
+        analytics_service = AnalyticsService()
+        dashboard_data = analytics_service.get_dashboard_data(
+            start_date=start_date,
+            end_date=end_date,
+            store_id=current_user.store.id if current_user.store else None
+        )
+        
+        # Ensure all metrics have default values
+        dashboard = {
+            'total_revenue': float(dashboard_data.get('total_revenue', 0)),
+            'total_transactions': int(dashboard_data.get('total_transactions', 0)),
+            'avg_transaction': float(dashboard_data.get('avg_transaction', 0)),
+            'top_store': dashboard_data.get('top_store', 'No stores'),
+            'top_product': dashboard_data.get('top_product', 'No products'),
+            'this_month_sales': float(dashboard_data.get('this_month_sales', 0)),
+            'daily_change': float(dashboard_data.get('daily_change', 0)),
+            'weekly_change': float(dashboard_data.get('weekly_change', 0)),
+            'today_sales': float(dashboard_data.get('today_sales', 0)),
+            'today_transactions': int(dashboard_data.get('today_transactions', 0)),
+            'store_daily_goal': float(dashboard_data.get('store_daily_goal', 0)),
+            'store_goal_progress': float(dashboard_data.get('store_goal_progress', 0))
+        }
+        
+        return render_template(
+            'dashboard/overview.html',
+            dashboard=dashboard,
+            datetime=datetime,
+            start_date=start_date,
+            end_date=end_date
+        )
+    except Exception as e:
+        current_app.logger.error(f"Error rendering dashboard: {str(e)}")
+        flash('An error occurred while loading the dashboard. Please try again later.', 'error')
+        return redirect(url_for('main.index')) 

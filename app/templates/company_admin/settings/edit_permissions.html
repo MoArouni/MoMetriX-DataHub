@@ -34,11 +34,33 @@
             <form method="POST">
                 {{ form.hidden_tag() }}
                 
+                <!-- Access Level Section -->
+                <div class="permission-section">
+                    <h3><i class="fas fa-user-shield"></i> What Can They Do?</h3>
+                    <p class="section-description">
+                        Choose the level of access this moderator should have.
+                    </p>
+                    
+                    <div class="access-level-selection">
+                        {{ form.access_level.label(class="form-label") }}
+                        {{ form.access_level(class="form-select") }}
+                        
+                        <div class="range-descriptions">
+                            <div class="range-option">
+                                <strong>Add & See Daily Sales Only:</strong> Can add new sales and see only their own sales data for current day - NO analytics access
+                            </div>
+                            <div class="range-option">
+                                <strong>See Everything:</strong> Full access to all sales data, analytics, and management features
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Store Access Section -->
                 <div class="permission-section">
-                    <h3><i class="fas fa-store"></i> Store Access Permissions</h3>
+                    <h3><i class="fas fa-store"></i> Store Access</h3>
                     <p class="section-description">
-                        Control which stores this moderator can access and add sales to. Leave none selected to grant access to all stores.
+                        Select which stores this moderator can add sales to and view sales from. Leave none selected to grant access to all stores.
                     </p>
                     
                     <div class="store-permissions">
@@ -68,102 +90,6 @@
                         <div class="permission-note">
                             <i class="fas fa-info-circle"></i>
                             <span>If no stores are selected, the moderator will have access to all stores (current and future).</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Data Range Access Section -->
-                <div class="permission-section">
-                    <h3><i class="fas fa-calendar-alt"></i> Sales Data Range Access</h3>
-                    <p class="section-description">
-                        Determine how far back in time this moderator can view sales data.
-                    </p>
-                    
-                    <div class="data-range-selection">
-                        {{ form.data_range_access.label(class="form-label") }}
-                        {{ form.data_range_access(class="form-select") }}
-                        
-                        <div class="range-descriptions">
-                            <div class="range-option">
-                                <strong>Current Day Only:</strong> Can only see today's sales
-                            </div>
-                            <div class="range-option">
-                                <strong>Past Week:</strong> Can view sales from the last 7 days
-                            </div>
-                            <div class="range-option">
-                                <strong>Past Month:</strong> Can access sales from the last 30 days
-                            </div>
-                            <div class="range-option">
-                                <strong>All Historical Data:</strong> Full access to all sales history
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sales Permissions Section -->
-                <div class="permission-section">
-                    <h3><i class="fas fa-cash-register"></i> Sales Management Permissions</h3>
-                    <p class="section-description">
-                        Configure what actions this moderator can perform with sales data.
-                    </p>
-                    
-                    <div class="permissions-grid">
-                        <div class="permission-item">
-                            {{ form.can_view_sales(class="permission-checkbox") }}
-                            {{ form.can_view_sales.label(class="permission-label") }}
-                            <p class="permission-description">View sales reports and data</p>
-                        </div>
-                        
-                        <div class="permission-item">
-                            {{ form.can_add_sales(class="permission-checkbox") }}
-                            {{ form.can_add_sales.label(class="permission-label") }}
-                            <p class="permission-description">Record new sales transactions</p>
-                        </div>
-                        
-                        <div class="permission-item">
-                            {{ form.can_edit_sales(class="permission-checkbox") }}
-                            {{ form.can_edit_sales.label(class="permission-label") }}
-                            <p class="permission-description">Modify existing sales records</p>
-                        </div>
-                        
-                        <div class="permission-item">
-                            {{ form.can_delete_sales(class="permission-checkbox") }}
-                            {{ form.can_delete_sales.label(class="permission-label") }}
-                            <p class="permission-description">Remove sales transactions</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Advanced Permissions Section -->
-                <div class="permission-section">
-                    <h3><i class="fas fa-chart-line"></i> Advanced Permissions</h3>
-                    <p class="section-description">
-                        Additional capabilities for data analysis and management.
-                    </p>
-                    
-                    <div class="permissions-grid">
-                        <div class="permission-item">
-                            {{ form.can_view_analytics(class="permission-checkbox") }}
-                            {{ form.can_view_analytics.label(class="permission-label") }}
-                            <p class="permission-description">Access analytics and detailed reports</p>
-                        </div>
-                        
-                        <div class="permission-item">
-                            {{ form.can_export_data(class="permission-checkbox") }}
-                            {{ form.can_export_data.label(class="permission-label") }}
-                            <p class="permission-description">Export data to CSV/Excel files</p>
-                        </div>
-                        
-                        <div class="permission-item">
-                            {{ form.can_manage_products(class="permission-checkbox") }}
-                            {{ form.can_manage_products.label(class="permission-label") }}
-                            <p class="permission-description">Add, edit, and organize products</p>
-                        </div>
-                        
-                        <div class="permission-item">
-                            {{ form.can_manage_stores(class="permission-checkbox") }}
-                            {{ form.can_manage_stores.label(class="permission-label") }}
-                            <p class="permission-description">Manage store locations and settings</p>
                         </div>
                     </div>
                 </div>
@@ -402,6 +328,12 @@
     color: #fff;
     font-size: 1rem;
     margin-bottom: 1rem;
+}
+
+.form-select option {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 0.5rem;
 }
 
 .range-descriptions {

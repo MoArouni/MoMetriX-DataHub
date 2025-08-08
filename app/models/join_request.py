@@ -259,4 +259,75 @@ class DirectModeratorInvite(db.Model):
         expired_invites = cls.query.filter(cls.expires_at < datetime.utcnow()).all()
         for invite in expired_invites:
             db.session.delete(invite)
-        db.session.commit() 
+        db.session.commit()
+
+class ExistingUserInvite(db.Model):
+    """Model for invitations sent to existing users"""
+    __tablename__ = 'existing_user_invites'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), nullable=False)
+    invited_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    invite_token = db.Column(db.String(64), unique=True, nullable=False, index=True)
+    role_permissions = db.Column(db.String(50), nullable=False)
+    message = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.String(20), default='pending')  # pending, accepted, rejected, expired
+    responded_at = db.Column(db.DateTime, nullable=True)
+    
+    # Relationships
+    user = db.relationship('User', foreign_keys=[user_id])
+    company = db.relationship('Company')
+    inviter = db.relationship('User', foreign_keys=[invited_by])
+    
+    def __init__(self, user_id, company_id, invited_by, role_permissions, message=None):
+        from app.models.user import User  # Import here to avoid circular import
+        self.user_id = user_id
+        user = User.query.get(user_id)
+        self.email = user.email if user else ''  # Get email from user
+        self.company_id = company_id
+        self.invited_by = invited_by
+        self.role_permissions = role_permissions
+        self.message = message
+        self.invite_token = self.generate_token()
+        self.expires_at = datetime.utcnow() + timedelta(days=7)  # 7 days for existing users
+    
+    @staticmethod
+    def generate_token():
+        """Generate a secure invite token"""
+        return secrets.token_urlsafe(48)
+    
+    @property
+    def is_expired(self):
+        """Check if the invite has expired"""
+        return datetime.utcnow() > self.expires_at
+    
+    @property
+    def is_valid(self):
+        """Check if the invite is valid (not expired and pending)"""
+        return not self.is_expired and self.status == 'pending'
+    
+    def accept(self):
+        """Mark the invite as accepted"""
+        self.status = 'accepted'
+        self.responded_at = datetime.utcnow()
+    
+    def reject(self):
+        """Mark the invite as rejected"""
+        self.status = 'rejected'
+        self.responded_at = datetime.utcnow()
+    
+    def expire(self):
+        """Mark the invite as expired"""
+        self.status = 'expired'
+    
+    @property
+    def full_name(self):
+        """Get the full name of the invited user"""
+        return f"{self.user.first_name} {self.user.last_name}"
+    
+    def __repr__(self):
+        return f'<ExistingUserInvite {self.email} for {self.company.company_name}>' 
