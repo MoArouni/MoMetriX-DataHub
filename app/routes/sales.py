@@ -106,7 +106,6 @@ def index():
     ).scalar() or 0
     
     # Calculate monthly sales total (only show if user has permission to see all sales)
-    from app.utils.permission_utils import can_view_all_sales
     monthly_sales = None
     show_monthly_stats = is_admin or can_view_all_sales()
     
