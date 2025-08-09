@@ -1039,12 +1039,7 @@
                 </li>
                 {% endif %}
                 
-                <li class="quick-action-item">
-                    <a href="{{ url_for('settings.index') }}" class="quick-action-link">
-                        <i class="fas fa-cog quick-action-icon"></i>
-                        <span>Settings</span>
-                    </a>
-                </li>
+                
                 {% else %}
                 {% if current_user.role_website in ['subscriber', 'admin'] %}
                 <li class="quick-action-item">

@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: mometrix-datahub
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT run:app
+    autoDeploy: true
+
