@@ -47,9 +47,13 @@
             </div>
             <div class="setup-actions">
                 {% if 'stores' in missing_setup %}
-                <a href="{{ url_for('stores.manage') }}" class="btn btn-primary">
-                    Add Stores
-                </a>
+                    {% if current_user.role_company == 'admin' or current_user.is_admin %}
+                    <a href="{{ url_for('stores.manage') }}" class="btn btn-primary">
+                        Add Stores
+                    </a>
+                    {% else %}
+                    <p class="admin-required">Contact your company administrator to add stores.</p>
+                    {% endif %}
                 {% elif 'categories' in missing_setup %}
                 <a href="{{ url_for('products.categories') }}" class="btn btn-primary">
                     Add Categories
