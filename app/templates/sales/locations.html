@@ -6,9 +6,11 @@
 <div class="container">
     <div class="section-header">
         <h1>Store Locations</h1>
+        {% if current_user.role_company == 'admin' or current_user.is_admin %}
         <a href="{{ url_for('stores.manage') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Manage Stores
         </a>
+        {% endif %}
     </div>
     
     <div class="card">
@@ -42,9 +44,13 @@
                 </div>
                 <h3>No Stores Set Up</h3>
                 <p>You haven't set up any store locations yet.</p>
+                {% if current_user.role_company == 'admin' or current_user.is_admin %}
                 <a href="{{ url_for('stores.manage') }}" class="btn btn-primary">
                     Set Up Stores
                 </a>
+                {% else %}
+                <p class="permission-note">Contact your company administrator to set up stores.</p>
+                {% endif %}
             </div>
             {% endif %}
         </div>

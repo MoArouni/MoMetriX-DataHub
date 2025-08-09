@@ -6,9 +6,14 @@
 <div class="container">
     <div class="section-header">
         <h1>Manage Stores</h1>
-        <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
+        <div class="button-group">
+            <a href="{{ url_for('stores.index') }}" class="btn btn-secondary">
+                <i class="fas fa-list"></i> View Stores
+            </a>
+            <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
     </div>
     
     <div class="plan-info-banner">
@@ -237,6 +242,24 @@
     .form-actions {
         margin-top: 2rem;
         text-align: right;
+    }
+    
+    .button-group {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .admin-notice {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        color: var(--primary-color);
+        padding: 0.75rem 1rem;
+        border-radius: 4px;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        border-left: 3px solid var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 </style>
 {% endblock %} 
