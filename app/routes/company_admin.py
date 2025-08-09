@@ -11,6 +11,7 @@ from app.forms.company_settings_forms import CompanyDetailsForm, UserPermissions
 from app.utils.email import send_join_request_declined_email, send_moderator_invite_email, send_direct_moderator_invite_email, send_existing_user_invite_email
 from app import db
 from datetime import datetime
+import secrets
 from flask import current_app
 
 # Create company admin blueprint
@@ -375,7 +376,10 @@ def review_join_request(request_id):
                         company_id=join_request.company_id,
                         role_company='moderator'
                     )
-                    user.password = 'temp_password_123'  # They'll need to reset this
+                    # This user hasn't set a password yet; set a secure temporary password to satisfy NOT NULL
+                    user.password = secrets.token_urlsafe(16)
+                    # Mark email as verified since we verified during the join flow
+                    user.email_verified = True
                     db.session.add(user)
                 
                 db.session.flush()  # Get user ID
@@ -393,13 +397,8 @@ def review_join_request(request_id):
                     )
                     db.session.add(permissions)
                 
-                # Set permissions based on role level
-                if role_permissions == 'data_entry':
-                    permissions.set_permissions(
-                        access_level='daily_sales',
-                        allowed_store_ids=[]  # Empty means all stores
-                    )
-                elif role_permissions == 'daily_sales':
+                # Set permissions based on role level (two-tier)
+                if role_permissions == 'daily_sales':
                     permissions.set_permissions(
                         access_level='daily_sales',
                         allowed_store_ids=[]  # Empty means all stores
@@ -414,8 +413,8 @@ def review_join_request(request_id):
                 
                 # For new users, set default store access if needed
                 if not existing_user and role_permissions in ['data_entry', 'daily_sales']:
-                    # Get all active stores for the company
-                    stores = Store.query.filter_by(company_id=join_request.company_id, is_active=True).all()
+                    # Get all stores for the company
+                    stores = Store.query.filter_by(company_id=join_request.company_id).all()
                     if stores:
                         permissions.allowed_store_ids = [store.id for store in stores]
                 
@@ -431,10 +430,10 @@ def review_join_request(request_id):
                         pass  # Don't fail if email sending fails
                     flash(f'Join request approved! {join_request.full_name} has been added to your team and will receive a notification email.', 'success')
                 else:
-                    # Send password reset email to new user
-                    from app.utils.email import send_password_reset_email
-                    send_password_reset_email(user)
-                    flash(f'Join request approved! {join_request.full_name} has been added to your team and will receive a password reset email.', 'success')
+                    # Send set-password email to new user
+                    from app.utils.email import send_set_password_email
+                    send_set_password_email(user)
+                    flash(f'Join request approved! {join_request.full_name} has been added to your team and will receive a password setup email.', 'success')
                 
                 return redirect(url_for('company_admin.join_requests'))
                 

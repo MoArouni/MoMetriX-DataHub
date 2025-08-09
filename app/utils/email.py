@@ -101,6 +101,19 @@ def send_password_reset_email(user):
         token=token
     )
 
+def send_set_password_email(user):
+    """
+    Send a first-time password setup email (uses reset token but with different wording)
+    """
+    token = user.generate_reset_token()
+    send_email(
+        to=user.email,
+        subject='Set Your Password',
+        template='auth/email/set_password',
+        user=user,
+        token=token
+    )
+
 def send_verification_code_email(email, code):
     """
     Send email verification code

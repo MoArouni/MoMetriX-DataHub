@@ -5,7 +5,7 @@ from datetime import datetime
 from app import db
 from app.models.user import User
 from app.models.company import Company
-from app.models.join_request import EmailVerificationCode, JoinRequest, ModeratorInvite, ExistingUserInvite
+from app.models.join_request import EmailVerificationCode, JoinRequest, ModeratorInvite, ExistingUserInvite, DirectModeratorInvite
 from app.forms.join_request_forms import (
     EmailVerificationForm, VerifyCodeForm, CompanySelectionForm,
     ModeratorRegistrationForm, InviteAcceptanceForm, AuthenticatedUserJoinForm
@@ -189,6 +189,18 @@ def verify_email():
             
             if verification.is_valid:
                 verification.mark_as_used()
+                # Persist verification to a user account if it already exists
+                try:
+                    from app.models.user import User
+                    user = User.query.filter_by(email=email.lower()).first()
+                    if user and not user.email_verified:
+                        user.email_verified = True
+                        from app import db
+                        db.session.commit()
+                        current_app.logger.info(f"Marked existing user {email} as email_verified due to join code verification")
+                except Exception as persist_err:
+                    current_app.logger.warning(f"Could not persist email verification to user {email}: {persist_err}")
+                
                 session['join_email_verified'] = True
                 current_app.logger.info(f"Email verification successful for {email}")
                 flash('Email verified successfully!', 'success')

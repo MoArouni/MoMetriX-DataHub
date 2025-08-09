@@ -148,8 +148,7 @@ class DirectModeratorInviteForm(FlaskForm):
     role_permissions = SelectField('Permission Level', validators=[
         DataRequired(message='Please select a permission level.')
     ], choices=[
-        ('data_entry', 'Data Entry Only'),
-        ('daily_sales', 'Data Entry + Daily Sales View'),
+        ('daily_sales', 'Data Entry Only'),
         ('full_access', 'Full Access (All Data)')
     ])
     message = TextAreaField('Personal Message (Optional)', validators=[
