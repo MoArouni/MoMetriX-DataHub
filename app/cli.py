@@ -125,6 +125,161 @@ def register_commands(app):
         create_subscription_plans()
         click.echo('Subscription plans have been created.')
 
+    @app.cli.command('smoke-test')
+    @with_appcontext
+    def smoke_test():
+        """Run an end-to-end smoke test over core features."""
+        import os
+        from flask import current_app
+        from app import create_app, db
+        from app.models.user import User
+        from app.models.company import Company
+        from app.models.store import Store
+        from app.models.product_category import ProductCategory
+        from app.models.product import Product
+        from app.models.user_permissions import UserPermissions
+        from app.utils.db_init import init_roles
+
+        os.environ['FLASK_CONFIG'] = 'testing'
+        test_app = create_app('testing')
+        test_app.debug = True  # ensure email sending logs instead of real SMTP
+        results = []
+
+        with test_app.app_context():
+            db.drop_all()
+            db.create_all()
+            init_roles()
+
+            # Create admin user
+            admin = User(email='admin@test.com', username='admin', is_admin=True, role_website='admin')
+            admin.password = 'AdminPass123!'
+            db.session.add(admin)
+            db.session.commit()
+
+            client = test_app.test_client()
+
+            def check(path, expected_status=200):
+                r = client.get(path, follow_redirects=True)
+                ok = (r.status_code == expected_status) or (r.status_code == 200)
+                results.append((path, r.status_code, ok))
+                return r
+
+            # Public
+            check('/')
+            check('/features/')
+            check('/pricing/')
+
+            # Auth basics
+            check('/auth/login')
+            check('/auth/register')
+            check('/auth/reset')
+            client.post('/auth/login', data={'email':'admin@test.com','password':'AdminPass123!'}, follow_redirects=True)
+
+            # Create a company
+            client.post('/dashboard/create-company', data={'company_name':'TestCo','company_email':'co@test.com','phone':'1234567890'}, follow_redirects=True)
+            check('/dashboard')
+            check('/company-admin/settings')
+
+            # Seed minimal data for sales and analytics
+            company = Company.query.filter_by(company_name='TestCo').first()
+            store = Store(name='Main Store', location='HQ', company_id=company.id)
+            category = ProductCategory(name='Jewelry', company_id=company.id)
+            db.session.add_all([store, category])
+            db.session.commit()
+            product = Product(name='Silver Ring', category_id=category.id, company_id=company.id)
+            db.session.add(product)
+            db.session.commit()
+
+            # Sales index should load
+            check('/sales/')
+
+            # Enter a sale
+            sale_post = client.post('/sales/new', data={
+                'store_id': store.id,
+                'product_id': product.id,
+                'quantity': 1,
+                'total_price': '45.00',
+                'cash_amount': '20.00',
+                'card_amount': '25.00',
+                'notes': 'Smoke test sale'
+            }, follow_redirects=True)
+            results.append(('/sales/new [POST]', sale_post.status_code, sale_post.status_code == 200))
+
+            # Analytics pages (admin has access)
+            check('/analytics/')
+            check('/analytics/stores')
+            check('/analytics/categories')
+            check('/analytics/products')
+            check('/analytics/payments')
+
+            # Company settings: update company details (GET then POST)
+            check('/company-admin/settings/company-details')
+            upd = client.post('/company-admin/settings/company-details', data={
+                'company_name': 'TestCo Updated',
+                'company_email': 'co+updated@test.com',
+                'phone': '9999999999'
+            }, follow_redirects=True)
+            results.append(('/company-admin/settings/company-details [POST]', upd.status_code, upd.status_code == 200))
+
+            # Create a moderator and set permissions
+            moderator = User(email='mod@test.com', username='mod', is_admin=False, role_website='viewer', company_id=company.id, role_company='moderator')
+            moderator.password = 'Moderator123!'
+            db.session.add(moderator)
+            db.session.commit()
+
+            check('/company-admin/settings/moderators')
+            perm_post = client.post(f'/company-admin/settings/moderator/{moderator.id}/permissions', data={
+                'user_id': moderator.id,
+                'access_level': 'see_everything',
+                'allowed_stores': [str(store.id)]
+            }, follow_redirects=True)
+            results.append((f'/company-admin/settings/moderator/{moderator.id}/permissions [POST]', perm_post.status_code, perm_post.status_code == 200))
+
+            # Invite moderator (non-existing user email)
+            check('/company-admin/invite-moderator')
+            invite_post = client.post('/company-admin/invite-moderator', data={
+                'email': 'newuser@test.com',
+                'first_name': 'New',
+                'last_name': 'User',
+                'role_permissions': 'daily_sales',
+                'message': 'Welcome!'
+            }, follow_redirects=True)
+            results.append(('/company-admin/invite-moderator [POST]', invite_post.status_code, invite_post.status_code == 200))
+
+            # Join flow (unauthed): start, verify code, select company
+            client.get('/auth/logout', follow_redirects=True)
+            start = client.post('/join/', data={'email': 'candidate@test.com'}, follow_redirects=True)
+            results.append(('/join/ [POST]', start.status_code, start.status_code == 200))
+
+            # Fetch verification code from DB
+            from app.models.join_request import EmailVerificationCode
+            code = EmailVerificationCode.query.filter_by(email='candidate@test.com').first()
+            verify = client.post('/join/verify-email', data={'email': 'candidate@test.com', 'verification_code': code.code}, follow_redirects=True)
+            results.append(('/join/verify-email [POST]', verify.status_code, verify.status_code == 200))
+
+            select = client.post('/join/select-company', data={
+                'email': 'candidate@test.com',
+                'first_name': 'Cand',
+                'last_name': 'Idate',
+                'username': 'candidate1',
+                'company_id': company.id,
+                'message': 'Please add me'
+            }, follow_redirects=True)
+            results.append(('/join/select-company [POST]', select.status_code, select.status_code == 200))
+
+            # Summarize
+            click.echo('\nSmoke test results:')
+            failures = 0
+            for path, code, ok in results:
+                status = 'OK' if ok else 'FAIL'
+                click.echo(f" - {path} -> {code} [{status}]")
+                if not ok:
+                    failures += 1
+
+            if failures:
+                raise SystemExit(f"Smoke test finished with {failures} failure(s)")
+            click.echo('All checks passed')
+
     @app.cli.command('seed-faqs')
     @with_appcontext
     def seed_faqs():
