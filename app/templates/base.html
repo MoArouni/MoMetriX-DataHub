@@ -753,52 +753,26 @@
             <div class="footer-content">
                 <div class="footer-section about">
                     <h3>About Us</h3>
-                    <p>Data Analytics Hub provides powerful tools for businesses to analyze, visualize, and leverage their data for better decision making.</p>
+                    <p>MoMetriX DataHub helps small teams track daily sales, manage products and stores, and turn activity into clear insights—fast.</p>
+                    <p>New here? Visit the <a href="{{ url_for('documentation.index') }}">Docs</a> or ask in the <a href="{{ url_for('qa.index') }}">Q&A</a>.</p>
                 </div>
 
-                <div class="footer-section contact">
-                    <h3>Contact Us</h3>
-                    <p><i class="fas fa-envelope"></i> {{ config.CONTACT_EMAIL }}</p>
-                    <p><i class="fas fa-phone"></i> {{ config.CONTACT_PHONE }}</p>
-                    <p><i class="fas fa-map-marker-alt"></i> {{ config.CONTACT_ADDRESS }}</p>
-                </div>
 
                 <div class="footer-section links">
                     <h3>Quick Links</h3>
                     <ul>
                         <li><a href="{{ url_for('dashboard.index') }}">Home</a></li>
                         <li><a href="{{ url_for('blog.index') }}">Blog</a></li>
-                        <li><a href="{{ url_for('pricing.index') }}">Pricing</a></li>
                         <li><a href="{{ url_for('qa.index') }}">Q&A</a></li>
-                        <li><a href="{{ url_for('support.index') }}">Support</a></li>
-                        <li><a href="{{ url_for('documentation.index') }}">Documentation</a></li>
+                        <li><a href="{{ url_for('contact.index') }}">Contact</a></li>
                     </ul>
                 </div>
 
-                <div class="footer-section policies">
-                    <h3>Legal</h3>
-                    <ul>
-                        <li><a href="{{ url_for('policies.privacy') }}">Privacy Policy</a></li>
-                        <li><a href="{{ url_for('policies.terms') }}">Terms of Service</a></li>
-                        <li><a href="{{ url_for('policies.cookies') }}">Cookie Policy</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section contact">
-                    <h3>Contact</h3>
-                    <p><i class="fas fa-envelope"></i> {{config.CONTACT_EMAIL}}</p>
-                    <p><i class="fas fa-phone"></i> {{config.CONTACT_PHONE}}</p>
-                    <p><i class="fas fa-map-marker-alt"></i> {{config.CONTACT_ADDRESS}}</p>
-                </div>
             </div>
 
             <div class="footer-bottom">
-                <div class="social-icons">
-                    <a href="{{ config.SOCIAL_TWITTER }}" class="social-icon" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="{{ config.SOCIAL_LINKEDIN }}" class="social-icon" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="{{ config.SOCIAL_GITHUB }}" class="social-icon" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="{{ config.SOCIAL_INSTAGRAM }}" class="social-icon" target="_blank"><i class="fab fa-instagram"></i></a>
-                </div>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:{{ config.CONTACT_EMAIL }}">{{ config.CONTACT_EMAIL }}</a> </p>  
+                <p><i class="fas fa-phone"></i> {{ config.CONTACT_PHONE }}</p>
                 <p>&copy; 2025 {{ config.COMPANY_NAME }}. All rights reserved.</p>
             </div>
         </div>

@@ -87,7 +87,7 @@ class TestingConfig(Config):
     """Testing config"""
     TESTING = True
     # Create a test-specific DATABASE_URL using the same credentials but different database name
-    DB_NAME = os.environ.get('TEST_DB_NAME', 'MoMetriXHub_test')
+    DB_NAME = os.environ.get('DB_NAME', 'MoMetriXHub_test')
     SQLALCHEMY_DATABASE_URI = (os.environ.get('TEST_DATABASE_URL') or 
         f"postgresql://{Config.DB_USER}:{safe_quote(Config.DB_PASSWORD)}@{Config.DB_HOST}:{Config.DB_PORT}/{DB_NAME}")
     WTF_CSRF_ENABLED = False

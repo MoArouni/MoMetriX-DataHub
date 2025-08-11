@@ -116,6 +116,50 @@ def register_commands(app):
         db.session.commit()
         
         print(f"Admin user '{username}' created successfully!")
+
+    @app.cli.command('truncate-data')
+    @click.option('--yes', is_flag=True, help='Skip confirmation prompt')
+    @with_appcontext
+    def truncate_data(yes):
+        """Delete ALL rows from ALL public tables (keeps schema and database). Resets IDs.
+
+        Uses TRUNCATE ... RESTART IDENTITY CASCADE for each table, excluding alembic_version.
+        """
+        import sqlalchemy as sa
+        from sqlalchemy import text
+
+        if not yes:
+            confirmed = click.confirm(
+                'This will DELETE ALL ROWS in ALL tables for the current database (excluding migrations). Continue?',
+                default=False
+            )
+            if not confirmed:
+                click.echo('Aborted.')
+                return
+
+        engine = db.engine
+        try:
+            with engine.connect() as conn:
+                # Run in autocommit to allow TRUNCATE outside transaction blocks
+                conn = conn.execution_options(isolation_level='AUTOCOMMIT')
+                conn.execute(text("""
+                    DO $$
+                    DECLARE r RECORD;
+                    BEGIN
+                        FOR r IN (
+                            SELECT tablename
+                            FROM pg_tables
+                            WHERE schemaname = 'public'
+                              AND tablename <> 'alembic_version'
+                        ) LOOP
+                            EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || ' RESTART IDENTITY CASCADE';
+                        END LOOP;
+                    END
+                    $$;
+                """))
+            click.echo('All rows truncated and identities reset successfully.')
+        except Exception as e:
+            click.echo(f'Error truncating data: {str(e)}')
     
     @app.cli.command('create-subscription-plans')
     @with_appcontext
