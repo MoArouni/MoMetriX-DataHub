@@ -150,7 +150,7 @@ def register_commands(app):
                             SELECT tablename
                             FROM pg_tables
                             WHERE schemaname = 'public'
-                              AND tablename <> 'alembic_version'
+                              AND tablename NOT IN ('alembic_version', 'role_website', 'role_company')
                         ) LOOP
                             EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || ' RESTART IDENTITY CASCADE';
                         END LOOP;
