@@ -7,7 +7,7 @@ email-validator==2.0.0
 Werkzeug==2.3.5
 Jinja2==3.1.2
 SQLAlchemy==2.0.16
-sWTForms==3.0.1
+WTForms==3.0.1
 PyJWT==2.8.0
 flask-mail==0.9.1
 stripe==2.6.0
