@@ -94,11 +94,15 @@ class TestingConfig(Config):
     
 class ProductionConfig(Config):
     """Production config"""
-    # Use the DATABASE_URL from Config
-    SQLALCHEMY_DATABASE_URI = Config.DATABASE_URL
+    # Render provides DATABASE_URL - use it directly
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     
-    # Fix for Heroku's "postgres://" vs "postgresql://" URL format
-    if SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
+    # If no DATABASE_URL, fall back to Config.DATABASE_URL
+    if not SQLALCHEMY_DATABASE_URI:
+        SQLALCHEMY_DATABASE_URI = Config.DATABASE_URL
+    
+    # Fix for legacy "postgres://" vs "postgresql://" URL format (Render uses postgresql://)
+    if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
         SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
         
     @classmethod
