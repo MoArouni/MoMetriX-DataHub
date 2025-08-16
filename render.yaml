@@ -11,8 +11,6 @@ services:
     envVars:
       - key: FLASK_CONFIG
         value: "production"
-      - key: PYTHON_VERSION
-        value: "3.11"
 
 
 
