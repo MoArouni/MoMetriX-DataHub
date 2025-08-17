@@ -23,7 +23,11 @@ def wait_for_db():
 wait_for_db()
 END
 
-# Run migrations
+# Initialize database (create all tables and seed data)
+echo "Initializing database..."
+flask init-db --force
+
+# Run any pending migrations
 echo "Running database migrations..."
 flask db upgrade
 
