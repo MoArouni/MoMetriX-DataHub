@@ -50,6 +50,31 @@ def create_app(config_name='default'):
     login_manager.init_app(app)
     csrf.init_app(app)
     mail.init_app(app)
+    
+    # FORCE CREATE TABLES IN PRODUCTION
+    if config_name == 'production':
+        with app.app_context():
+            try:
+                print("🔥 PRODUCTION: Force creating all tables...")
+                # Import all models to ensure they're registered
+                from app.models import user, company, roles, product, sales, tool, qa, blog, newsletter, subscription, schema, stock_adjustment, store, join_request, mailing_list, product_category, user_permissions
+                
+                # Force create all tables
+                db.create_all()
+                print("✅ Tables created successfully!")
+                
+                # Initialize default data
+                from app.utils.db_init import initialize_database
+                try:
+                    initialize_database()
+                    print("✅ Database initialized with default data!")
+                except Exception as e:
+                    print(f"⚠️ Database initialization warning: {e}")
+                    
+            except Exception as e:
+                print(f"❌ Error creating tables: {e}")
+                import traceback
+                traceback.print_exc()
     login_manager.login_view = 'auth.login'
     
     # Register blueprints
