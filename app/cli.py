@@ -10,8 +10,9 @@ def register_commands(app):
     """Register Flask CLI commands"""
     
     @app.cli.command('init-db')
+    @click.option('--force', is_flag=True, help='Skip confirmation prompts')
     @with_appcontext
-    def init_db():
+    def init_db(force):
         """Initialize the database with schema and default data."""
         click.echo('Initializing the database...')
         
@@ -21,7 +22,7 @@ def register_commands(app):
         existing_tables = inspector.get_table_names()
         
         if existing_tables:
-            if click.confirm('Database tables already exist. Do you want to drop all tables and recreate?'):
+            if force or click.confirm('Database tables already exist. Do you want to drop all tables and recreate?'):
                 # Drop all tables if they exist
                 db.drop_all()
                 click.echo('Dropped existing tables.')
