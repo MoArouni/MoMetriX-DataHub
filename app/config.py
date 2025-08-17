@@ -25,9 +25,8 @@ class Config:
     DEBUG = os.environ.get('FLASK_DEBUG', 'false').lower() in ['true', 'on', '1']
     TESTING = os.environ.get('FLASK_TESTING', 'false').lower() in ['true', 'on', '1']
     
-    # Database URL - use exactly what's provided
-    DATABASE_URL = os.environ.get('DATABASE_URL')
-    
+    # Database configuration
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/MoMetriXHub')
     # Admin user settings for initial setup
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
     ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME')
@@ -63,21 +62,21 @@ class Config:
 class DevelopmentConfig(Config):
     """Development config"""
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    # Development uses the base config's database URI if not overridden
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or Config.SQLALCHEMY_DATABASE_URI
     
-class TestingConfig(Config):
-    """Testing config"""
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
-    WTF_CSRF_ENABLED = False
+    # Fix postgres:// to postgresql:// if needed
+    if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
+        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+    
+
     
 class ProductionConfig(Config):
     """Production config"""
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    # Use provided DATABASE_URL or fall back to Config default
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or Config.SQLALCHEMY_DATABASE_URI
     
-    # Fix for legacy "postgres://" vs "postgresql://" URL format (Render uses postgresql://)
-    if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
-        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+
         
     @classmethod
     def init_app(cls, app):
@@ -98,7 +97,6 @@ STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
 # Config dictionary mapping
 config = {
     'development': DevelopmentConfig,
-    'testing': TestingConfig,
     'production': ProductionConfig,
     'default': DevelopmentConfig
 } 
