@@ -12,46 +12,29 @@ def safe_quote(value):
 
 class Config:
     """Base config class"""
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-for-development-only')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(basedir, 'static', 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     
     # Server configuration for URL generation
     SERVER_NAME = os.environ.get('SERVER_NAME')
-    PREFERRED_URL_SCHEME = os.environ.get('PREFERRED_URL_SCHEME', 'http')
+    PREFERRED_URL_SCHEME = os.environ.get('PREFERRED_URL_SCHEME')
     
     # Environment-specific settings
     DEBUG = os.environ.get('FLASK_DEBUG', 'false').lower() in ['true', 'on', '1']
     TESTING = os.environ.get('FLASK_TESTING', 'false').lower() in ['true', 'on', '1']
-    DB_NAME = os.environ.get('DB_NAME', 'MoMetriXHub')  # Default to MoMetriXHub
     
-    # Database settings - used if DATABASE_URL is not set
-    DB_USER = os.environ.get('DB_USER', 'postgres')
-    DB_PASSWORD = os.environ.get('DB_PASSWORD', 'postgres')
-    DB_HOST = os.environ.get('DB_HOST', 'localhost')
-    DB_PORT = os.environ.get('DB_PORT', '5432')
-    
-    # Check and fix DATABASE_URL format if it exists
+    # Database URL - use exactly what's provided
     DATABASE_URL = os.environ.get('DATABASE_URL')
-    if DATABASE_URL:
-        if 'MoMetriXHub' not in DATABASE_URL:
-            # If DATABASE_URL exists but doesn't have the right database name
-            parts = DATABASE_URL.rsplit('/', 1)
-            if len(parts) > 1:
-                DATABASE_URL = f"{parts[0]}/MoMetriXHub"
-                os.environ['DATABASE_URL'] = DATABASE_URL
-    else:
-        # Build default PostgreSQL URL if DATABASE_URL is not provided
-        DATABASE_URL = f"postgresql://{DB_USER}:{safe_quote(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     
     # Admin user settings for initial setup
-    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
-    ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
-    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'adminpassword')
+    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
+    ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME')
+    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD')
     
     # Mail settings
-    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+    MAIL_SERVER = os.environ.get('MAIL_SERVER')
     MAIL_PORT = int(os.environ.get('MAIL_PORT', '587'))
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
     MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'false').lower() in ['true', 'on', '1']
@@ -62,16 +45,16 @@ class Config:
     MAIL_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     
     # Contact information for footer and contact forms
-    CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'mmtxhelp@gmail.com')
-    CONTACT_PHONE = os.environ.get('CONTACT_PHONE', '+1 (555) 123-4567')
-    CONTACT_ADDRESS = os.environ.get('CONTACT_ADDRESS', 'Your Business Address')
-    COMPANY_NAME = os.environ.get('COMPANY_NAME', 'MoMetriX DataHub')
+    CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL')
+    CONTACT_PHONE = os.environ.get('CONTACT_PHONE')
+    CONTACT_ADDRESS = os.environ.get('CONTACT_ADDRESS')
+    COMPANY_NAME = os.environ.get('COMPANY_NAME')
     
     # Social media links
-    SOCIAL_TWITTER = os.environ.get('SOCIAL_TWITTER', 'https://twitter.com/yourcompany')
-    SOCIAL_LINKEDIN = os.environ.get('SOCIAL_LINKEDIN', 'https://linkedin.com/company/yourcompany')
-    SOCIAL_GITHUB = os.environ.get('SOCIAL_GITHUB', 'https://github.com/yourcompany')
-    SOCIAL_INSTAGRAM = os.environ.get('SOCIAL_INSTAGRAM', 'https://instagram.com/yourcompany')
+    SOCIAL_TWITTER = os.environ.get('SOCIAL_TWITTER')
+    SOCIAL_LINKEDIN = os.environ.get('SOCIAL_LINKEDIN')
+    SOCIAL_GITHUB = os.environ.get('SOCIAL_GITHUB')
+    SOCIAL_INSTAGRAM = os.environ.get('SOCIAL_INSTAGRAM')
     
     @staticmethod
     def init_app(app):
@@ -80,26 +63,17 @@ class Config:
 class DevelopmentConfig(Config):
     """Development config"""
     DEBUG = True
-    # Use the DATABASE_URL from Config
-    SQLALCHEMY_DATABASE_URI = Config.DATABASE_URL
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     
 class TestingConfig(Config):
     """Testing config"""
     TESTING = True
-    # Create a test-specific DATABASE_URL using the same credentials but different database name
-    DB_NAME = os.environ.get('DB_NAME', 'MoMetriXHub_test')
-    SQLALCHEMY_DATABASE_URI = (os.environ.get('TEST_DATABASE_URL') or 
-        f"postgresql://{Config.DB_USER}:{safe_quote(Config.DB_PASSWORD)}@{Config.DB_HOST}:{Config.DB_PORT}/{DB_NAME}")
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
     WTF_CSRF_ENABLED = False
     
 class ProductionConfig(Config):
     """Production config"""
-    # Render provides DATABASE_URL - use it directly
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    
-    # If no DATABASE_URL, fall back to Config.DATABASE_URL
-    if not SQLALCHEMY_DATABASE_URI:
-        SQLALCHEMY_DATABASE_URI = Config.DATABASE_URL
     
     # Fix for legacy "postgres://" vs "postgresql://" URL format (Render uses postgresql://)
     if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
@@ -117,9 +91,9 @@ class ProductionConfig(Config):
         app.logger.addHandler(file_handler)
 
 # Stripe configuration
-STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_your_test_key')
-STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'pk_test_your_test_key')
-STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', 'whsec_your_webhook_secret')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
 
 # Config dictionary mapping
 config = {
