@@ -895,12 +895,10 @@
         function closeMobileMenu() {
             const navLinks = document.querySelector('.nav-links');
             const hamburger = document.getElementById('hamburger');
-            const body = document.body;
             
             if (navLinks && navLinks.classList.contains('active')) {
                 navLinks.classList.remove('active');
                 hamburger.classList.remove('active');
-                body.classList.remove('menu-open');
             }
         }
 
@@ -908,17 +906,11 @@
         document.getElementById('hamburger').addEventListener('click', function(event) {
             event.stopPropagation();
             const navLinks = document.querySelector('.nav-links');
-            const body = document.body;
             
             navLinks.classList.toggle('active');
             this.classList.toggle('active');
             
-            // Toggle body scroll lock
-            if (navLinks.classList.contains('active')) {
-                body.classList.add('menu-open');
-            } else {
-                body.classList.remove('menu-open');
-            }
+            // No scroll lock - let users scroll behind the menu
         });
 
         // Close mobile menu when clicking outside

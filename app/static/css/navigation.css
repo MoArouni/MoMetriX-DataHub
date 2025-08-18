@@ -17,9 +17,130 @@
     text-decoration: none;
 }
 
-/* Hamburger Menu - Remove all styling to avoid conflicts */
+/* Mobile & Tablet Navigation Override - Full Width, Limited Height */
+@media (max-width: 991px) {
+    .nav-links {
+        position: fixed !important;
+        top: 5rem !important; /* Start below nav bar */
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important; /* Full width */
+        height: auto !important;
+        max-height: calc(100vh - 6rem) !important; /* Almost full height minus nav */
+        background: var(--surface-color) !important;
+        border-bottom: 1px solid var(--primary-color) !important;
+        border-top: 1px solid var(--primary-color) !important;
+        flex-direction: column !important;
+        padding: 1rem 2rem 2rem 2rem !important; /* Less top padding */
+        transform: translateY(-100%) !important; /* Slide from top */
+        transition: transform 0.3s ease !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        z-index: 999 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+        /* Ensure content starts at top */
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: stretch !important;
+    }
 
-/* Mobile Navigation - Handled in base.html */
+    .nav-links.active {
+        transform: translateY(0) !important;
+    }
+
+    .nav-links li {
+        margin: 0.5rem 0 !important;
+        width: 100% !important;
+    }
+
+    .nav-links a {
+        font-size: 0.95rem !important;
+        padding: 0.6rem 0 !important;
+        display: block !important;
+        width: 100% !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    /* Mobile dropdown improvements */
+    .dropdown-menu {
+        position: static !important;
+        width: 100% !important;
+        background: rgba(0, 0, 0, 0.9) !important; /* Even darker for better contrast */
+        border: 1px solid var(--primary-color) !important;
+        border-radius: 6px !important;
+        max-height: 0 !important;
+        overflow: visible !important; /* Allow content to be visible */
+        transition: max-height 0.3s ease, opacity 0.3s ease !important;
+        margin: 0.25rem 0 1rem 0 !important; /* More bottom margin */
+        opacity: 0 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important; /* External shadow */
+        z-index: 1000 !important; /* Higher z-index */
+    }
+
+    .dropdown.active .dropdown-menu {
+        max-height: none !important; /* Remove height restriction */
+        height: auto !important;
+        opacity: 1 !important;
+        overflow: visible !important; /* Ensure all content is visible */
+    }
+
+    .dropdown-menu li {
+        margin: 0 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .dropdown-menu li:last-child {
+        border-bottom: none !important;
+    }
+
+    .dropdown-menu a {
+        padding: 0.75rem 1.25rem !important;
+        font-size: 0.9rem !important;
+        color: var(--text-color) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+        transition: background-color 0.2s ease !important;
+        border-bottom: none !important; /* Remove duplicate border */
+    }
+
+    .dropdown-menu a:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .dropdown-menu a i {
+        font-size: 0.85rem !important;
+        width: 1.2rem !important;
+        text-align: center !important;
+        color: var(--primary-color) !important;
+    }
+
+    /* Make dropdown toggle more visible */
+    .dropdown > a {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        border-radius: 4px !important;
+        padding: 0.75rem 1rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    .dropdown.active > a {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+
+    .dropdown > a i.fa-chevron-down {
+        transition: transform 0.3s ease !important;
+        color: var(--primary-color) !important;
+    }
+
+    .dropdown.active > a i.fa-chevron-down {
+        transform: rotate(180deg) !important;
+    }
+}
 
 /* User Role Labels */
 .role-label-container {
