@@ -979,9 +979,6 @@
         window.addEventListener('scroll', () => {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             
-            // Close mobile menu on scroll
-            closeMobileMenu();
-            
             // Show nav when scrolling up or at the top
             if (scrollTop < lastScrollTop || scrollTop < 50) {
                 nav.classList.add('visible');
