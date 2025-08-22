@@ -58,17 +58,17 @@ def create_subscription_plans():
         
         print(f"Created plans: {free_plan.name}, {standard_plan.name}, {premium_plan.name}")
         
-        # Set all existing companies to Free plan
-        free_plan = SubscriptionPlan.query.filter_by(name="Free").first()
-        if free_plan:
+        # BETA MODE: Set all existing companies to Premium plan instead of Free
+        premium_plan = SubscriptionPlan.query.filter_by(name="Premium").first()
+        if premium_plan:
             companies = Company.query.all()
             for company in companies:
-                company.subscription_plan_id = free_plan.id
+                company.subscription_plan_id = premium_plan.id
                 
                 # Create subscription record
                 subscription = CompanySubscription(
                     company_id=company.id,
-                    plan_id=free_plan.id,
+                    plan_id=premium_plan.id,
                     status="active"
                 )
                 
@@ -79,7 +79,7 @@ def create_subscription_plans():
                 db.session.add(subscription)
                 
             db.session.commit()
-            print(f"Updated {len(companies)} existing companies to Free plan")
+            print(f"Updated {len(companies)} existing companies to Premium plan (BETA MODE)")
         
         print("Done!")
 

@@ -194,7 +194,22 @@ def create_company():
                 admin_id=current_user.id
             )
             db.session.add(company)
-            db.session.commit()
+            db.session.flush()  # Get company ID
+            
+            # BETA MODE: Assign Premium plan by default instead of Free
+            from app.models.subscription import SubscriptionPlan, CompanySubscription
+            premium_plan = SubscriptionPlan.query.filter_by(name="Premium").first()
+            if premium_plan:
+                company.subscription_plan_id = premium_plan.id
+                
+                # Create subscription record
+                subscription = CompanySubscription(
+                    company_id=company.id,
+                    plan_id=premium_plan.id,
+                    status="active"
+                )
+                subscription.user_count = 1  # Start with the admin user
+                db.session.add(subscription)
             
             # Update the user's company_id and company_role
             current_user.company_id = company.id

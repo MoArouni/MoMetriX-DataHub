@@ -51,26 +51,27 @@ def check_sales_limit(redirect_if_limited=True):
         
     subscription = CompanySubscription.query.filter_by(company_id=current_user.company.id).first()
     
-    # If no subscription, create a free plan subscription
+    # BETA MODE: If no subscription, create a premium plan subscription
     if not subscription:
-        free_plan = SubscriptionPlan.query.filter_by(name='Free').first()
-        if not free_plan:
-            # Create default free plan if none exists
-            free_plan = SubscriptionPlan(
-                name='Free',
-                price=0.0,
-                max_sales=100,
-                max_users=3,
+        # BETA MODE: Use Premium plan instead of Free
+        premium_plan = SubscriptionPlan.query.filter_by(name='Premium').first()
+        if not premium_plan:
+            # Create default premium plan if none exists
+            premium_plan = SubscriptionPlan(
+                name='Premium',
+                price=9.99,
+                max_sales=0,  # Unlimited
+                max_users=0,  # Unlimited
                 feature_analytics=True,
                 feature_export=True,
-                feature_premium_tools=False
+                feature_premium_tools=True
             )
-            db.session.add(free_plan)
+            db.session.add(premium_plan)
             db.session.flush()
             
         subscription = CompanySubscription(
             company_id=current_user.company.id,
-            plan_id=free_plan.id,
+            plan_id=premium_plan.id,
             status='active',
             current_period_start=datetime.utcnow()
         )
@@ -102,26 +103,27 @@ def check_user_limit(redirect_if_limited=True):
         
     subscription = CompanySubscription.query.filter_by(company_id=current_user.company.id).first()
     
-    # If no subscription, create a free plan subscription
+    # BETA MODE: If no subscription, create a premium plan subscription
     if not subscription:
-        free_plan = SubscriptionPlan.query.filter_by(name='Free').first()
-        if not free_plan:
-            # Create default free plan if none exists
-            free_plan = SubscriptionPlan(
-                name='Free',
-                price=0.0,
-                max_sales=100,
-                max_users=3,
+        # BETA MODE: Use Premium plan instead of Free
+        premium_plan = SubscriptionPlan.query.filter_by(name='Premium').first()
+        if not premium_plan:
+            # Create default premium plan if none exists
+            premium_plan = SubscriptionPlan(
+                name='Premium',
+                price=9.99,
+                max_sales=0,  # Unlimited
+                max_users=0,  # Unlimited
                 feature_analytics=True,
                 feature_export=True,
-                feature_premium_tools=False
+                feature_premium_tools=True
             )
-            db.session.add(free_plan)
+            db.session.add(premium_plan)
             db.session.flush()
             
         subscription = CompanySubscription(
             company_id=current_user.company.id,
-            plan_id=free_plan.id,
+            plan_id=premium_plan.id,
             status='active',
             current_period_start=datetime.utcnow()
         )

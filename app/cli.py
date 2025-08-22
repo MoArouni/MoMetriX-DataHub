@@ -478,8 +478,73 @@ Your company's data is completely isolated from other companies and only accessi
             click.echo(f'Error during migration: {str(e)}')
             return
 
+    @click.command('upgrade-to-premium')
+    @with_appcontext
+    def upgrade_to_premium():
+        """BETA MODE: Upgrade all existing companies to Premium plan"""
+        try:
+            from app.models.company import Company
+            from app.models.subscription import SubscriptionPlan, CompanySubscription
+            from app.models.user import User
+            
+            # Get or create Premium plan
+            premium_plan = SubscriptionPlan.query.filter_by(name="Premium").first()
+            if not premium_plan:
+                premium_plan = SubscriptionPlan(
+                    name="Premium",
+                    price=9.99,
+                    billing_cycle="monthly",
+                    max_sales=0,  # Unlimited
+                    max_users=0,  # Unlimited
+                    feature_analytics=True,
+                    feature_export=True,
+                    feature_premium_tools=True
+                )
+                db.session.add(premium_plan)
+                db.session.flush()
+                click.echo('✨ Created Premium plan')
+            
+            # Get all companies
+            companies = Company.query.all()
+            upgraded_count = 0
+            
+            for company in companies:
+                # Update company subscription plan ID
+                old_plan = company.subscription_plan_id
+                company.subscription_plan_id = premium_plan.id
+                
+                # Update or create subscription record
+                subscription = CompanySubscription.query.filter_by(company_id=company.id).first()
+                if subscription:
+                    subscription.plan_id = premium_plan.id
+                    subscription.status = "active"
+                else:
+                    # Create new subscription record
+                    subscription = CompanySubscription(
+                        company_id=company.id,
+                        plan_id=premium_plan.id,
+                        status="active"
+                    )
+                    db.session.add(subscription)
+                
+                # Count users in this company
+                user_count = User.query.filter_by(company_id=company.id).count()
+                subscription.user_count = user_count
+                
+                upgraded_count += 1
+                click.echo(f'📈 Upgraded company: {company.company_name} (was plan {old_plan})')
+            
+            db.session.commit()
+            click.echo(f'✅ Successfully upgraded {upgraded_count} companies to Premium plan!')
+            
+        except Exception as e:
+            db.session.rollback()
+            click.echo(f'❌ Error upgrading companies: {str(e)}')
+            return
+
     # Add all commands to the app
     app.cli.add_command(create_admin)
     app.cli.add_command(create_subscription_plans_command)
     app.cli.add_command(migrate_products_to_embellishments)
+    app.cli.add_command(upgrade_to_premium)
     
