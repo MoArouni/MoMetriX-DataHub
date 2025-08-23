@@ -69,6 +69,18 @@ class DevelopmentConfig(Config):
     if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
         SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
     
+    # Development connection pool settings (lighter than production)
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': 3,
+        'pool_timeout': 20,
+        'pool_recycle': 600,  # Recycle connections every 10 minutes
+        'pool_pre_ping': True,  # Verify connections before use
+        'connect_args': {
+            'connect_timeout': 5,
+            'application_name': 'MoMetriX_DataHub_Development'
+        }
+    }
+    
 
     
 class ProductionConfig(Config):
@@ -76,7 +88,23 @@ class ProductionConfig(Config):
     # Use provided DATABASE_URL or fall back to Config default
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or Config.SQLALCHEMY_DATABASE_URI
     
-
+    # Fix postgres:// to postgresql:// if needed
+    if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
+        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+    
+    # Database connection pool settings for Render + Neon
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': 5,
+        'pool_timeout': 30,
+        'pool_recycle': 300,  # Recycle connections every 5 minutes
+        'max_overflow': 10,
+        'pool_pre_ping': True,  # Verify connections before use
+        'connect_args': {
+            'connect_timeout': 10,
+            'application_name': 'MoMetriX_DataHub_Production',
+            'sslmode': 'require'
+        }
+    }
         
     @classmethod
     def init_app(cls, app):

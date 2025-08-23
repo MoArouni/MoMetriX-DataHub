@@ -6,8 +6,9 @@ from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_mail import Mail
 from werkzeug.exceptions import HTTPException
 import os
+import time
 import sqlalchemy as sa
-from sqlalchemy.exc import OperationalError, ProgrammingError
+from sqlalchemy.exc import OperationalError, ProgrammingError, DisconnectionError
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -16,20 +17,48 @@ login_manager = LoginManager()
 csrf = CSRFProtect()
 mail = Mail()
 
+def robust_db_operation(operation_func, max_retries=3, delay=1):
+    """Execute database operation with retry logic for connection drops"""
+    for attempt in range(max_retries):
+        try:
+            return operation_func()
+        except (OperationalError, DisconnectionError) as e:
+            error_msg = str(e).lower()
+            
+            # Check if it's a connection-related error
+            if any(keyword in error_msg for keyword in ['ssl', 'connection', 'timeout', 'closed', 'broken']):
+                print(f"🔄 Database connection error (attempt {attempt + 1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(delay * (attempt + 1))  # Exponential backoff
+                    continue
+            raise  # Re-raise if not a connection error or max retries reached
+        except Exception as e:
+            print(f"❌ Non-connection database error: {e}")
+            raise
+    
+    raise OperationalError("Max retries exceeded for database operation", None, None)
+
 def check_db_exists(app):
-    """Check if the database exists"""
-    engine = sa.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    """Check if the database exists with retry logic"""
+    def _check():
+        engine_options = app.config.get('SQLALCHEMY_ENGINE_OPTIONS', {})
+        engine = sa.create_engine(app.config['SQLALCHEMY_DATABASE_URI'], **engine_options)
+        try:
+            # Try to connect to the database
+            with engine.connect() as conn:
+                # Check if the 'role_website' table exists (a key table in our app)
+                conn.execute(sa.text("SELECT 1 FROM information_schema.tables WHERE table_name = 'role_website'"))
+                return True
+        except (OperationalError, ProgrammingError):
+            # Database or table doesn't exist
+            return False
+        finally:
+            engine.dispose()
+    
     try:
-        # Try to connect to the database
-        with engine.connect() as conn:
-            # Check if the 'role_website' table exists (a key table in our app)
-            conn.execute(sa.text("SELECT 1 FROM information_schema.tables WHERE table_name = 'role_website'"))
-            return True
-    except (OperationalError, ProgrammingError):
-        # Database or table doesn't exist
+        return robust_db_operation(_check)
+    except:
         return False
-    finally:
-        engine.dispose()
 
 def create_app(config_name='default'):
     """Application factory function"""
@@ -51,10 +80,10 @@ def create_app(config_name='default'):
     csrf.init_app(app)
     mail.init_app(app)
     
-    # FORCE CREATE TABLES IN PRODUCTION
+    # FORCE CREATE TABLES IN PRODUCTION WITH RETRY LOGIC
     if config_name == 'production':
         with app.app_context():
-            try:
+            def _init_production_db():
                 print("🔥 PRODUCTION: Force creating all tables...")
                 # Import all models to ensure they're registered
                 from app.models import user, company, roles, product, sales, tool, qa, blog, newsletter, subscription, schema, stock_adjustment, store, join_request, mailing_list, product_category, user_permissions
@@ -70,9 +99,12 @@ def create_app(config_name='default'):
                     print("✅ Database initialized with default data!")
                 except Exception as e:
                     print(f"⚠️ Database initialization warning: {e}")
-                    
+                return True
+            
+            try:
+                robust_db_operation(_init_production_db, max_retries=5, delay=2)
             except Exception as e:
-                print(f"❌ Error creating tables: {e}")
+                print(f"❌ Error creating tables after retries: {e}")
                 import traceback
                 traceback.print_exc()
     login_manager.login_view = 'auth.login'
@@ -140,41 +172,47 @@ def create_app(config_name='default'):
     register_error_handlers(app)
     
     # Initialize database with default values only if it's not already initialized
-    with app.app_context():
-        if not check_db_exists(app):
-            app.logger.info("Database not initialized. Initializing with default values...")
-            try:
-                # Create all tables
-                db.create_all()
+    # Skip this for production as we handle it above with better retry logic
+    if config_name != 'production':
+        with app.app_context():
+            if not check_db_exists(app):
+                app.logger.info("Database not initialized. Initializing with default values...")
+                def _init_dev_db():
+                    # Create all tables
+                    db.create_all()
+                    
+                    # Set up initial data
+                    from app.utils.db_init import init_roles
+                    init_roles()
+                    
+                    # Create admin user if admin credentials are provided
+                    from app.models.user import User
+                    if not User.query.filter_by(is_admin=True).first():
+                        app.logger.info("Creating admin user...")
+                        try:
+                            admin = User(
+                                email=app.config['ADMIN_EMAIL'],
+                                username=app.config['ADMIN_USERNAME'],
+                                is_admin=True,
+                                role_website='admin'
+                            )
+                            admin.password = app.config['ADMIN_PASSWORD']
+                            db.session.add(admin)
+                            db.session.commit()
+                            app.logger.info(f"Admin user '{app.config['ADMIN_USERNAME']}' created successfully!")
+                        except Exception as e:
+                            app.logger.error(f"Error creating admin user: {str(e)}")
+                            db.session.rollback()
+                    
+                    app.logger.info("Database initialization complete.")
+                    return True
                 
-                # Set up initial data
-                from app.utils.db_init import init_roles
-                init_roles()
-                
-                # Create admin user if admin credentials are provided
-                from app.models.user import User
-                if not User.query.filter_by(is_admin=True).first():
-                    app.logger.info("Creating admin user...")
-                    try:
-                        admin = User(
-                            email=app.config['ADMIN_EMAIL'],
-                            username=app.config['ADMIN_USERNAME'],
-                            is_admin=True,
-                            role_website='admin'
-                        )
-                        admin.password = app.config['ADMIN_PASSWORD']
-                        db.session.add(admin)
-                        db.session.commit()
-                        app.logger.info(f"Admin user '{app.config['ADMIN_USERNAME']}' created successfully!")
-                    except Exception as e:
-                        app.logger.error(f"Error creating admin user: {str(e)}")
-                        db.session.rollback()
-                
-                app.logger.info("Database initialization complete.")
-            except Exception as e:
-                app.logger.error(f"Error initializing database: {str(e)}")
-        else:
-            app.logger.info("Database already exists. Skipping initialization.")
+                try:
+                    robust_db_operation(_init_dev_db, max_retries=3, delay=1)
+                except Exception as e:
+                    app.logger.error(f"Error initializing database: {str(e)}")
+            else:
+                app.logger.info("Database already exists. Skipping initialization.")
     
     # Template context processor for permissions
     @app.context_processor
@@ -186,6 +224,28 @@ def create_app(config_name='default'):
     # Register CLI commands
     from app.cli import register_commands
     register_commands(app)
+    
+    # Add a simple health check endpoint for database connectivity
+    @app.route('/health')
+    def health_check():
+        """Simple health check endpoint"""
+        try:
+            # Test database connection
+            result = robust_db_operation(lambda: db.session.execute(sa.text("SELECT 1")).scalar())
+            if result == 1:
+                return {'status': 'healthy', 'database': 'connected'}, 200
+            else:
+                return {'status': 'unhealthy', 'database': 'disconnected'}, 500
+        except Exception as e:
+            return {'status': 'unhealthy', 'database': 'error', 'message': str(e)}, 500
+    
+    # Add favicon route to prevent 404 errors
+    @app.route('/favicon.ico')
+    def favicon():
+        """Serve favicon"""
+        from flask import send_from_directory
+        return send_from_directory(os.path.join(app.root_path, 'static', 'images'), 
+                                 'mylogo.png', mimetype='image/png')
     
     return app
 
