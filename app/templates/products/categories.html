@@ -65,27 +65,6 @@
         </table>
     </div>
     
-    <!-- Mobile Card View -->
-    <div class="categories-cards">
-        {% for category in categories %}
-        <div class="category-card">
-            <div class="category-card-header">
-                <div class="category-card-title">{{ category.name }}</div>
-                <div class="category-card-count">{{ category.product_count }} products</div>
-            </div>
-            <div class="category-card-actions">
-                <a href="{{ url_for('products.edit_category', category_id=category.id) }}" class="btn btn-edit">
-                    <i class="fas fa-edit"></i> Edit
-                </a>
-                <button type="button" class="btn btn-delete" 
-                        data-category-id="{{ category.id }}" 
-                        data-category-name="{{ category.name }}">
-                    <i class="fas fa-trash"></i> Delete
-                </button>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
     {% else %}
     <div class="empty-state">
         {% if request.args.get('search') %}
