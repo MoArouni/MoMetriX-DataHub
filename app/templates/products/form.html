@@ -119,13 +119,19 @@
                 });
                 
                 // Update hidden select for form submission
+                hiddenSelect.empty(); // Clear existing options
+                selectedEmbellishments.forEach(function(emb) {
+                    hiddenSelect.append(new Option(emb.name, emb.id, true, true));
+                });
                 var selectedIds = selectedEmbellishments.map(function(emb) { return emb.id; });
                 hiddenSelect.val(selectedIds);
+                console.log('Updated hidden select with IDs:', selectedIds, 'Hidden select value:', hiddenSelect.val());
                 
             } else {
                 // Hide container, show placeholder
                 container.hide();
                 placeholder.show();
+                hiddenSelect.empty();
                 hiddenSelect.val([]);
             }
         }
@@ -194,6 +200,8 @@
                             
                             // Update display
                             updateEmbellishmentDisplay();
+                            
+                            console.log('Auto-selected embellishments:', selectedEmbellishments);
                             
                             // Update help text based on form type
                             if (isEditForm) {
