@@ -323,7 +323,7 @@ def new_product():
                 company_id=current_user.company_id,
                 name=form.name.data,
                 category_id=form.category_id.data,
-                base_price=form.base_price.data
+                base_price=0.00  # Set default base price to 0
             )
             
             # Add embellishments if selected
@@ -380,7 +380,7 @@ def edit_product(product_id):
             
             product.name = form.name.data
             product.category_id = form.category_id.data
-            product.base_price = form.base_price.data
+            # base_price remains unchanged in edit
             
             # Update embellishments
             product.embellishments = []

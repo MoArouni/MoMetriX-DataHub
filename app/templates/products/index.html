@@ -51,7 +51,6 @@
                         <tr>
                             <th>Name</th>
                             <th>Category</th>
-                            <th>Base Price</th>
                             <th>Embellishments</th>
                             <th>Actions</th>
                         </tr>
@@ -61,7 +60,6 @@
                         <tr data-category="{{ product.category_id }}">
                             <td>{{ product.name }}</td>
                             <td>{{ product.category.name if product.category else 'No Category' }}</td>
-                            <td>£{{ product.base_price }}</td>
                             <td>
                                 <div class="embellishment-badges">
                                     {% if product.embellishments %}
@@ -103,10 +101,7 @@
                             <span class="product-card-label">Category:</span>
                             <span class="product-card-value">{{ product.category.name if product.category else 'No Category' }}</span>
                         </div>
-                        <div class="product-card-row">
-                            <span class="product-card-label">Base Price:</span>
-                            <span class="product-card-value">£{{ product.base_price }}</span>
-                        </div>
+
                         <div class="product-card-row">
                             <span class="product-card-label">Embellishments:</span>
                             <div class="product-card-value">

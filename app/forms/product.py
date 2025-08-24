@@ -19,10 +19,7 @@ class ProductForm(FlaskForm):
         Length(min=2, max=100)
     ])
     category_id = SelectField('Category', coerce=int, validators=[Optional()])
-    base_price = DecimalField('Base Price', validators=[
-        DataRequired(),
-        NumberRange(min=0)
-    ])
+    # base_price removed - not needed for product definition
     embellishments = SelectMultipleField('Applicable Embellishments', coerce=int, validators=[Optional()])
     submit = SubmitField('Save Product')
     
