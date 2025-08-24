@@ -30,7 +30,7 @@
                 
                 <div class="form-group">
                     {{ form.category_id.label }}
-                    {{ form.category_id(class="form-control") }}
+                    {{ form.category_id(class="form-control", id="category_id") }}
                     {% if form.category_id.errors %}
                         <div class="error-message">
                             {% for error in form.category_id.errors %}
@@ -54,8 +54,20 @@
                 
                 <div class="form-group">
                     {{ form.embellishments.label }}
-                    {{ form.embellishments(class="form-control select2", multiple="multiple") }}
-                    <small class="form-text text-muted">Select multiple embellishments that can be applied to this product</small>
+                    <!-- Hidden select for form submission -->
+                    {{ form.embellishments(style="display: none;", multiple="multiple", id="embellishments") }}
+                    
+                    <!-- Custom embellishment display using your existing classes -->
+                    <div class="card" style="min-height: 60px; padding: 1rem;">
+                        <div id="embellishment-container" style="display: none;">
+                            <!-- Embellishment tags will be inserted here -->
+                        </div>
+                        <div id="embellishment-placeholder" class="text-muted">
+                            <i class="fas fa-info-circle"></i> 
+                            <span id="embellishment-help-text">Select a category first. Applicable embellishments will appear as removable tags below.</span>
+                        </div>
+                    </div>
+                    
                     {% if form.embellishments.errors %}
                         <div class="error-message">
                             {% for error in form.embellishments.errors %}
@@ -65,7 +77,7 @@
                     {% endif %}
                 </div>
                 
-                <div class="form-buttons">
+                <div class="d-flex flex-column" style="gap: 1rem; align-items: center;">
                     {{ form.submit(class="btn btn-primary") }}
                     <a href="{{ url_for('products.index') }}" class="btn btn-secondary">Cancel</a>
                 </div>
@@ -73,49 +85,156 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
 {% block scripts %}
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Template data -->
+<script type="application/json" id="form-data">
+{
+    "existingEmbellishments": {{ form.embellishments.data | tojson if form.embellishments.data else [] }},
+    "apiUrl": "{{ url_for('products.api_embellishments_for_category') }}"
+}
+</script>
+
 <script>
     $(document).ready(function() {
-        $('.select2').select2({
-            theme: 'classic',
-            placeholder: 'Select applicable embellishments',
-            allowClear: true
+        // Get template data
+        var formData = JSON.parse(document.getElementById('form-data').textContent);
+        var existingEmbellishments = formData.existingEmbellishments;
+        var apiUrl = formData.apiUrl;
+        var selectedEmbellishments = [];
+        
+        // Function to update the visual display and hidden select
+        function updateEmbellishmentDisplay() {
+            var container = $('#embellishment-container');
+            var placeholder = $('#embellishment-placeholder');
+            var hiddenSelect = $('#embellishments');
+            
+            // Clear container
+            container.empty();
+            
+            if (selectedEmbellishments.length > 0) {
+                // Show container, hide placeholder
+                container.show();
+                placeholder.hide();
+                
+                // Add each embellishment as a tag using your existing classes
+                selectedEmbellishments.forEach(function(emb) {
+                    var tag = $('<div class="btn btn-primary" style="display: block; margin-bottom: 0.5rem; text-align: left; position: relative; width: 100%;">' +
+                              '<span style="cursor: pointer; margin-right: 0.5rem; color: #000; font-weight: bold;" data-id="' + emb.id + '" class="remove-embellishment">×</span>' +
+                              emb.name + '</div>');
+                    container.append(tag);
+                });
+                
+                // Update hidden select for form submission
+                var selectedIds = selectedEmbellishments.map(function(emb) { return emb.id; });
+                hiddenSelect.val(selectedIds);
+                
+            } else {
+                // Hide container, show placeholder
+                container.hide();
+                placeholder.show();
+                hiddenSelect.val([]);
+            }
+        }
+        
+        // Handle remove embellishment
+        $(document).on('click', '.remove-embellishment', function(e) {
+            e.preventDefault();
+            var embId = parseInt($(this).data('id'));
+            selectedEmbellishments = selectedEmbellishments.filter(function(emb) {
+                return emb.id !== embId;
+            });
+            updateEmbellishmentDisplay();
         });
         
-        // Handle category change to filter embellishments
+        // Initialize with existing embellishments for edit forms
+        if (existingEmbellishments.length > 0) {
+            // For edit forms, we need to get the embellishment names
+            // This will be populated when the category change fires
+        }
+        
+        // Trigger category change on page load if category is already selected (for edit forms)
+        setTimeout(function() {
+            if ($('#category_id').val() && $('#category_id').val() != '0') {
+                $('#category_id').trigger('change');
+            }
+        }, 500);
+        
+        // Handle category change to auto-populate embellishments
         $('#category_id').change(function() {
             var categoryId = $(this).val();
+            var helpText = $('#embellishment-help-text');
+            
             if (categoryId && categoryId != 0) {
+                // Show loading state
+                helpText.html('<i class="fas fa-spinner fa-spin"></i> Loading applicable embellishments...');
+                
                 // Fetch embellishments for this category
                 $.ajax({
-                    url: "{{ url_for('products.api_embellishments_for_category') }}",
+                    url: apiUrl,
                     data: {category_id: categoryId},
                     type: 'GET',
                     success: function(response) {
-                        // Update embellishments dropdown
-                        var embSelect = $('#embellishments');
-                        embSelect.empty();
-                        
                         if (response.embellishments && response.embellishments.length > 0) {
-                            $.each(response.embellishments, function(i, emb) {
-                                embSelect.append(new Option(emb.name, emb.id, false, false));
+                            var isEditForm = existingEmbellishments.length > 0;
+                            selectedEmbellishments = [];
+                            
+                            // Determine which embellishments to select
+                            response.embellishments.forEach(function(emb) {
+                                var shouldSelect = false;
+                                
+                                if (isEditForm) {
+                                    // For edit forms, only select if it was previously selected
+                                    shouldSelect = existingEmbellishments.includes(emb.id);
+                                } else {
+                                    // For new forms, select all applicable embellishments by default
+                                    shouldSelect = true;
+                                }
+                                
+                                if (shouldSelect) {
+                                    selectedEmbellishments.push({
+                                        id: emb.id,
+                                        name: emb.name
+                                    });
+                                }
                             });
+                            
+                            // Update display
+                            updateEmbellishmentDisplay();
+                            
+                            // Update help text based on form type
+                            if (isEditForm) {
+                                helpText.html('<i class="fas fa-info-circle"></i> Previously selected embellishments maintained. Click × to remove any you don\'t want.');
+                            } else {
+                                helpText.html('<i class="fas fa-check-circle" style="color: #28a745;"></i> All applicable embellishments auto-selected. Click × to remove any you don\'t want.');
+                            }
+                        } else {
+                            // No embellishments found for this category
+                            selectedEmbellishments = [];
+                            updateEmbellishmentDisplay();
+                            helpText.html('<i class="fas fa-info-circle"></i> No embellishments are configured for this category.');
                         }
-                        embSelect.trigger('change');
                     },
-                    error: function() {
-                        console.error('Failed to fetch embellishments for this category');
+                    error: function(xhr, status, error) {
+                        helpText.html('<i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i> Failed to load embellishments. Please try again.');
                     }
                 });
+            } else {
+                // No category selected - clear embellishments
+                selectedEmbellishments = [];
+                updateEmbellishmentDisplay();
+                helpText.html('<i class="fas fa-info-circle"></i> Select a category first. Applicable embellishments will appear as removable tags below.');
             }
         });
     });
 </script>
 {% endblock %}
 
+{% block styles %}
+{{ super() }}
 <style>
     .container {
         max-width: 800px;
@@ -188,15 +307,12 @@
         margin-right: 0.5rem;
     }
     
-    .form-buttons {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-    }
+
     
     .btn {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         padding: 0.75rem 1.5rem;
         border-radius: 4px;
         font-weight: 600;
@@ -204,6 +320,9 @@
         cursor: pointer;
         transition: all 0.3s ease;
         text-decoration: none;
+        min-height: 44px;
+        line-height: 1.2;
+        white-space: nowrap;
     }
     
     .btn-primary {
@@ -231,27 +350,70 @@
         font-size: 0.85rem;
     }
     
-    /* Select2 styling */
-    .select2-container--classic .select2-selection--multiple {
-        background-color: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #fff;
+    /* Simple styles for embellishment tags using existing classes */
+    .text-muted {
+        color: #999 !important;
+        font-size: 0.875rem;
     }
     
-    .select2-container--classic .select2-selection--multiple .select2-selection__choice {
-        background-color: var(--primary-color);
-        color: #000;
-        border: none;
+    .text-muted i {
+        margin-right: 0.5rem;
+        color: var(--primary-color);
     }
     
-    .select2-container--classic .select2-results__option {
-        background-color: var(--card-bg, #2c3e50);
-        color: #fff;
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+        
+        .section-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+        
+        .section-header h1 {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+            min-height: 48px;
+        }
+        
+        /* Select2 mobile adjustments */
+        .select2-container {
+            width: 100% !important;
+        }
+        
+        .select2-selection--multiple {
+            min-height: 44px; /* Touch-friendly */
+        }
     }
     
-    .select2-container--classic .select2-results__option--highlighted {
-        background-color: var(--primary-color);
-        color: #000;
+    @media (max-width: 480px) {
+        .container {
+            padding: 0.5rem;
+        }
+        
+        .section-header h1 {
+            font-size: 1.25rem;
+        }
+        
+        .card-body {
+            padding: 0.75rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
     }
 </style>
 {% endblock %} 

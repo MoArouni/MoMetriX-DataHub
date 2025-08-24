@@ -37,11 +37,9 @@ class ProductForm(FlaskForm):
                 for cat in ProductCategory.query.filter_by(company_id=company_id).order_by(ProductCategory.name).all()
             ]
             
-            # Dynamically load embellishments for this company
-            self.embellishments.choices = [
-                (emb.id, emb.name)
-                for emb in Embellishment.query.filter_by(company_id=company_id).order_by(Embellishment.name).all()
-            ]
+            # Embellishments will be loaded dynamically via JavaScript based on category selection
+            # Start with empty choices - they will be populated when category is selected
+            self.embellishments.choices = []
             
     def validate_category_id(self, field):
         """Convert 0 to None for the database"""

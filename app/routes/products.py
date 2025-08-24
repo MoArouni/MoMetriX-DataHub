@@ -309,6 +309,15 @@ def new_product():
         # Use regular form if no schema exists
         form = ProductForm(company_id=current_user.company_id)
         
+        # Always populate embellishment choices before validation
+        if request.method == 'POST' and form.embellishments.data:
+            # Get all embellishments that were submitted
+            submitted_embellishments = Embellishment.query.filter(
+                Embellishment.id.in_(form.embellishments.data),
+                Embellishment.company_id == current_user.company_id
+            ).all()
+            form.embellishments.choices = [(emb.id, emb.name) for emb in submitted_embellishments]
+        
         if form.validate_on_submit():
             product = Product(
                 company_id=current_user.company_id,
@@ -358,7 +367,17 @@ def edit_product(product_id):
             # Pre-select embellishments
             form.embellishments.data = [emb.id for emb in product.embellishments]
         
+        # Always populate embellishment choices before validation
+        if request.method == 'POST' and form.embellishments.data:
+            # Get all embellishments that were submitted
+            submitted_embellishments = Embellishment.query.filter(
+                Embellishment.id.in_(form.embellishments.data),
+                Embellishment.company_id == current_user.company_id
+            ).all()
+            form.embellishments.choices = [(emb.id, emb.name) for emb in submitted_embellishments]
+        
         if form.validate_on_submit():
+            
             product.name = form.name.data
             product.category_id = form.category_id.data
             product.base_price = form.base_price.data
