@@ -7,7 +7,7 @@ class StockAdjustmentEntry(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=True)  # Null for sets
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=True)
     sale_id = db.Column(db.Integer, db.ForeignKey('sales.id'), nullable=False)
     
     # Product details (for tracking even if product is deleted)
@@ -19,9 +19,7 @@ class StockAdjustmentEntry(db.Model):
     quantity_sold = db.Column(db.Integer, nullable=False)
     sale_date = db.Column(db.Date, nullable=False)
     
-    # Set-specific fields
-    is_set = db.Column(db.Boolean, default=False)
-    set_items_count = db.Column(db.Integer, nullable=True)  # Only for sets
+
     
     # Adjustment tracking
     is_completed = db.Column(db.Boolean, default=False)
@@ -43,13 +41,9 @@ class StockAdjustmentEntry(db.Model):
     @property
     def total_items_to_adjust(self):
         """Calculate total items that need stock adjustment"""
-        if self.is_set and self.set_items_count:
-            return self.quantity_sold * self.set_items_count
         return self.quantity_sold
     
     @property
     def adjustment_description(self):
         """Get human-readable description of the adjustment needed"""
-        if self.is_set:
-            return f"{self.quantity_sold} set(s) of {self.product_name} (total {self.total_items_to_adjust} items)"
         return f"{self.quantity_sold} unit(s) of {self.product_name}" 

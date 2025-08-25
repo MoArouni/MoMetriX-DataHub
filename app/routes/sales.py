@@ -227,43 +227,26 @@ def new_sale():
                 product_choices=product_choices_by_category
             )
         
-        # Handle "set" selection
+        # Get product_id directly from form
         product_id_value = form.product_id.data
-        is_set = product_id_value == 'set'
-        set_items_count = None
-        
-        if is_set:
-            # For sets, we don't link to a specific product
-            product_id_value = None
-            set_items_count = request.form.get('set_items_count', 1)
-            try:
-                set_items_count = int(set_items_count)
-                if set_items_count < 1:
-                    set_items_count = 1
-            except (ValueError, TypeError):
-                set_items_count = 1
         
         # Get store and product information for required fields
         store = Store.query.get(form.store_id.data)
         store_name = store.name if store else 'Unknown Store'
         
-        # Handle product information
-        if is_set:
-            product_name = 'Set'
-            category_select = request.form.get('selected_category_id') or request.form.get('category_id')
-            if category_select:
-                try:
-                    category = ProductCategory.query.get(int(category_select))
-                    product_category = category.name if category else 'Unknown Category'
-                    product_name = f"{product_category} Set"
-                except (ValueError, TypeError):
-                    product_category = 'Unknown Category'
-            else:
-                product_category = 'Unknown Category'
-        else:
-            product = Product.query.get(product_id_value) if product_id_value else None
-            product_name = product.name if product else 'Unknown Product'
-            product_category = product.category.name if product and product.category else 'Unknown Category'
+        # Get product information
+        product = Product.query.get(product_id_value) if product_id_value else None
+        if not product:
+            flash('Selected product not found.', 'error')
+            return render_template(
+                'sales/new_sale.html',
+                form=form,
+                stores=stores,
+                product_choices=product_choices_by_category
+            )
+        
+        product_name = product.name
+        product_category = product.category.name if product.category else 'Unknown Category'
         
         # Calculate total from payment amounts
         total_amount = form.cash_amount.data + form.card_amount.data
@@ -274,7 +257,7 @@ def new_sale():
             user_id=current_user.id,
             store_id=form.store_id.data,
             store_name=store_name,
-            product_id=product_id_value,  # None for sets
+            product_id=product_id_value,
             product_name=product_name,
             product_category=product_category,
             quantity=form.quantity.data,
@@ -285,64 +268,38 @@ def new_sale():
             sale_date=date.today()
         )
         
-        # Add set information to notes if it's a set
-        if is_set:
-            category_name = ProductCategory.query.get(request.form.get('category_id', '')).name if request.form.get('category_id') else 'Unknown Category'
-            set_note = f"Set sale - {category_name} set with {set_items_count} items"
-            if new_sale.notes:
-                new_sale.notes = f"{set_note}. {new_sale.notes}"
-            else:
-                new_sale.notes = set_note
+
         db.session.add(new_sale)
         db.session.flush()  # Get the sale ID without committing
         
-        # Process embellishments (only for individual products, not sets)
-        if not is_set:
-            embellishment_ids = request.form.getlist('embellishment_ids')
-            if embellishment_ids:
-                for emb_id in embellishment_ids:
-                    try:
-                        embellishment = Embellishment.query.get(int(emb_id))
-                        if embellishment and embellishment.company_id == company_id:
-                            new_sale.embellishments.append(embellishment)
-                    except (ValueError, TypeError):
-                        # Skip invalid IDs
-                        continue
+        # Process embellishments
+        embellishment_ids = request.form.getlist('embellishment_ids')
+        if embellishment_ids:
+            for emb_id in embellishment_ids:
+                try:
+                    embellishment = Embellishment.query.get(int(emb_id))
+                    if embellishment and embellishment.company_id == company_id:
+                        new_sale.embellishments.append(embellishment)
+                except (ValueError, TypeError):
+                    # Skip invalid IDs
+                    continue
         
         # Create stock adjustment entry for new sales (not imports)
         from app.models.stock_adjustment import StockAdjustmentEntry
         
         # Get product and store details for the adjustment entry
         store = Store.query.get(new_sale.store_id)
-        category_name = 'Unknown Category'
-        
-        if is_set:
-            # For sets, we need to get the category name from the form submission
-            category_select = request.form.get('selected_category_id') or request.form.get('category_id')
-            if category_select:
-                try:
-                    category = ProductCategory.query.get(int(category_select))
-                    if category:
-                        category_name = category.name
-                except (ValueError, TypeError):
-                    pass
-        else:
-            # For individual products, get category from product
-            product = Product.query.get(new_sale.product_id)
-            if product and product.category:
-                category_name = product.category.name
+        category_name = product.category.name if product.category else 'Unknown Category'
         
         adjustment_entry = StockAdjustmentEntry(
             company_id=company_id,
-            product_id=new_sale.product_id,  # Will be None for sets
+            product_id=new_sale.product_id,
             sale_id=new_sale.id,
-            product_name=f"{category_name} Set" if is_set else (product.name if product else 'Unknown Product'),
+            product_name=product.name,
             category_name=category_name,
             store_name=store.name if store else 'Unknown Store',
             quantity_sold=new_sale.quantity,
-            sale_date=new_sale.sale_date,
-            is_set=is_set,
-            set_items_count=set_items_count if is_set else None
+            sale_date=new_sale.sale_date
         )
         db.session.add(adjustment_entry)
         

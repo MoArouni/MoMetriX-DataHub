@@ -16,15 +16,11 @@
     <div class="sale-form-container">
         <form method="POST" action="{{ url_for('sales.new_sale') }}" id="saleForm">
             {{ form.hidden_tag() }}
-            <!-- Hidden field to store selected category ID for sets -->
-            <input type="hidden" id="selected_category_id" name="selected_category_id" value="">
+
             
             <!-- Quick Entry Bar -->
             <div class="quick-entry-bar">
                 <div class="quick-actions">
-                    <button type="button" class="quick-btn" onclick="setTodayDate()">
-                        <i class="fas fa-calendar-day"></i> Today's Sale
-                    </button>
                     <button type="button" class="quick-btn" onclick="clearForm()">
                         <i class="fas fa-broom"></i> Clear All
                     </button>
@@ -102,24 +98,7 @@
                         </div>
                     </div>
                     
-                    <!-- Set Items Count (only shown when "Set" is selected) -->
-                    <div class="form-row" id="set-items-row" style="display: none;">
-                        <div class="form-group">
-                            <label for="set_items_count">Items in Set <span class="required-star">*</span></label>
-                            <div class="quantity-input">
-                                <button type="button" class="qty-btn minus" onclick="adjustSetItems(-1)">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <input type="number" id="set_items_count" name="set_items_count" class="form-control qty-field" min="1" value="1">
-                                <button type="button" class="qty-btn plus" onclick="adjustSetItems(1)">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <small class="form-text text-muted">
-                                <i class="fas fa-info-circle"></i> How many individual items are in this set?
-                            </small>
-                        </div>
-                    </div>
+
                     
                     <div class="form-row">
                         <div class="form-group">
@@ -914,28 +893,13 @@ document.addEventListener('DOMContentLoaded', function() {
         embellishmentSelect.innerHTML = '';
         embellishmentSelect.disabled = true;
         clearEmbellishmentTags();
-        hideSetItemsRow();
         
-        // Store the selected category ID for sets
-        const hiddenCategoryField = document.getElementById('selected_category_id');
-        if (hiddenCategoryField) {
-            hiddenCategoryField.value = categoryId;
-        }
+
         
         if (categoryId) {
             productSelect.disabled = false;
             
-            // Add "Set" option first
-            const setOption = document.createElement('option');
-            setOption.value = 'set';
-            setOption.textContent = 'Set (multiple items)';
-            productSelect.appendChild(setOption);
-            
-            // Add separator
-            const separatorOption = document.createElement('option');
-            separatorOption.disabled = true;
-            separatorOption.textContent = '── Individual Products ──';
-            productSelect.appendChild(separatorOption);
+
             
             // Add individual products
             if (productChoices[categoryId] && productChoices[categoryId].products) {
@@ -967,14 +931,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (productId) {
             showProductPreview(productName);
             
-            // Handle "Set" selection
-            if (productId === 'set') {
-                showSetItemsRow();
-                embellishmentSelect.disabled = true; // No embellishments for sets
-                embellishmentSelect.innerHTML = '<option value="" disabled>Sets do not have embellishments</option>';
-            } else {
-                hideSetItemsRow();
-                embellishmentSelect.disabled = false;
+            embellishmentSelect.disabled = false;
                 
                 // Fetch embellishments for this product
                 fetch(`/products/api/product-embellishments/${productId}`)
@@ -995,11 +952,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         console.error('Error fetching embellishments:', error);
                         embellishmentSelect.innerHTML = '<option value="" disabled>Error loading embellishments</option>';
                     });
-            }
         } else {
             embellishmentSelect.disabled = true;
             hideProductPreview();
-            hideSetItemsRow();
         }
     });
 
@@ -1048,14 +1003,7 @@ document.addEventListener('DOMContentLoaded', function() {
         tagsContainer.style.display = 'none';
     }
 
-    function showSetItemsRow() {
-        document.getElementById('set-items-row').style.display = 'block';
-    }
 
-    function hideSetItemsRow() {
-        document.getElementById('set-items-row').style.display = 'none';
-        document.getElementById('set_items_count').value = '1';
-    }
 
     // Global function for removing embellishments
     window.removeEmbellishment = function(embellishmentId) {
@@ -1099,11 +1047,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Enable/disable submit button
-        const isSetSelected = productSelect.value === 'set';
-        const setItemsValid = !isSetSelected || (document.getElementById('set_items_count').value > 0);
         const canSubmit = totalPrice > 0 && Math.abs(balance) < 0.01 && 
                          productSelect.value && categorySelect.value && 
-                         document.getElementById('store_id').value && setItemsValid;
+                         document.getElementById('store_id').value;
         submitBtn.disabled = !canSubmit;
     }
     
@@ -1163,15 +1109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const cash = cashAmountInput.value || '0.00';
         const card = cardAmountInput.value || '0.00';
         
-        let previewText = `Sale Preview:\n\nStore: ${store}\nCategory: ${category}\nProduct: ${product}`;
-        
-        // Add set information if applicable
-        if (productSelect.value === 'set') {
-            const setItems = document.getElementById('set_items_count').value || '1';
-            previewText += `\nItems in Set: ${setItems}`;
-        }
-        
-        previewText += `\nQuantity: ${qty}\nTotal: £${total}\nCash: £${cash}\nCard: £${card}`;
+        const previewText = `Sale Preview:\n\nStore: ${store}\nCategory: ${category}\nProduct: ${product}\nQuantity: ${qty}\nTotal: £${total}\nCash: £${cash}\nCard: £${card}`;
         
         alert(previewText);
     };
@@ -1183,12 +1121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         qtyInput.value = newQty;
     };
 
-    window.adjustSetItems = function(change) {
-        const setItemsInput = document.getElementById('set_items_count');
-        const currentCount = parseInt(setItemsInput.value) || 1;
-        const newCount = Math.max(1, currentCount + change);
-        setItemsInput.value = newCount;
-    };
+
     
     // Auto-fill payment when total changes
     totalPriceInput.addEventListener('input', function() {

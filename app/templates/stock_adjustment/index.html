@@ -390,11 +390,7 @@
                         <input type="checkbox" name="adjustment_ids" value="{{ adjustment.id }}" class="item-checkbox">
                         {% endif %}
                         <div class="product-name">
-                            {% if adjustment.is_set %}
-                                <i class="fas fa-boxes"></i> {{ adjustment.category_name }} Set
-                            {% else %}
-                                <i class="fas fa-box"></i> {{ adjustment.product_name }}
-                            {% endif %}
+                            <i class="fas fa-box"></i> {{ adjustment.product_name }}
                         </div>
                         <div class="adjustment-details">
                             <div><strong>Store:</strong> {{ adjustment.store_name }}</div>
