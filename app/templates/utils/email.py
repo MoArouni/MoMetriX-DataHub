@@ -184,6 +184,7 @@ def send_direct_moderator_invite_email(invite):
         invite: DirectModeratorInvite model instance
     """
     invite_url = url_for('join_request.accept_direct_invite', token=invite.invite_token, _external=True)
+    join_company_url = url_for('join_request.start', _external=True)
     
     send_email(
         to=invite.email,
@@ -192,7 +193,8 @@ def send_direct_moderator_invite_email(invite):
         invite=invite,
         company=invite.company,
         inviter=invite.inviter,
-        invite_url=invite_url
+        invite_url=invite_url,
+        join_company_url=join_company_url
     )
 
 def send_email_verification_email(user):

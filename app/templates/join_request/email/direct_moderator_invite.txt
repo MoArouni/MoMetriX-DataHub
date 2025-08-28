@@ -1,0 +1,44 @@
+Subject: Invitation to Join {{ company.company_name }} as Moderator
+
+Hello {{ invite.first_name }},
+
+You have been invited to join {{ company.company_name }} as a moderator.
+
+{{ inviter.full_name }} has invited you to join {{ company.company_name }} with the following permissions:
+
+{% if invite.role_permissions == 'data_entry' %}
+- Role: Data Entry Moderator
+- You can add and edit data entries for the company
+{% elif invite.role_permissions == 'daily_sales' %}
+- Role: Data & Sales Moderator  
+- You can manage data entries and view daily sales reports
+{% elif invite.role_permissions == 'full_access' %}
+- Role: Full Access Moderator
+- You have complete access to all company data, reports, and management features
+{% else %}
+- Role: {{ invite.role_permissions|title }} Moderator
+{% endif %}
+
+{% if invite.message %}
+Personal message from {{ inviter.full_name }}:
+"{{ invite.message }}"
+{% endif %}
+
+To accept this invitation and register:
+{{ invite_url }}
+
+Visit MoMetriX DataHub: {{ join_company_url }}
+
+IMPORTANT:
+- This invitation expires in 24 hours ({{ invite.expires_at.strftime('%B %d, %Y at %I:%M %p') }})
+- You can register immediately without admin approval
+- You'll be logged in automatically after registration
+- This invitation can only be used once
+
+Best regards,
+{{ inviter.full_name }}
+{{ company.company_name }}
+
+---
+This is an automated invitation from MoMetriX DataHub.
+If you did not expect this invitation, please ignore this email.
