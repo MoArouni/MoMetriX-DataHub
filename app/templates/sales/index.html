@@ -152,7 +152,7 @@
             <table class="sales-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Sale #</th>
                         <th>Date</th>
                         <th>Store</th>
                         <th>Category</th>
@@ -162,13 +162,14 @@
                         <th>Card</th>
                         <th>Cash</th>
                         <th>Notes</th>
+                        <th>Entered By</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="sales-table-body">
                     {% for sale in all_sales %}
                     <tr>
-                        <td>{{ sale.id }}</td>
+                        <td>{{ loop.index }}</td>
                         <td>{{ sale.sale_date.strftime('%Y-%m-%d') }}</td>
                         <td>{{ sale.store_name or (sale.store.name if sale.store else 'Unknown Store') }}</td>
                         <td>{{ sale.product_category or (sale.product.category.name if sale.product and sale.product.category else 'Unknown Category') }}</td>
@@ -178,6 +179,7 @@
                         <td>£{{ (sale.card_amount or 0)|round(2) }}</td>
                         <td>£{{ (sale.cash_amount or 0)|round(2) }}</td>
                         <td>{{ (sale.notes or '')[:50] }}{% if sale.notes and sale.notes|length > 50 %}...{% endif %}</td>
+                        <td>{{ sale.user.username if sale.user else 'Unknown' }}</td>
                         <td class="action-buttons">
                             <a href="{{ url_for('sales.view_sale', sale_id=sale.id) }}" class="btn-action" title="View">
                                 <i class="fas fa-eye"></i>
@@ -724,7 +726,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showRow = showRow && productCell.includes(productName);
             }
             
-            // Filter by search text (searches across all visible columns)
+            // Filter by search text (searches across all visible columns except actions)
             if (searchValue) {
                 const rowText = Array.from(row.cells).slice(0, -1).map(cell => 
                     cell.textContent.toLowerCase()

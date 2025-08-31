@@ -874,6 +874,9 @@
 
 {% block extra_js %}
 <script>
+// Prevent multiple form submissions
+let isSubmitting = false;
+
 document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.getElementById('category_id');
     const productSelect = document.getElementById('product_id');
@@ -1152,6 +1155,37 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initial update
     updatePaymentSummary();
+    
+    // Prevent multiple form submissions
+    const saleForm = document.getElementById('saleForm');
+    if (saleForm) {
+        saleForm.addEventListener('submit', function(e) {
+            if (isSubmitting) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Set flag to prevent additional submissions
+            isSubmitting = true;
+            
+            // Show visual feedback without disabling
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recording Sale...';
+            }
+            
+            // Reset flag after 10 seconds (safety net for errors)
+            setTimeout(function() {
+                isSubmitting = false;
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Record Sale';
+                }
+            }, 10000);
+            
+            // Allow form to submit
+            return true;
+        });
+    }
 });
 </script>
 {% endblock %}
