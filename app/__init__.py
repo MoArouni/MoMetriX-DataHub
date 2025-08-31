@@ -6,6 +6,7 @@ from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_mail import Mail
 from werkzeug.exceptions import HTTPException
 import os
+import re
 import time
 import sqlalchemy as sa
 from sqlalchemy.exc import OperationalError, ProgrammingError, DisconnectionError
@@ -79,6 +80,16 @@ def create_app(config_name='default'):
     login_manager.init_app(app)
     csrf.init_app(app)
     mail.init_app(app)
+    
+    # Add custom template filters
+    def nl2br_filter(text):
+        """Convert newlines to HTML line breaks"""
+        if text is None:
+            return ''
+        text = str(text)
+        return re.sub(r'\n', '<br>', text)
+    
+    app.jinja_env.filters['nl2br'] = nl2br_filter
     
     # FORCE CREATE TABLES IN PRODUCTION WITH RETRY LOGIC
     if config_name == 'production':
