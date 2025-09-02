@@ -258,6 +258,14 @@ def create_app(config_name='default'):
         return send_from_directory(os.path.join(app.root_path, 'static', 'images'), 
                                  'mylogo.png', mimetype='image/png')
     
+    # Add sitemap route for SEO
+    @app.route('/sitemap.xml')
+    def sitemap():
+        """Serve sitemap for search engines"""
+        from flask import send_from_directory
+        return send_from_directory(os.path.join(app.root_path, 'static'), 
+                                 'sitemap.xml', mimetype='application/xml')
+    
     return app
 
 def register_error_handlers(app):
