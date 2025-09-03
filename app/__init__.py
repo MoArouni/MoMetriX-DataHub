@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -265,6 +265,15 @@ def create_app(config_name='default'):
         from flask import send_from_directory
         return send_from_directory(os.path.join(app.root_path, 'static'), 
                                  'sitemap.xml', mimetype='application/xml')
+    
+    # Force HTTPS redirect for production
+    @app.before_request
+    def force_https():
+        """Force HTTPS redirect in production"""
+        if not request.is_secure and request.headers.get('X-Forwarded-Proto') != 'https':
+            # Only redirect in production (when host contains the domain)
+            if 'mometrix.co.uk' in request.host:
+                return redirect(request.url.replace('http://', 'https://'), code=301)
     
     return app
 
