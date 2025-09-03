@@ -275,19 +275,35 @@ def create_app(config_name='default'):
             if 'mometrix.co.uk' in request.host:
                 return redirect(request.url.replace('http://', 'https://'), code=301)
     
+    # Optimize database connections for faster response
+    @app.before_request
+    def optimize_db_connection():
+        """Optimize database connection for faster responses"""
+        # Skip for static files
+        if request.endpoint == 'static':
+            return
+        
+        # Set connection timeout for faster failures
+        if hasattr(db.engine, 'pool'):
+            db.engine.pool._timeout = 5  # 5 second timeout
+    
     # Add performance headers
     @app.after_request
     def add_performance_headers(response):
         """Add performance and caching headers"""
-        # Enable compression for text-based content
+        # Enable compression hints for text-based content
         if response.content_type and any(ct in response.content_type for ct in 
-            ['text/', 'application/json', 'application/javascript', 'application/xml']):
+            ['text/', 'application/json', 'application/javascript', 'application/xml', 'text/css']):
             response.headers['Vary'] = 'Accept-Encoding'
         
         # Cache static assets for 1 year
         if request.endpoint == 'static':
             response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
             response.headers['Expires'] = 'Thu, 31 Dec 2025 23:59:59 GMT'
+        
+        # Cache Cloudflare assets for longer
+        elif 'cloudflare-static' in request.path:
+            response.headers['Cache-Control'] = 'public, max-age=86400'  # 24 hours
         
         # Cache API responses for 5 minutes
         elif request.path.startswith('/api/'):

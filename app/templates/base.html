@@ -42,8 +42,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     
-    <!-- Preload critical font -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <!-- Preload critical font with subset -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap&text=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%20-_.,:;!?" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap"></noscript>
     
     <!-- Critical CSS - Inline above-the-fold styles -->
@@ -119,6 +119,19 @@
             .hamburger { display: flex; }
             main { padding-top: 6rem; }
         }
+        
+        /* Screen reader only utility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
     </style>
     
     <!-- Defer non-critical CSS -->
@@ -128,6 +141,17 @@
     
     <!-- Defer Font Awesome with optimized loading -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- Override Font Awesome font-display for better performance -->
+    <style>
+        @font-face {
+            font-family: 'Font Awesome 6 Free';
+            font-style: normal;
+            font-weight: 900;
+            font-display: swap;
+            src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2') format('woff2');
+        }
+    </style>
     
     <!-- Fallback for browsers without JS -->
     <noscript>
@@ -839,14 +863,23 @@
     <nav>
         <div class="nav-container">
             <a href="{{ url_for('dashboard.index') }}" class="logo-container">
-                <img src="{{ url_for('static', filename='images/mylogo.png') }}" alt="Data Analysis Hub Logo" class="logo-image">
+                <picture>
+                    <source srcset="{{ url_for('static', filename='images/mylogo-optimized.webp') }}" type="image/webp" width="132" height="35">
+                    <img src="{{ url_for('static', filename='images/mylogo.png') }}" 
+                         alt="MoMetriX DataHub Logo" 
+                         class="logo-image"
+                         width="132" 
+                         height="35"
+                         loading="eager">
+                </picture>
             </a>
             
             {% include 'nav-authenticated.html' %}
             
-            <button class="hamburger" id="hamburger">
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
                 <div class="line"></div>
                 <div class="line"></div>
+                <span class="sr-only">Menu</span>
             </button>
         </div>
     </nav>
@@ -1042,9 +1075,13 @@
         document.getElementById('hamburger').addEventListener('click', function(event) {
             event.stopPropagation();
             const navLinks = document.querySelector('.nav-links');
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
             
             navLinks.classList.toggle('active');
             this.classList.toggle('active');
+            
+            // Update aria-expanded for accessibility
+            this.setAttribute('aria-expanded', !isExpanded);
             
             // No scroll lock - let users scroll behind the menu
         });
