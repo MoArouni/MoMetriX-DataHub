@@ -275,6 +275,42 @@ def create_app(config_name='default'):
             if 'mometrix.co.uk' in request.host:
                 return redirect(request.url.replace('http://', 'https://'), code=301)
     
+    # Add performance headers
+    @app.after_request
+    def add_performance_headers(response):
+        """Add performance and caching headers"""
+        # Enable compression for text-based content
+        if response.content_type and any(ct in response.content_type for ct in 
+            ['text/', 'application/json', 'application/javascript', 'application/xml']):
+            response.headers['Vary'] = 'Accept-Encoding'
+        
+        # Cache static assets for 1 year
+        if request.endpoint == 'static':
+            response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+            response.headers['Expires'] = 'Thu, 31 Dec 2025 23:59:59 GMT'
+        
+        # Cache API responses for 5 minutes
+        elif request.path.startswith('/api/'):
+            response.headers['Cache-Control'] = 'public, max-age=300'
+        
+        # No cache for authenticated pages
+        elif request.endpoint and any(bp in request.endpoint for bp in 
+            ['dashboard', 'admin', 'user', 'sales', 'products']):
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+        
+        # Cache public pages for 1 hour
+        else:
+            response.headers['Cache-Control'] = 'public, max-age=3600'
+        
+        # Security headers for performance
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        
+        return response
+    
     return app
 
 def register_error_handlers(app):

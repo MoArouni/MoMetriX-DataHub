@@ -3,7 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Data Analysis Hub{% endblock %}</title>
+    <title>{% block title %}MoMetriX DataHub - Business Analytics & Sales Management Platform{% endblock %}</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{% block description %}MoMetriX DataHub helps small teams track daily sales, manage products and stores, and turn activity into clear insights. Start your data-driven journey today.{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}business analytics, sales management, data analysis, inventory tracking, performance insights, small business tools{% endblock %}">
+    <meta name="author" content="MoMetriX DataHub">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ self.description() }}{% endblock %}">
+    <meta property="og:image" content="{{ url_for('static', filename='images/MoMetriX Logo.png', _external=True) }}">
+    <meta property="og:site_name" content="MoMetriX DataHub">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:title" content="{% block twitter_title %}{{ self.title() }}{% endblock %}">
+    <meta property="twitter:description" content="{% block twitter_description %}{{ self.description() }}{% endblock %}">
+    <meta property="twitter:image" content="{{ url_for('static', filename='images/MoMetriX Logo.png', _external=True) }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/MoMetriX Logo.png') }}">
@@ -15,18 +37,105 @@
     <meta name="msapplication-TileImage" content="{{ url_for('static', filename='images/MoMetriX Logo.png') }}">
     <meta name="msapplication-TileColor" content="#8B5CF6">
     
-    <!-- Fonts -->
+    <!-- Preconnect to external domains for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Preload critical font -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap"></noscript>
     
-    <!-- Core CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/form-validation.css') }}">
+    <!-- Critical CSS - Inline above-the-fold styles -->
+    <style>
+        /* Critical above-the-fold CSS */
+        body { 
+            font-family: 'Do Hyeon', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            overflow-x: hidden;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        
+        nav {
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            border-bottom: 1px solid #8B5CF6;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            padding: 1rem;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            height: 100%;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .logo-image {
+            height: 2.7rem;
+            width: auto;
+            display: block;
+        }
+        
+        main {
+            padding-top: 7rem;
+        }
+        
+        /* Critical navigation styles */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 1.5rem;
+        }
+        
+        .nav-links li a {
+            color: rgb(174, 174, 174);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.3rem;
+            font-size: 0.6rem;
+            font-weight: 600;
+        }
+        
+        /* Mobile-first critical styles */
+        @media (max-width: 991px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            main { padding-top: 6rem; }
+        }
+    </style>
+    
+    <!-- Defer non-critical CSS -->
+    <link rel="preload" href="{{ url_for('static', filename='css/main.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="{{ url_for('static', filename='css/navigation.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="{{ url_for('static', filename='css/form-validation.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- Defer Font Awesome with optimized loading -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- Fallback for browsers without JS -->
+    <noscript>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/form-validation.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </noscript>
     
     <!-- Flash Messages -->
     <style>
@@ -899,6 +1008,23 @@
         }
     </style>
 
+    <!-- CSS Loading Helper -->
+    <script>
+        // Polyfill for CSS loading
+        (function() {
+            'use strict';
+            var links = document.querySelectorAll('link[rel="preload"][as="style"]');
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i];
+                if (!link.onload) {
+                    link.onload = function() {
+                        this.rel = 'stylesheet';
+                    };
+                }
+            }
+        })();
+    </script>
+    
     <!-- Core JavaScript -->
     <script>
         // Helper function to close mobile menu
