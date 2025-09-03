@@ -27,10 +27,14 @@
     <meta property="twitter:description" content="{% block twitter_description %}{{ self.description() }}{% endblock %}">
     <meta property="twitter:image" content="{{ url_for('static', filename='images/MoMetriX Logo.png', _external=True) }}">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/MoMetriX Logo.png') }}">
-    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/MoMetriX Logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/MoMetriX Logo.png') }}">
+    <!-- Favicon - Multiple sizes for better Google recognition -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/mylogo-optimized.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/mylogo-optimized.png') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/mylogo-optimized.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/MoMetriX Logo.png') }}">
+    
+    <!-- Additional favicon formats -->
+    <link rel="icon" type="image/webp" href="{{ url_for('static', filename='images/mylogo-optimized.webp') }}">
     
     <!-- Meta tags for branding -->
     <meta name="theme-color" content="#8B5CF6">
