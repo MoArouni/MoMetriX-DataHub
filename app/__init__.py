@@ -256,7 +256,7 @@ def create_app(config_name='default'):
         """Serve favicon"""
         from flask import send_from_directory
         return send_from_directory(os.path.join(app.root_path, 'static', 'images'), 
-                                 'mylogo.png', mimetype='image/png')
+                                 'MoMetriX Logo.png', mimetype='image/png')
     
     # Add sitemap route for SEO
     @app.route('/sitemap.xml')
