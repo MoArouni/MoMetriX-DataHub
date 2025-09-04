@@ -1,0 +1,44 @@
+/* FontAwesome Local Font Overrides */
+/* This file ensures FontAwesome fonts are loaded from local static files */
+
+@font-face {
+    font-family: "Font Awesome 6 Brands";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../webfonts/fa-brands-400.woff2') format("woff2");
+}
+
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../webfonts/fa-regular-400.woff2') format("woff2");
+}
+
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url('../webfonts/fa-solid-900.woff2') format("woff2");
+}
+
+/* Ensure icons load properly */
+.fa, .fas, .far, .fab {
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
+}
+
+.fas {
+    font-weight: 900;
+}
+
+.far {
+    font-weight: 400;
+}
+
+.fab {
+    font-family: "Font Awesome 6 Brands";
+    font-weight: 400;
+}

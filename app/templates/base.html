@@ -44,7 +44,10 @@
     <!-- Preconnect to external domains for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Preload critical local resources -->
+    <link rel="preload" href="{{ url_for('static', filename='webfonts/fa-solid-900.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ url_for('static', filename='images/mylogo.png') }}" as="image">
     
     <!-- Preload critical font with subset -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap&text=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%20-_.,:;!?" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -143,26 +146,17 @@
     <link rel="preload" href="{{ url_for('static', filename='css/navigation.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <link rel="preload" href="{{ url_for('static', filename='css/form-validation.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     
-    <!-- Defer Font Awesome with optimized loading -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    
-    <!-- Override Font Awesome font-display for better performance -->
-    <style>
-        @font-face {
-            font-family: 'Font Awesome 6 Free';
-            font-style: normal;
-            font-weight: 900;
-            font-display: swap;
-            src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2') format('woff2');
-        }
-    </style>
+    <!-- Defer Font Awesome with optimized loading (local) -->
+    <link rel="preload" href="{{ url_for('static', filename='css/fontawesome.min.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="{{ url_for('static', filename='css/fontawesome-local.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     
     <!-- Fallback for browsers without JS -->
     <noscript>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/form-validation.css') }}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome-local.css') }}">
     </noscript>
     
     <!-- Flash Messages -->
@@ -868,13 +862,22 @@
         <div class="nav-container">
             <a href="{{ url_for('dashboard.index') }}" class="logo-container">
                 <picture>
-                    <source srcset="{{ url_for('static', filename='images/mylogo-optimized.webp') }}" type="image/webp" width="132" height="35">
+                    <!-- High-res WebP for modern browsers -->
+                    <source srcset="{{ url_for('static', filename='images/mylogo-optimized.webp') }} 1x, 
+                                   {{ url_for('static', filename='images/mylogo.png') }} 2x" 
+                           type="image/webp">
+                    <!-- High-res PNG fallback -->
+                    <source srcset="{{ url_for('static', filename='images/mylogo-optimized.png') }} 1x, 
+                                   {{ url_for('static', filename='images/mylogo.png') }} 2x" 
+                           type="image/png">
+                    <!-- Fallback image -->
                     <img src="{{ url_for('static', filename='images/mylogo.png') }}" 
                          alt="MoMetriX DataHub Logo" 
                          class="logo-image"
-                         width="132" 
-                         height="35"
-                         loading="eager">
+                         width="200" 
+                         height="53"
+                         loading="eager"
+                         style="width: 132px; height: 35px;">
                 </picture>
             </a>
             
