@@ -22,11 +22,29 @@ def view_post(post_id):
 def create_post():
     form = BlogPostForm()
     if form.validate_on_submit():
+        # Validate that we have at least some content blocks
+        content_blocks = form.get_content_blocks()
+        
+        # Check if any block has meaningful content (strip HTML tags for validation)
+        import re
+        has_content = False
+        for block in content_blocks:
+            content = block.get('content', '')
+            # Strip HTML tags and check if there's actual text
+            clean_content = re.sub(r'<[^>]+>', '', content).strip()
+            if clean_content:
+                has_content = True
+                break
+        
+        if not content_blocks or not has_content:
+            flash('Please add some content to your blog post.', 'error')
+            return render_template('blog/create_post.html', form=form)
+        
         post = BlogPost(
             title=form.title.data,
-            content=form.content.data,
             user_id=current_user.id
         )
+        post.content_blocks = content_blocks
         db.session.add(post)
         db.session.commit()
         flash('Your post has been published!', 'success')
@@ -39,14 +57,32 @@ def edit_post(post_id):
     post = BlogPost.query.get_or_404(post_id)
     form = BlogPostForm()
     if form.validate_on_submit():
+        # Validate that we have at least some content blocks
+        content_blocks = form.get_content_blocks()
+        
+        # Check if any block has meaningful content (strip HTML tags for validation)
+        import re
+        has_content = False
+        for block in content_blocks:
+            content = block.get('content', '')
+            # Strip HTML tags and check if there's actual text
+            clean_content = re.sub(r'<[^>]+>', '', content).strip()
+            if clean_content:
+                has_content = True
+                break
+        
+        if not content_blocks or not has_content:
+            flash('Please add some content to your blog post.', 'error')
+            return render_template('blog/edit_post.html', form=form, post=post)
+        
         post.title = form.title.data
-        post.content = form.content.data
+        post.content_blocks = content_blocks
         db.session.commit()
         flash('Your post has been updated!', 'success')
         return redirect(url_for('blog.view_post', post_id=post.id))
     elif request.method == 'GET':
         form.title.data = post.title
-        form.content.data = post.content
+        form.set_content_blocks(post.content_blocks)
     return render_template('blog/edit_post.html', form=form, post=post)
 
 @blog.route('/blog/delete/<int:post_id>', methods=['POST'])

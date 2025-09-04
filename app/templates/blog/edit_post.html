@@ -6,16 +6,25 @@
         <h1>Edit Blog Post</h1>
         
         <form method="POST" action="{{ url_for('blog.edit_post', post_id=post.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {{ form.hidden_tag() }}
             
             <div class="form-group">
                 <label for="title">Title</label>
-                <input type="text" class="form-control" id="title" name="title" value="{{ form.title.data }}" required>
+                {{ form.title(class="form-control", placeholder="Enter your blog post title") }}
+                {% if form.title.errors %}
+                    <div class="form-error">
+                        {% for error in form.title.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             
             <div class="form-group">
-                <label for="content">Content</label>
-                <textarea class="form-control" id="content" name="content" rows="15" required>{{ form.content.data }}</textarea>
+                <label>Content Blocks</label>
+                <p class="form-help">Edit your blog post using different content blocks. Click "Add Content Block" to add more content.</p>
+                <div id="block-editor-container"></div>
+                {{ form.content_blocks(id="content_blocks") }}
             </div>
             
             <div class="form-actions">
@@ -25,6 +34,8 @@
         </form>
     </div>
 </div>
+
+<script src="{{ url_for('static', filename='javascript/blog/block-editor.js') }}"></script>
 
 <style>
     .form-container {
@@ -99,6 +110,251 @@
     
     .btn-cancel:hover {
         background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .form-help {
+        color: #999;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .form-error {
+        color: #f44336;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    
+    /* Block Editor Styles */
+    .block-editor {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+    }
+    
+    .content-block {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+    }
+    
+    .block-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .block-type {
+        color: var(--primary-color);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    
+    .block-controls {
+        display: flex;
+        gap: 0.25rem;
+    }
+    
+    .block-controls button, .heading-level {
+        padding: 0.25rem 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+        color: white;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+    
+    .heading-level {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+    }
+    
+    .heading-level option {
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+    }
+    
+    .block-controls button:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .block-controls button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .delete-btn {
+        color: #e74c3c !important;
+    }
+    
+    .delete-btn:hover {
+        background: rgba(231, 76, 60, 0.2) !important;
+    }
+    
+    .block-input {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        color: white;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .block-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    
+    .block-input:last-child {
+        margin-bottom: 0;
+    }
+    
+    textarea.block-input {
+        min-height: 100px;
+        resize: vertical;
+    }
+    
+    .add-block-menu {
+        position: relative;
+        margin-top: 1rem;
+    }
+    
+    .add-block-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--primary-color);
+        color: #000;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+    
+    .add-block-btn:hover {
+        background: var(--primary-color-light);
+    }
+    
+    .add-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        margin-top: 0.5rem;
+    }
+    
+    .add-menu button {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: none;
+        border: none;
+        color: #333;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .add-menu button:hover {
+        background: rgba(0, 0, 0, 0.1);
+    }
+    
+    .add-menu button i {
+        width: 16px;
+        color: var(--primary-color);
+    }
+    
+    /* Rich Text Editor Styles */
+    .rich-text-toolbar {
+        display: flex !important;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+    }
+    
+    .format-btn {
+        padding: 0.25rem 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+        color: white;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: background-color 0.2s ease;
+    }
+    
+    .format-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .rich-text-editor {
+        min-height: 100px;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        color: white;
+        font-size: 1rem;
+        line-height: 1.5;
+        outline: none;
+    }
+    
+    .rich-text-editor:focus {
+        border-color: var(--primary-color);
+    }
+    
+    .rich-text-editor:empty:before {
+        content: attr(data-placeholder);
+        color: #999;
+        font-style: italic;
+    }
+    
+    .heading-editor {
+        min-height: 40px;
+        font-weight: 600;
+    }
+    
+    /* Rich text formatting styles */
+    .rich-text-editor b, .rich-text-editor strong {
+        font-weight: bold;
+    }
+    
+    .rich-text-editor i, .rich-text-editor em {
+        font-style: italic;
+    }
+    
+    .rich-text-editor u {
+        text-decoration: underline;
+    }
+    
+    .rich-text-editor a {
+        color: var(--primary-color);
+        text-decoration: underline;
+    }
+    
+    .rich-text-editor a:hover {
+        color: var(--primary-color-light);
     }
 </style>
 {% endblock %} 

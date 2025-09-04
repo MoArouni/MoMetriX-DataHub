@@ -12,7 +12,47 @@
         </div>
 
         <div class="post-content">
-            {{ post.content | nl2br | safe }}
+            {% for block in post.content_blocks %}
+                {% if block.type == 'text' %}
+                    <div class="content-block text-block">
+                        {{ block.content | safe }}
+                    </div>
+                {% elif block.type == 'heading' %}
+                    <div class="content-block heading-block">
+                        {% if block.level == 'h1' %}
+                            <h1>{{ block.content | safe }}</h1>
+                        {% elif block.level == 'h2' %}
+                            <h2>{{ block.content | safe }}</h2>
+                        {% elif block.level == 'h3' %}
+                            <h3>{{ block.content | safe }}</h3>
+                        {% elif block.level == 'h4' %}
+                            <h4>{{ block.content | safe }}</h4>
+                        {% elif block.level == 'h5' %}
+                            <h5>{{ block.content | safe }}</h5>
+                        {% else %}
+                            <h3>{{ block.content | safe }}</h3>
+                        {% endif %}
+                    </div>
+                {% elif block.type == 'image' %}
+                    <div class="content-block image-block">
+                        {% if block.url %}
+                            <img src="{{ block.url }}" alt="{{ block.alt or '' }}" class="blog-image">
+                            {% if block.alt %}
+                                <p class="image-caption">{{ block.alt }}</p>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% elif block.type == 'link' %}
+                    <div class="content-block link-block">
+                        {% if block.url and block.text %}
+                            <a href="{{ block.url }}" target="_blank" rel="noopener noreferrer" class="blog-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                {{ block.text }}
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
 
         {% if current_user.is_admin %}
@@ -115,6 +155,101 @@
 
     .back-link:hover {
         color: var(--primary-color-light);
+    }
+    
+    /* Content Block Styles */
+    .content-block {
+        margin-bottom: 1.5rem;
+    }
+    
+    .text-block {
+        line-height: 1.8;
+        color: #eee;
+    }
+    
+    .heading-block h1,
+    .heading-block h2,
+    .heading-block h3,
+    .heading-block h4,
+    .heading-block h5 {
+        color: var(--primary-color);
+        margin: 0;
+        font-weight: 600;
+    }
+    
+    .heading-block h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .heading-block h2 {
+        font-size: 2rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .heading-block h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .heading-block h4 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .heading-block h5 {
+        font-size: 1.1rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .image-block {
+        text-align: center;
+        margin: 2rem 0;
+    }
+    
+    .blog-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+    }
+    
+    .blog-image:hover {
+        transform: scale(1.02);
+    }
+    
+    .image-caption {
+        margin-top: 0.5rem;
+        font-style: italic;
+        color: #999;
+        font-size: 0.9rem;
+    }
+    
+    .link-block {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: rgba(var(--primary-color-rgb), 0.1);
+        border-left: 4px solid var(--primary-color);
+        border-radius: 0 4px 4px 0;
+    }
+    
+    .blog-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+    
+    .blog-link:hover {
+        color: var(--primary-color-light);
+    }
+    
+    .blog-link i {
+        font-size: 0.8rem;
     }
 </style>
 {% endblock %} 
