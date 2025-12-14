@@ -916,13 +916,13 @@
                     <p>New here? Visit the <a href="{{ url_for('documentation.index') }}">Docs</a> or ask in the <a href="{{ url_for('qa.index') }}">Q&A</a>.</p>
                 </div>
 
-
                 <div class="footer-section links">
                     <h3>Quick Links</h3>
                     <ul>
                         <li><a href="{{ url_for('dashboard.index') }}">Home</a></li>
+                        <li><a href="{{ url_for('policies.about') }}">About</a></li>
+                        <li><a href="{{ url_for('features.index') }}">Features</a></li>
                         <li><a href="{{ url_for('blog.index') }}">Blog</a></li>
-                        <li><a href="{{ url_for('qa.index') }}">Q&A</a></li>
                         <li><a href="{{ url_for('contact.index') }}">Contact</a></li>
                     </ul>
                 </div>
@@ -977,7 +977,13 @@
         }
 
         .footer-section.about {
-            grid-column: span 2;
+            grid-column: span 1;
+        }
+
+        @media (min-width: 769px) {
+            .footer-section.about {
+                grid-column: span 1;
+            }
         }
 
         .footer-section ul {

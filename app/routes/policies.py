@@ -3,6 +3,11 @@ from flask import Blueprint, render_template
 # Create blueprint
 policies_bp = Blueprint('policies', __name__, url_prefix='/policies')
 
+@policies_bp.route('/about')
+def about():
+    """About page - Company information and mission"""
+    return render_template('policies/about.html')
+
 @policies_bp.route('/privacy')
 def privacy():
     """Privacy Policy page"""
@@ -10,7 +15,7 @@ def privacy():
 
 @policies_bp.route('/terms')
 def terms():
-    """Terms of Service page"""
+    """Terms & Conditions page"""
     return render_template('policies/terms.html')
 
 @policies_bp.route('/cookies')

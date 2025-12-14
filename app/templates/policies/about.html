@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+
+{% block title %}About MoMetriX DataHub - Sales Management & Business Analytics Platform{% endblock %}
+
+{% block description %}Learn about MoMetriX DataHub, a sales management and business analytics platform built for small teams. Track sales, manage inventory, and gain actionable insights.{% endblock %}
+
+{% block keywords %}about MoMetriX DataHub, sales management platform, business analytics software, inventory tracking, small business tools, sales tracking software, data-driven decisions{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,20,0.9) 50%, rgba(0,0,0,0.95) 100%);
+        padding: 6rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+        top: -200px;
+        right: -150px;
+    }
+
+    .about-hero h1 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        background: linear-gradient(135deg, #8B5CF6 0%, #9eff00 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+        font-weight: 800;
+    }
+
+    .about-hero .lead {
+        font-size: 1.3rem;
+        color: #e0e0e0;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+    }
+
+    .about-section {
+        padding: 5rem 2rem;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .about-section h2 {
+        font-size: 2rem;
+        color: #8B5CF6;
+        margin-bottom: 1.5rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .about-section h2::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(135deg, #8B5CF6 0%, #9eff00 100%);
+        border-radius: 2px;
+    }
+
+    .about-section p {
+        font-size: 1.1rem;
+        color: #cccccc;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+    }
+
+    .mission-vision {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 3rem;
+        margin-top: 3rem;
+    }
+
+    .mission-card, .vision-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        border-radius: 16px;
+        padding: 2.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .mission-card:hover, .vision-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(139, 92, 246, 0.4);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .mission-card h3, .vision-card h3 {
+        color: #ffffff;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .mission-card h3 i, .vision-card h3 i {
+        color: #8B5CF6;
+        font-size: 1.8rem;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .value-item {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(139, 92, 246, 0.1);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .value-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    .value-item i {
+        font-size: 2.5rem;
+        color: #8B5CF6;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .value-item h4 {
+        color: #ffffff;
+        font-size: 1.2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .value-item p {
+        color: #aaaaaa;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    .features-highlight {
+        background: rgba(139, 92, 246, 0.05);
+        border-top: 1px solid rgba(139, 92, 246, 0.2);
+        border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        padding: 4rem 2rem;
+        margin: 3rem 0;
+    }
+
+    .features-highlight .container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .features-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .feature-check {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+    }
+
+    .feature-check i {
+        color: #9eff00;
+        font-size: 1.2rem;
+        margin-top: 3px;
+    }
+
+    .feature-check span {
+        color: #dddddd;
+        font-size: 1rem;
+    }
+
+    .cta-section {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: linear-gradient(180deg, rgba(15, 15, 15, 1) 0%, rgba(25, 25, 25, 1) 100%);
+    }
+
+    .cta-section h2 {
+        font-size: 2.2rem;
+        color: #8B5CF6;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-section p {
+        color: #cccccc;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .cta-btn {
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .cta-btn-primary {
+        background: linear-gradient(135deg, #8B5CF6 0%, #9eff00 100%);
+        color: #000;
+    }
+
+    .cta-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+    }
+
+    .cta-btn-secondary {
+        background: transparent;
+        color: #8B5CF6;
+        border: 2px solid #8B5CF6;
+    }
+
+    .cta-btn-secondary:hover {
+        background: rgba(139, 92, 246, 0.1);
+        transform: translateY(-3px);
+    }
+
+    @media (max-width: 768px) {
+        .about-hero {
+            padding: 4rem 1.5rem;
+        }
+
+        .about-section {
+            padding: 3rem 1.5rem;
+        }
+
+        .mission-vision {
+            grid-template-columns: 1fr;
+        }
+
+        .features-highlight {
+            padding: 3rem 1.5rem;
+        }
+
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cta-btn {
+            width: 100%;
+            max-width: 280px;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="about-hero">
+    <h1>About MoMetriX DataHub</h1>
+    <p class="lead">
+        A sales management and business analytics platform built specifically for small teams 
+        who need to track daily sales, manage products and stores, and transform raw data into actionable insights.
+    </p>
+</section>
+
+<!-- Main About Section -->
+<section class="about-section">
+    <h2>Our Story</h2>
+    <p>
+        MoMetriX DataHub was created to solve a common challenge faced by small businesses: 
+        managing sales data efficiently without the complexity and cost of enterprise solutions. 
+        We believe every business, regardless of size, deserves access to powerful analytics tools 
+        that help drive growth and inform decision-making.
+    </p>
+    <p>
+        Our platform combines intuitive sales tracking with comprehensive analytics, giving you 
+        the visibility you need to understand your business performance. From daily sales entry 
+        to detailed reports, MoMetriX DataHub streamlines your workflow so you can focus on 
+        what matters most—growing your business.
+    </p>
+
+    <!-- Mission & Vision -->
+    <div class="mission-vision">
+        <div class="mission-card">
+            <h3><i class="fas fa-bullseye"></i> Our Mission</h3>
+            <p>
+                To empower small businesses with accessible, easy-to-use sales management 
+                and analytics tools that transform how they track, understand, and grow their operations.
+            </p>
+        </div>
+        <div class="vision-card">
+            <h3><i class="fas fa-eye"></i> Our Vision</h3>
+            <p>
+                To become the go-to platform for small teams seeking data-driven insights, 
+                making business intelligence accessible to everyone, not just large enterprises.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Features Highlight -->
+<section class="features-highlight">
+    <div class="container">
+        <h2>What We Offer</h2>
+        <div class="features-list">
+            <div class="feature-check">
+                <i class="fas fa-check-circle"></i>
+                <span>Daily sales tracking with real-time updates</span>
+            </div>
+            <div class="feature-check">
+                <i class="fas fa-check-circle"></i>
+                <span>Multi-store management for growing businesses</span>
+            </div>
+            <div class="feature-check">
+                <i class="fas fa-check-circle"></i>
+                <span>Product and inventory management</span>
+            </div>
+            <div class="feature-check">
+                <i class="fas fa-check-circle"></i>
+                <span>Comprehensive analytics and visualizations</span>
+            </div>
+            <div class="feature-check">
+                <i class="fas fa-check-circle"></i>
+                <span>CSV import/export for data portability</span>
+            </div>
+            <div class="feature-check">
+                <i class="fas fa-check-circle"></i>
+                <span>Team collaboration with role-based access</span>
+            </div>
+            <div class="feature-check">
+                <i class="fas fa-check-circle"></i>
+                <span>Stock adjustment tracking and reminders</span>
+            </div>
+            <div class="feature-check">
+                <i class="fas fa-check-circle"></i>
+                <span>Secure cloud-based platform</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="about-section">
+    <h2>Our Values</h2>
+    <div class="values-grid">
+        <div class="value-item">
+            <i class="fas fa-shield-alt"></i>
+            <h4>Security First</h4>
+            <p>Your business data is protected with industry-standard encryption and security practices.</p>
+        </div>
+        <div class="value-item">
+            <i class="fas fa-users"></i>
+            <h4>User-Centric</h4>
+            <p>Every feature is designed with real users in mind, prioritizing simplicity and usability.</p>
+        </div>
+        <div class="value-item">
+            <i class="fas fa-chart-line"></i>
+            <h4>Data-Driven</h4>
+            <p>We help you make informed decisions based on real insights from your sales data.</p>
+        </div>
+        <div class="value-item">
+            <i class="fas fa-handshake"></i>
+            <h4>Reliability</h4>
+            <p>Count on us to keep your data safe and your platform running smoothly.</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2>Ready to Transform Your Sales Management?</h2>
+    <p>
+        Join businesses already using MoMetriX DataHub to streamline their operations 
+        and gain valuable insights. Get started with our free plan today.
+    </p>
+    <div class="cta-buttons">
+        <a href="{{ url_for('auth.register') }}" class="cta-btn cta-btn-primary">Get Started Free</a>
+        <a href="{{ url_for('contact.index') }}" class="cta-btn cta-btn-secondary">Contact Us</a>
+    </div>
+</section>
+{% endblock %}
+
