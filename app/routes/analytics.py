@@ -14,27 +14,30 @@ analytics_bp = Blueprint('analytics', __name__, url_prefix='/analytics')
 analytics_service = AnalyticsService()
 
 def get_date_range_from_request(default_days=30):
-    """Helper function to get date range from request with view all support"""
-    view_all = request.args.get('view_all')
+    """Resolve (start_date, end_date, view_all) from the current request.
+
+    - Parses ``start_date`` / ``end_date`` query params (YYYY-MM-DD); falls
+      back to the first of the current month / today on bad input.
+    - ``view_all=1`` expands to the company's full sales history.
+    - Guarantees ``start_date <= end_date`` (swaps if the user inverts them).
+    """
+    view_all_raw = request.args.get('view_all')
     end_date = request.args.get('end_date')
     start_date = request.args.get('start_date')
-    
-    # Set default to current month if no dates specified
+
     today = datetime.now().date()
     this_month_start = today.replace(day=1)
-    
-    if view_all:
-        # View all data - get earliest and latest dates from sales
+
+    if view_all_raw:
         date_range = db.session.query(
             func.min(Sale.sale_date).label('min_date'),
             func.max(Sale.sale_date).label('max_date')
         ).filter_by(company_id=current_user.company_id).first()
-        
+
         if date_range and date_range.min_date and date_range.max_date:
             start_date = date_range.min_date
             end_date = date_range.max_date
         else:
-            # Fallback to current month if no sales data
             start_date = this_month_start
             end_date = today
     else:
@@ -45,17 +48,20 @@ def get_date_range_from_request(default_days=30):
                 end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
             except ValueError:
                 end_date = today
-        
+
         if not start_date:
-            # Default to start of current month
             start_date = this_month_start
         else:
             try:
                 start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
             except ValueError:
                 start_date = this_month_start
-    
-    return start_date, end_date, bool(view_all)
+
+    # Clamp: swap if inverted so downstream queries behave predictably.
+    if start_date > end_date:
+        start_date, end_date = end_date, start_date
+
+    return start_date, end_date, bool(view_all_raw)
 
 @analytics_bp.route('/')
 @login_required
