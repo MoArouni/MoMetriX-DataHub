@@ -302,17 +302,51 @@ class AnalyticsService:
                 'error': str(e)
             }
     
+    # ------------------------------------------------------------------
+    # Canonical analytics DataFrame contract
+    # ------------------------------------------------------------------
+    # Every analytics function in this service assumes the following
+    # schema after `_prepare(df)` is applied. Keep this list in sync with
+    # `_prepare` and with `docs`/README when it changes.
+    #
+    #   sale_id           int
+    #   sale_date         datetime64[ns]   (midnight if date-only)
+    #   store_name        str
+    #   product_category  str
+    #   product_name      str
+    #   quantity          int
+    #   total             float   (canonical revenue per row)
+    #   card_amount       float
+    #   cash_amount       float
+    #   payment_method    str
+    #   embellishments    str     ('None' if empty)
+    #   notes             str | None
+    #   day_of_week       str     ('Monday'...'Sunday')
+    #   month             str     ('January'...'December')
+    #   year              int
+    # ------------------------------------------------------------------
+    CANONICAL_COLUMNS = [
+        'sale_id', 'sale_date', 'store_name', 'product_category',
+        'product_name', 'quantity', 'total', 'card_amount', 'cash_amount',
+        'payment_method', 'embellishments', 'notes',
+        'day_of_week', 'month', 'year',
+    ]
+
     def get_company_sales_data(self, company_id, start_date=None, end_date=None):
-        """Get sales data for analytics as a pandas DataFrame"""
+        """Load sales for a company and return the canonical analytics frame.
+
+        Returns a DataFrame conforming to ``CANONICAL_COLUMNS``. Safe to call
+        with no rows: returns an empty DataFrame with the expected columns.
+        """
         query = Sale.query.filter_by(company_id=company_id)
-        
+
         if start_date:
             query = query.filter(Sale.sale_date >= start_date)
         if end_date:
             query = query.filter(Sale.sale_date <= end_date)
-            
+
         sales = query.all()
-        
+
         data = []
         for sale in sales:
             embellishment_names = [emb.name for emb in sale.embellishments]
@@ -328,13 +362,80 @@ class AnalyticsService:
                 'cash_amount': float(sale.cash_amount or 0),
                 'payment_method': sale.payment_method,
                 'embellishments': ', '.join(embellishment_names) if embellishment_names else 'None',
-                'day_of_week': sale.sale_date.strftime('%A'),
-                'month': sale.sale_date.strftime('%B'),
-                'year': sale.sale_date.year,
-                'notes': sale.notes  # Add notes for embellishment extraction
+                'notes': sale.notes,
             })
-        
-        return pd.DataFrame(data)
+
+        df = pd.DataFrame(data)
+        return self._prepare(df)
+
+    @classmethod
+    def _prepare(cls, df: pd.DataFrame) -> pd.DataFrame:
+        """Normalize a raw sales frame into the canonical analytics contract.
+
+        - Enforces dtypes (datetime for ``sale_date``, floats for money).
+        - Applies the revenue fallback rule (``total`` falls back to
+          ``card_amount + cash_amount`` when total is missing/zero).
+        - Computes derived columns (``day_of_week``, ``month``, ``year``)
+          once so downstream code never has to re-derive.
+        - Drops rows that can't be used (missing ``sale_date``).
+
+        Returning an empty frame is valid and preserves column names so
+        callers can ``.groupby`` safely.
+        """
+        if df is None or len(df) == 0:
+            return pd.DataFrame(columns=cls.CANONICAL_COLUMNS)
+
+        df = df.copy()
+
+        # sale_date -> datetime; rows without a usable date are dropped.
+        df['sale_date'] = pd.to_datetime(df.get('sale_date'), errors='coerce')
+        df = df.dropna(subset=['sale_date'])
+        if df.empty:
+            return pd.DataFrame(columns=cls.CANONICAL_COLUMNS)
+
+        # Money fields -> float, default 0.
+        for col in ('total', 'card_amount', 'cash_amount'):
+            if col not in df.columns:
+                df[col] = 0.0
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0).astype(float)
+
+        # Revenue rule: if total is zero/missing, fall back to card+cash.
+        mask = df['total'] <= 0
+        df.loc[mask, 'total'] = df.loc[mask, 'card_amount'] + df.loc[mask, 'cash_amount']
+
+        # Quantity -> int, default 1 (so row count stays meaningful).
+        if 'quantity' not in df.columns:
+            df['quantity'] = 1
+        df['quantity'] = pd.to_numeric(df['quantity'], errors='coerce').fillna(1).astype(int)
+
+        # String fields we rely on for groupby -> safe defaults.
+        for col, default in (
+            ('store_name', 'Unknown Store'),
+            ('product_category', 'Uncategorized'),
+            ('product_name', 'Unknown Product'),
+            ('payment_method', 'Unknown'),
+            ('embellishments', 'None'),
+        ):
+            if col not in df.columns:
+                df[col] = default
+            df[col] = df[col].fillna(default).astype(str)
+
+        if 'notes' not in df.columns:
+            df['notes'] = None
+
+        if 'sale_id' not in df.columns:
+            df['sale_id'] = range(1, len(df) + 1)
+
+        # Derived date parts (computed once).
+        df['day_of_week'] = df['sale_date'].dt.day_name()
+        df['month'] = df['sale_date'].dt.month_name()
+        df['year'] = df['sale_date'].dt.year.astype(int)
+
+        # Keep canonical column order; extra columns (e.g. source metadata
+        # from integrations later) are preserved after these.
+        ordered = [c for c in cls.CANONICAL_COLUMNS if c in df.columns]
+        extras = [c for c in df.columns if c not in ordered]
+        return df[ordered + extras].reset_index(drop=True)
     
     def _create_chart(self, fig, title):
         """Convert matplotlib figure to base64 string"""
@@ -765,65 +866,75 @@ class AnalyticsService:
     
     # DAY OF WEEK ANALYTICS
     def get_day_analytics(self, df):
-        """Get analytics for days of the week"""
-        if df.empty:
-            return None
-        
-        # Group by day of week and calculate metrics
-        df['day_of_week'] = pd.to_datetime(df['sale_date']).dt.day_name()
-        day_stats = df.groupby('day_of_week').agg({
-            'total_amount': ['sum', 'count', 'mean'],
-            'transaction_id': 'nunique'
-        }).reset_index()
-        
-        # Rename columns for clarity
-        day_stats.columns = ['day_of_week', 'total_revenue', 'total_items', 'avg_sale', 'transaction_count']
-        
-        # Sort by day of week
-        day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-        day_stats['day_of_week'] = pd.Categorical(day_stats['day_of_week'], categories=day_order, ordered=True)
-        day_stats = day_stats.sort_values('day_of_week')
-        
-        # Convert to list of dicts for template
-        stats = day_stats.to_dict('records')
-        
+        """Aggregate revenue/transactions by day of week.
+
+        Assumes the canonical frame (see ``_prepare``). Returns a dict with
+        ``stats`` list and headline fields, or a stable empty-shape dict
+        when there are no rows.
+        """
+        empty = {'stats': [], 'peak_day': None, 'avg_daily_revenue': 0.0}
+        if df is None or df.empty:
+            return empty
+
+        day_stats = df.groupby('day_of_week').agg(
+            total_revenue=('total', 'sum'),
+            total_items=('quantity', 'sum'),
+            avg_sale=('total', 'mean'),
+            transaction_count=('sale_id', 'nunique'),
+        ).reset_index()
+
+        day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
+                     'Friday', 'Saturday', 'Sunday']
+        day_stats['day_of_week'] = pd.Categorical(
+            day_stats['day_of_week'], categories=day_order, ordered=True
+        )
+        day_stats = day_stats.sort_values('day_of_week').reset_index(drop=True)
+
+        if day_stats.empty:
+            return empty
+
+        peak_idx = day_stats['total_revenue'].idxmax()
         return {
-            'stats': stats,
-            'peak_day': day_stats.loc[day_stats['total_revenue'].idxmax(), 'day_of_week'] if not day_stats.empty else None,
-            'avg_daily_revenue': day_stats['total_revenue'].mean() if not day_stats.empty else 0
+            'stats': day_stats.to_dict('records'),
+            'peak_day': str(day_stats.loc[peak_idx, 'day_of_week']),
+            'avg_daily_revenue': float(day_stats['total_revenue'].mean()),
         }
-    
+
     # MONTHLY ANALYTICS
     def get_monthly_analytics(self, df):
-        """Get analytics for months"""
-        if df.empty:
-            return None
-        
-        # Group by month and calculate metrics
-        df['month'] = pd.to_datetime(df['sale_date']).dt.strftime('%B %Y')
-        month_stats = df.groupby('month').agg({
-            'total_amount': ['sum', 'count', 'mean'],
-            'transaction_id': 'nunique'
-        }).reset_index()
-        
-        # Rename columns for clarity
-        month_stats.columns = ['month', 'total_revenue', 'total_items', 'avg_sale', 'transaction_count']
-        
-        # Sort by date
-        month_stats['sort_date'] = pd.to_datetime(month_stats['month'])
-        month_stats = month_stats.sort_values('sort_date')
-        month_stats = month_stats.drop('sort_date', axis=1)
-        
-        # Calculate month-over-month growth
+        """Aggregate revenue/transactions by calendar month.
+
+        Month key is ``YYYY-MM`` so sorting is stable across years.
+        Returns a stable empty-shape dict when there are no rows.
+        """
+        empty = {'stats': [], 'peak_month': None, 'avg_monthly_revenue': 0.0}
+        if df is None or df.empty:
+            return empty
+
+        working = df.copy()
+        working['month_key'] = working['sale_date'].dt.strftime('%Y-%m')
+        working['month_label'] = working['sale_date'].dt.strftime('%B %Y')
+
+        month_stats = working.groupby(['month_key', 'month_label']).agg(
+            total_revenue=('total', 'sum'),
+            total_items=('quantity', 'sum'),
+            avg_sale=('total', 'mean'),
+            transaction_count=('sale_id', 'nunique'),
+        ).reset_index()
+
+        month_stats = month_stats.sort_values('month_key').reset_index(drop=True)
         month_stats['growth'] = month_stats['total_revenue'].pct_change() * 100
-        
-        # Convert to list of dicts for template
-        stats = month_stats.to_dict('records')
-        
+        month_stats = month_stats.rename(columns={'month_label': 'month'})
+        month_stats = month_stats.drop(columns=['month_key'])
+
+        if month_stats.empty:
+            return empty
+
+        peak_idx = month_stats['total_revenue'].idxmax()
         return {
-            'stats': stats,
-            'peak_month': month_stats.loc[month_stats['total_revenue'].idxmax(), 'month'] if not month_stats.empty else None,
-            'avg_monthly_revenue': month_stats['total_revenue'].mean() if not month_stats.empty else 0
+            'stats': month_stats.to_dict('records'),
+            'peak_month': str(month_stats.loc[peak_idx, 'month']),
+            'avg_monthly_revenue': float(month_stats['total_revenue'].mean()),
         }
     
     # DASHBOARD SUMMARY
@@ -849,15 +960,12 @@ class AnalyticsService:
             return default_metrics
         
         try:
-            # Convert dates to pandas datetime for consistent comparison
+            # `sale_date` is already datetime (guaranteed by _prepare).
             today = pd.Timestamp.now().normalize()
             yesterday = today - pd.Timedelta(days=1)
             this_week_start = today - pd.Timedelta(days=today.weekday())
             last_week_start = this_week_start - pd.Timedelta(days=7)
             this_month_start = today.replace(day=1)
-            
-            # Convert sale_date to datetime for filtering
-            df['sale_date'] = pd.to_datetime(df['sale_date'])
             
             # Calculate key metrics - simplified calculations
             total_revenue = float(df['total'].sum())
