@@ -19,7 +19,6 @@ import matplotlib.pyplot as plt
 import io
 import base64
 from app.services.analytics_service import AnalyticsService
-from flask import current_app
 
 # Create blueprint
 dashboard_bp = Blueprint('dashboard', __name__)
@@ -62,35 +61,53 @@ def dashboard():
             if current_user.role_company in ['admin', 'moderator']:
                 dashboard_data = analytics_service.get_dashboard_summary(df)
             else:
-                # Get daily summary for regular users
+                # Regular users: headline metrics + an honest 7-day trend.
+                # Sale.sale_date is a DATE column (no hour), so any
+                # "hourly" chart built from it would be fabricated; we
+                # show daily totals for the last week instead.
                 today = pd.Timestamp.now().normalize()
+                week_start = today - pd.Timedelta(days=6)
+
                 today_sales = df[df['sale_date'].dt.normalize() == today]
-                
+                last_week = df[
+                    (df['sale_date'].dt.normalize() >= week_start)
+                    & (df['sale_date'].dt.normalize() <= today)
+                ]
+
                 dashboard_data = {
-                    'today_sales': today_sales['total'].sum(),
-                    'today_transactions': len(today_sales),
-                    'avg_transaction': df['total'].mean() if not df.empty else 0,
-                    'store_daily_goal': 1000,  # This should come from company settings
-                    'store_goal_progress': (today_sales['total'].sum() / 1000 * 100) if not today_sales.empty else 0
+                    'today_sales': float(today_sales['total'].sum()),
+                    'today_transactions': int(len(today_sales)),
+                    'avg_transaction': float(df['total'].mean()) if not df.empty else 0.0,
+                    'store_daily_goal': 1000,  # TODO: company setting
+                    'store_goal_progress': (
+                        float(today_sales['total'].sum()) / 1000 * 100
+                        if not today_sales.empty else 0.0
+                    ),
                 }
-                
-                # Create daily performance chart for regular users
-                if not today_sales.empty:
+
+                if not last_week.empty:
+                    daily = (
+                        last_week
+                        .groupby(last_week['sale_date'].dt.normalize())['total']
+                        .sum()
+                        .reindex(pd.date_range(week_start, today), fill_value=0.0)
+                    )
+
                     fig, ax = plt.subplots(figsize=(10, 4))
-                    hourly_sales = today_sales.groupby(today_sales['sale_date'].dt.hour)['total'].sum()
-                    ax.plot(hourly_sales.index, hourly_sales.values, marker='o')
-                    ax.set_title('Today\'s Sales by Hour')
-                    ax.set_xlabel('Hour')
-                    ax.set_ylabel('Sales ($)')
-                    ax.grid(True, linestyle='--', alpha=0.7)
+                    ax.bar(
+                        [d.strftime('%a %d') for d in daily.index],
+                        daily.values,
+                    )
+                    ax.set_title("Sales - Last 7 Days")
+                    ax.set_ylabel('Sales')
+                    ax.grid(True, axis='y', linestyle='--', alpha=0.7)
                     plt.tight_layout()
-                    
-                    # Convert plot to base64
+
                     buffer = io.BytesIO()
                     plt.savefig(buffer, format='png')
                     buffer.seek(0)
                     dashboard_data['daily_chart'] = base64.b64encode(buffer.getvalue()).decode()
-                    plt.close()
+                    plt.close(fig)
     
     # Get stats for subscriber dashboard
     stats = {
@@ -268,44 +285,12 @@ def manage_category_products_redirect(category_id):
 @dashboard_bp.route('/overview')
 @login_required
 def overview():
-    """Render the dashboard overview page."""
-    try:
-        # Get date range from query parameters or default to last 30 days
-        end_date = datetime.utcnow()
-        start_date = end_date - timedelta(days=30)
-        
-        # Get dashboard data from analytics service
-        analytics_service = AnalyticsService()
-        dashboard_data = analytics_service.get_dashboard_data(
-            start_date=start_date,
-            end_date=end_date,
-            store_id=current_user.store.id if current_user.store else None
-        )
-        
-        # Ensure all metrics have default values
-        dashboard = {
-            'total_revenue': float(dashboard_data.get('total_revenue', 0)),
-            'total_transactions': int(dashboard_data.get('total_transactions', 0)),
-            'avg_transaction': float(dashboard_data.get('avg_transaction', 0)),
-            'top_store': dashboard_data.get('top_store', 'No stores'),
-            'top_product': dashboard_data.get('top_product', 'No products'),
-            'this_month_sales': float(dashboard_data.get('this_month_sales', 0)),
-            'daily_change': float(dashboard_data.get('daily_change', 0)),
-            'weekly_change': float(dashboard_data.get('weekly_change', 0)),
-            'today_sales': float(dashboard_data.get('today_sales', 0)),
-            'today_transactions': int(dashboard_data.get('today_transactions', 0)),
-            'store_daily_goal': float(dashboard_data.get('store_daily_goal', 0)),
-            'store_goal_progress': float(dashboard_data.get('store_goal_progress', 0))
-        }
-        
-        return render_template(
-            'dashboard/overview.html',
-            dashboard=dashboard,
-            datetime=datetime,
-            start_date=start_date,
-            end_date=end_date
-        )
-    except Exception as e:
-        current_app.logger.error(f"Error rendering dashboard: {str(e)}")
-        flash('An error occurred while loading the dashboard. Please try again later.', 'error')
-        return redirect(url_for('main.index')) 
+    """Legacy overview route.
+
+    The previous implementation called ``AnalyticsService.get_dashboard_data``
+    which does not exist on the service, so every request raised. The
+    ``/dashboard`` route already renders ``dashboard/overview.html`` with a
+    working summary from ``get_dashboard_summary``, so we just forward here
+    and avoid duplicate, drifting code paths.
+    """
+    return redirect(url_for('dashboard.dashboard'))
